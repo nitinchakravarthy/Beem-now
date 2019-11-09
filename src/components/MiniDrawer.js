@@ -144,9 +144,12 @@ export default function MiniDrawer() {
           ))}
         </List>
       </Drawer>
-    <Typography paragraph>
-      Blah blah blah
-    </Typography>
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        <Typography paragraph>
+          Features Coming soon
+        </Typography>
+      </main>
     </div>
   );
 }
