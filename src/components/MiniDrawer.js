@@ -161,7 +161,7 @@ export default function MiniDrawer() {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography paragraph>
-          Blah blah blah
+          Features Coming soon
         </Typography>
       </main>
     </div>

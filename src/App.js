@@ -1,13 +1,19 @@
 import React from 'react';
 import './App.css';
-import NavBar from "./components/NavBar";
-import MiniDrawer from "./components/MiniDrawer"
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
+import Home from "./components/Home";
+import ForgotPassword from "./components/ForgotPassword";
+import { Switch, Route, Link } from 'react-router-dom'
+
 function App() {
   return (
-    <div>
-        //<NavBar></NavBar>
-        <MiniDrawer></MiniDrawer>
-    </div>
+  	<Switch>
+      <Route exact path="/" component={SignIn}/>
+      <Route exact path="/home" component={Home}/>
+      <Route exact path="/signup" component={SignUp}/>
+      <Route exact path="/forgotpassword" component={ForgotPassword}/>
+    </Switch>
   );
 }
 
