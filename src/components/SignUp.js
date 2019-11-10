@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
 
 function Copyright() {
   return (
@@ -57,6 +61,14 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [gender, setGender] = useState(''); 
+
+  // Parameters for UI effect of Gender label when in focus
+  const genderLabel = React.useRef(null);
+  const [labelWidth, setLabelWidth] = React.useState(0);
+  React.useEffect(() => {
+    setLabelWidth(genderLabel.current.offsetWidth);
+  }, []);
 
   const validateEmailAddress = (event) =>{
       let name = event.target.name
@@ -66,12 +78,12 @@ export default function SignUp() {
       }
       else{
           var email = event.target.value;
-          var reg = /^[a-zA-Z0-9/_/g]+@[a-zA-Z0-9]+\.[A-Za-z]+(\.[A-Za-z]+)?$/;
+          var reg = /^[a-zA-Z0-9/_/g]+@tamu\.edu$/;
           var test = reg.test(email);
           if (test) {
               setEmailError('')
           } else{
-              setEmailError('Not a valid email address')
+              setEmailError('Please enter a valid tamu email.')
           }
       }
   }
@@ -84,7 +96,7 @@ export default function SignUp() {
       }
       else{
           var pass = event.target.value;
-          var reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/;
+          var reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,32}$/;
           var test = reg.test(pass);
           if (test) {
               setPasswordError('')
@@ -96,23 +108,27 @@ export default function SignUp() {
   const validatePasswordComfirmation = (event) => {
       let name = event.target.name
       let value = event.target.value 
-      var pass = event.target.value;
+      var pass = event.target.value
       if (pass === password) {
           setConfirmPasswordError('')
       } else{
           setConfirmPasswordError('Passwords do not match')
       }
   }
-  // const handleSubmit = (event) => {
-  //     event.preventDefault();
-  //     const data = new FormData(event.target);
+  const handleGenderChange = event => {
+    setGender(event.target.value)
+  }
+  const handleSubmit = (event) => {
+      event.preventDefault();
+      const data = new FormData(event.target)
+      console.log(gender)
 
-  //     fetch('/api/form-submit-url', {
-  //       method: 'POST',
-  //       body: data,
-  //     });
+      // fetch('/api/form-submit-url', {
+      //   method: 'POST',
+      //   body: data,
+      // });
       
-  // }
+  }
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -123,7 +139,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form}  noValidate>
+        <form className={classes.form}  onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -147,6 +163,24 @@ export default function SignUp() {
                 name="lastName"
                 autoComplete="lname"
               />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl variant="outlined" id = "gender-form-control" fullWidth className={classes.formControl}>
+                <InputLabel ref={genderLabel} id="gender-label" required>
+                  Gender
+                </InputLabel>
+                <Select
+                  labelId="gender-label"
+                  id="gender"
+                  labelWidth={labelWidth}
+                  value={gender}
+                  onChange={handleGenderChange}
+                >
+                  <MenuItem value={'Male'}>Male</MenuItem>
+                  <MenuItem value={'Female'}>Female</MenuItem>
+                  <MenuItem value={'Other'}>Prefer not to disclose</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <TextField
