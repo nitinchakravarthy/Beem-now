@@ -4,15 +4,16 @@ mongoose.set('useFindAndModify', false);
 
 const User = require('./user');
 
-// Create geolocation schema
 const GeoSchema = new mongoose.Schema({
   type: {
-    type: String,
-    default: "Point"
+      type: String,
+      enum: ['Point'],
+      required: true
   },
   coordinates: {
     type: [Number],
-    index: "2dsphere"
+    index: "2dsphere",
+    required: true
   }
 });
 
@@ -36,7 +37,6 @@ const rideSchema = new mongoose.Schema({
   pricePerSeat : { type : Number,
                 required : true },
   riders : [String], // string array of rider UIDs
-  // itemsMatched : [String],
   originCity: { type : String,
               required : true },
   destinationCity : { type : String,
@@ -46,9 +46,9 @@ const rideSchema = new mongoose.Schema({
   finalAddress : { type : String,
               required : true },
   initialCoords : { type:  GeoSchema,
-              required : false}, //change to GeoSchema
+              required : true}, //change to GeoSchema
   finalCoords : { type : GeoSchema,
-              required : false }
+              required : true }
 });
 
 const Ride = mongoose.model('Ride', rideSchema);
