@@ -68,7 +68,7 @@ export default function ResetPassword() {
       }
       else{
           var pass = event.target.value;
-          var reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,32}$/;
+          var reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,32}$/;
           var test = reg.test(pass);
           if (test) {
               setPasswordError('')

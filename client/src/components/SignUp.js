@@ -31,6 +31,21 @@ function Copyright() {
   );
 }
 
+const genderCategories = [
+  {
+    value: 'Male',
+    label: 'Male',
+  },
+  {
+    value: 'Female',
+    label: 'Female',
+  },
+  {
+    value: 'Other',
+    label: 'Prefer not to disclose',
+  },
+];
+
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -61,23 +76,21 @@ export default function SignUp() {
   const [accountCreated, setAccountCreated] = useState(false);
   const [signUpSucess, setSignUpSuccess] = useState('');
   const [password, setPassword] = useState('');
+  const [fNameError, setFNameError] = useState('');
+  const [lNameError, setLNameError] = useState('');
+  const [genderError, setGenderError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  const [gender, setGender] = useState('');
+  const [agreementError, setAgreementError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState(''); 
+  const [agreeToTermsOfUse, setAgreeToTermsOfUse] = useState(false);
 
-   // Parameters for UI effect of Gender label when in focus
-   const genderLabel = React.useRef(null);
-   const [labelWidth, setLabelWidth] = React.useState(0);
-   React.useEffect(() => {
-     setLabelWidth(genderLabel.current.offsetWidth);
-   }, []);
-
-   const validateEmailAddress = (event) =>{
+  const validateEmailAddress = (event) =>{
+      console.log("password")
       let name = event.target.name
       let value = event.target.value
       if(event.target.value === ''){
-          setEmailError('Email Address Required')
+          setEmailError('University Email Required')
       }
       else{
           var email = event.target.value;
@@ -94,7 +107,7 @@ export default function SignUp() {
       let name = event.target.name
       let value = event.target.value
       setPassword(value)
-      if(event.target.value==''){
+      if(event.target.value === ''){
           setPasswordError('Password Required')
       }
       else{
@@ -107,47 +120,110 @@ export default function SignUp() {
               setPasswordError('Password shoud contain a digit,small letter,capital letter and must be between 8 to 32 characters')
           }
       }
-    }
+  }
   const validatePasswordComfirmation = (event) => {
       let name = event.target.name
-      let value = event.target.value
-      var pass = event.target.value;
+      let value = event.target.value 
+      var pass = event.target.value
       if (pass === password) {
           setConfirmPasswordError('')
       } else{
           setConfirmPasswordError('Passwords do not match')
       }
   }
-  const handleGenderChange = event => {
-   setGender(event.target.value)
- }
+  const handleInputChange = event => {
+    let name = event.target.name
+    let value = event.target.value 
+    if(name === 'firstName'){
+      if (value === '') {
+          setFNameError('First Name is required')
+      } else{
+          setFNameError('')
+      }
+    } else if(name === 'lastName'){
+      if (value === '') {
+          setLNameError('Last Name is required')
+      } else{
+          setLNameError('')
+      }
+    } else if(name === 'gender'){
+      if (value === '') {
+          setGenderError('Please make a selection')
+      } else{
+          setGenderError('')
+      }
+    }
+  }
+  const handleCheckBoxInputs = event => {
+      let name = event.target.name
+      if(name === 'agreeToTermsOfUse'){
+        let currentVal = agreeToTermsOfUse
+        setAgreeToTermsOfUse(!currentVal)
+        setAgreementError('')
+      }
+  }
+  const handleEmptySubmission = data => {
+    var success = true
+      if(data.get('firstName') === ''){
+        setFNameError('First name is required')
+        success = false
+      }
+      if(data.get('lastName') === ''){
+        setLNameError('Last name is required')
+        success = false
+      } 
+      if(data.get('gender') === ''){
+        setGenderError('Please make a selection')
+        success = false
+      }
+      if(data.get('email') === ''){
+        setEmailError('University email is required')
+        success = false
+      }
+      if(data.get('password') === ''){
+        setPasswordError('Password is required')
+        success = false
+      }
+      if(data.get('confirmPassword') !== data.get('password')){
+        setConfirmPasswordError('Passwords do not match')
+        success = false
+      }
+      if(!agreeToTermsOfUse){
+        setAgreementError('You must agree to our terms of service.')
+        success = false
+      }
+      return success
+  }
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
-      const body = {
-          first_name : data.get('firstName'),
-          last_name : data.get('lastName'),
-          email : data.get('email'),
-          password: data.get('password'),
-          gender: gender
-      }
-      //console.log(body);
+      const success = handleEmptySubmission(data);
+      if(success){
+          const body = {
+              first_name : data.get('firstName'),
+              last_name : data.get('lastName'),
+              email : data.get('email'),
+              password: data.get('password'),
+              gender: data.get('gender')
+          }
+          //console.log(body);
 
-      fetch('/users/signup', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      }).then(response => response.json())
-      .then((data) => {
-         console.log(data);
-         setSignUpSuccess(data);
-         setAccountCreated(true);
-     }).catch( (error) => {
-         console.log(error);
-     });
+          fetch('/users/signup', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+          }).then(response => response.json())
+          .then((data) => {
+             console.log(data);
+             setSignUpSuccess(data);
+             setAccountCreated(true);
+         }).catch( (error) => {
+             console.log(error);
+         });
+      }
   }
   return (
       <div>
@@ -157,130 +233,146 @@ export default function SignUp() {
                                         }
                                         }}  /> : null}
      <Container component="main" maxWidth="xs">
-       <CssBaseline />
-       <div className={classes.paper}>
-         <Avatar className={classes.avatar}>
-           <LockOutlinedIcon />
-         </Avatar>
-         <Typography component="h1" variant="h5">
-           Sign up
-         </Typography>
-         <form className={classes.form}  onSubmit={handleSubmit} noValidate>
-           <Grid container spacing={2}>
-             <Grid item xs={12} sm={6}>
-               <TextField
-                 autoComplete="fname"
-                 name="firstName"
-                 variant="outlined"
-                 required
-                 fullWidth
-                 id="firstName"
-                 label="First Name"
-                 autoFocus
-               />
-             </Grid>
-             <Grid item xs={12} sm={6}>
-               <TextField
-                 variant="outlined"
-                 required
-                 fullWidth
-                 id="lastName"
-                 label="Last Name"
-                 name="lastName"
-                 autoComplete="lname"
-               />
-             </Grid>
-             <Grid item xs={12}>
-               <FormControl variant="outlined" id = "gender-form-control" fullWidth className={classes.formControl}>
-                 <InputLabel ref={genderLabel} id="gender-label" required>
-                   Gender
-                 </InputLabel>
-                 <Select
-                   labelId="gender-label"
-                   id="gender"
-                   labelWidth={labelWidth}
-                   value={gender}
-                   onChange={handleGenderChange}
-                 >
-                   <MenuItem value={'Male'}>Male</MenuItem>
-                   <MenuItem value={'Female'}>Female</MenuItem>
-                   <MenuItem value={'Other'}>Prefer not to disclose</MenuItem>
-                 </Select>
-               </FormControl>
-             </Grid>
-             <Grid item xs={12}>
-               <TextField
-                 error={emailError !== ''}
-                 variant="outlined"
-                 required
-                 fullWidth
-                 id="email"
-                 label="Email Address"
-                 name="email"
-                 autoComplete="email"
-                 helperText = {emailError}
-                 onChange = {validateEmailAddress}
-               />
-             </Grid>
-             <Grid item xs={12}>
-               <TextField
-                 error={passwordError !== ''}
-                 variant="outlined"
-                 required
-                 fullWidth
-                 name="password"
-                 label="Password"
-                 type="password"
-                 id="password"
-                 autoComplete="current-password"
-                 helperText = {passwordError}
-                 onChange = {validatePassword}
-               />
-             </Grid>
-             <Grid item xs={12}>
-               <TextField
-                 error = {confirmPasswordError !== ''}
-                 variant="outlined"
-                 required
-                 fullWidth
-                 name="confirmPassword"
-                 label="Confirm Password"
-                 type="password"
-                 id="confirm-password"
-                 autoComplete="confirm-password"
-                 helperText = {confirmPasswordError}
-                 onChange = {validatePasswordComfirmation}
-               />
-             </Grid>
-             <Grid item xs={12}>
-               <FormControlLabel
-                 control={<Checkbox value="allowExtraEmails" color="primary" />}
-                 label="I want to receive updates via email."
-               />
-             </Grid>
-           </Grid>
-           <Button
-             type="submit"
-             fullWidth
-             variant="contained"
-             color="primary"
-             className={classes.submit}
-           >
-             Sign Up
-           </Button>
-           <Grid container justify="flex-end">
-             <Grid item>
-               <Link href="/" variant="body2">
-                 Already have an account? Sign in
-               </Link>
-             </Grid>
-           </Grid>
-         </form>
-       </div>
-       <Box mt={5}>
-         <Copyright />
-       </Box>
-     </Container>
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <form className={classes.form}  onSubmit={handleSubmit} noValidate>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="fname"
+                  error = {fNameError !== ''}
+                  name="firstName"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  helperText = {fNameError}
+                  autoFocus
+                  onChange = {handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  error = {lNameError !== ''}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  helperText = {lNameError}
+                  autoComplete="lname"
+                  onChange = {handleInputChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  error = {genderError !== ''}
+                  onChange = {handleInputChange}
+                  select
+                  required
+                  fullWidth
+                  id="gender"
+                  label="Gender"
+                  name="gender"
+                  autoComplete="email"
+                  helperText = {genderError}
+                  SelectProps={{
+                    MenuProps: {
+                      className: classes.menu,
+                    },
+                  }}
+                >
+                {genderCategories.map(option => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={emailError !== ''}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="email"
+                  label="University Email"
+                  name="email"
+                  autoComplete="email"
+                  helperText = {emailError}
+                  onChange = {validateEmailAddress}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error={passwordError !== ''}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  helperText = {passwordError}
+                  onChange = {validatePassword}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  error = {confirmPasswordError !== ''}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirm-password"
+                  autoComplete="confirm-password"
+                  helperText = {confirmPasswordError}
+                  onChange = {validatePasswordComfirmation}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel style = {{marginRight: '5px'}}
+                  control={<Checkbox name = "agreeToTermsOfUse" color="primary" onChange = {handleCheckBoxInputs}/>}
+                  label="I have read and agree to the "
+                />
+                <Link href="/termsofservice" variant="body1" underline='always' target="_blank">Terms of service</Link>*
+                <Typography variant = "body2" color = "error">{agreementError}</Typography>
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign Up
+            </Button>
+            <Grid container justify="flex-end">
+              <Grid item>
+                <Link href="/" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </form>
+        </div>
+        <Box mt={5}>
+          <Copyright />
+        </Box>
+      </Container>
      </div>
  );
 }

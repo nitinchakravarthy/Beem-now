@@ -68,7 +68,7 @@ export default function SignIn() {
       }
       else{
           var email = event.target.value;
-          var reg = /^[a-zA-Z0-9/_/g]+@[a-zA-Z0-9]+\.[A-Za-z]+(\.[A-Za-z]+)?$/;
+          var reg = /^[a-zA-Z0-9/_/g]+@tamu\.edu$/;
           var test = reg.test(email);
           if (test) {
               setEmailError('')
@@ -108,6 +108,10 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Forgot Password
         </Typography>
+        <Typography variant="body1" style={{marginTop: '60px', marginBottom: '30px'}}>
+          Please enter your registered email ID.
+          We will send you a verification email to reset your password.
+        </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
           <TextField
             error={emailError !== ''}
@@ -115,7 +119,7 @@ export default function SignIn() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="University Email"
             name="email"
             autoComplete="email"
             helperText = {emailError}
@@ -129,7 +133,7 @@ export default function SignIn() {
             color="primary"
             className={classes.submit}
           >
-            Email Reset Link
+            Submit
           </Button>
           <Grid container>
             <Grid item xs={12}>
