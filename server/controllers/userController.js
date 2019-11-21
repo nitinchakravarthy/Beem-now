@@ -150,9 +150,9 @@ exports.sendProfile = function (req, res, next) {
     if (!user.verified) return res.status(400).send({ msg: 'This account has not been verified. Please verifiy your account' });
 
     // need to fix this
-    const user = user.toJSON();
-    delete user.password;
-    res.send( {user: user})
+    const result = user.toJSON();
+    delete result.password;
+    res.send( {user: result})
   });
 }
 
