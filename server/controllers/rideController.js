@@ -91,8 +91,8 @@ exports.getDriverRideInfo = function(req, res, next) {
     if (err) return res.status(500).send({ msg: err.message });
     if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
 
-    const ride = ride.toJSON();
-    res.send({ ride: ride });
+    const result = ride.toJSON();
+    res.send({ ride: result });
   }); // Ride.find()
 };
 
@@ -111,8 +111,8 @@ exports.getUserRideInfo = function(req, res, next) {
     if (err) return res.status(500).send({ msg: err.message });
     if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
 
-    const ride = ride.toJSON();
-    res.send({ ride : ride });
+    const result = ride.toJSON();
+    res.send({ ride : result });
   });
 };
 
@@ -130,8 +130,8 @@ exports.getInitialCoords = function(req, res, next) {
     if (err) return res.status(500).send({ msg: err.message });
     if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
 
-    const ride = ride.toJSON();
-    res.send({ ride : ride });
+    const result = ride.toJSON();
+    res.send({ ride : result });
   }); // Ride.find()
 };
 
@@ -148,8 +148,8 @@ exports.getFinalCoords = function(req, res, next) {
     if (err) return res.status(500).send({ msg: err.message });
     if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
 
-    const ride = ride.toJSON();
-    res.send({ ride : ride });
+    const result = ride.toJSON();
+    res.send({ ride : result });
   }); // Ride.findOne()
 };
 
@@ -166,8 +166,8 @@ exports.getDriverRides = function(req, res, next) {
     if (err) return res.status(500).send({ msg: err.message });
     if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
 
-    const ride = ride.toJSON();
-    res.send({ ride : ride });
+    const result = ride.toJSON();
+    res.send({ ride : result });
   });
 };
 
@@ -185,7 +185,7 @@ exports.getRiderRides = function(req, res, next) {
     if (err) return res.status(500).send({ msg: err.message });
     if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
 
-    const ride = ride.toJSON();
-    res.send({ ride : ride });
+    const result = ride.toJSON();
+    res.send({ ride : result });
   });
 };
