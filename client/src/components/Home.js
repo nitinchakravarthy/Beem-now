@@ -12,14 +12,13 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import MiniDrawer from './MiniDrawer';
+import SideDrawer from './SideDrawer';
 import NavBar from './NavBar';
 
 export default function Home() {
   return (
     <div>
-        //<NavBar></NavBar>
-        <MiniDrawer></MiniDrawer>
+        <SideDrawer></SideDrawer>
     </div>
   );
 }
