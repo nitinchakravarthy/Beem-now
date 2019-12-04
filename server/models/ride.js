@@ -42,13 +42,13 @@ const rideSchema = new mongoose.Schema({
   destinationCity : { type : String,
               required : true },
   initialAddress : { type : String,
-              required : true },
+              required : false },
   finalAddress : { type : String,
-              required : true },
+              required : false },
   initialCoords : { type:  GeoSchema,
-              required : true}, //change to GeoSchema
+              required : false}, //change to GeoSchema
   finalCoords : { type : GeoSchema,
-              required : true }
+              required : false }
 });
 
 const Ride = mongoose.model('Ride', rideSchema);
