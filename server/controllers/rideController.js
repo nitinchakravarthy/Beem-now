@@ -16,7 +16,7 @@ exports.createRide = function(req, res, next) {
   console.log(req.body);
   // ** TODO
   // check for if user has created ride in same dates...
-
+  
   // Geocode address into coordinates
   geocode();
   function geocode() {
