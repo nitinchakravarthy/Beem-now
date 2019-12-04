@@ -60,7 +60,9 @@ export default function PostRide() {
   const classes = useStyles();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedDate, handleDateChange] = useState(new Date());
+  const [selectedDateReturn, handleDateChangeReturn] = useState(new Date());
   const [selectedTime, handleTimeChange] = useState("2019-01-01T00:00:00.000Z");
+  const [selectedTimeReturn, handleTimeChangeReturn] = useState("2019-01-01T00:00:00.000Z");
   // const [state, setState] = useState({
   //   checkedA: true,
   //   checkedB: true,
@@ -76,11 +78,41 @@ export default function PostRide() {
       if(data.get('email') === 'A' &&  data.get('password') === 'B'){
         setIsAuthenticated(true);
       }
-      // fetch('/api/form-submit-url', {
-      //   method: 'POST',
-      //   body: data,
-      // });
-      
+      const body = {
+        originCity : data.get('originCity'),
+        destinationCity: data.get('destinationCity'),
+        pricePerSeat: data.get('pricePerSeat'),
+        departDate: data.get('departDate'),
+        returnDate: data.get('returnDate'),
+        roundTrip: data.get('roundTrip'),
+        maxCapacity: data.get('maxCapacity'),
+        occupiedCapacity : data.get('maxCapacity')
+
+      }
+      fetch('/rides/createRide', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(body)
+      }).then(response => response.json())
+      .then((data) => {
+         console.log(data);
+         if(data.error_code == 0){
+             setIsAuthenticated(true);
+             //save the user object in the
+         }else{
+             //notify(data.msg)
+         }
+     }).catch((error) => {
+         console.log(error);
+         //notify(error.msg)
+     });
+    //   const notify = (toastString) => {
+    //   toast(toastString);
+    // };
+  
   }
   const [expanded, setExpanded] = useState(false);
 
@@ -103,7 +135,7 @@ export default function PostRide() {
             margin="normal"
             required
             fullWidth
-            name="from"
+            name="originCity"
             label="From"
             type="from"
             id="password"
@@ -116,8 +148,19 @@ export default function PostRide() {
             fullWidth
             id="To"
             label="To"
-            name="To"
+            name="destinationCity"
             autoComplete="email"
+            autoFocus
+          />
+           <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="capacity"
+            label="Max Capacity"
+            name="maxCapacity"
+            //autoComplete=""
             autoFocus
           />
           <TextField
@@ -127,7 +170,7 @@ export default function PostRide() {
             fullWidth
             id="amount"
             label="Amount/seat"
-            name="amount"
+            name="pricePerSeat"
             type= "number"
             autoComplete="$"
             autoFocus
@@ -146,6 +189,7 @@ export default function PostRide() {
                 disablePast
                 inputVariant = "outlined"
                 label = "Travel Date"
+                name = "departDate"
                 value={selectedDate}
                 onChange={date => handleDateChange(date)}
                 minDate={new Date()}
@@ -173,12 +217,13 @@ export default function PostRide() {
                 <Switch
                   checked={isChecked}
                   onChange={handleSwitch}
-                  value="checkedA"
+                  value={isChecked}
                   color="primary"
                 />
               }
               label = "Make This a Round Trip"
               labelPlacement="start" 
+              name ="roundTrip"
             />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container spacing={2}>
@@ -190,8 +235,9 @@ export default function PostRide() {
                 disablePast
                 inputVariant = "outlined"
                 label = "Return Date"
-                value={selectedDate}
-                onChange={date => handleDateChange(date)}
+                name = "returnDate"
+                value={selectedDateReturn}
+                onChange={date => handleDateChangeReturn(date)}
                 minDate={new Date()}
                 format="MM/dd/yyyy"
                 autoFocus
@@ -205,8 +251,8 @@ export default function PostRide() {
                   ampm={true}
                   inputVariant="outlined"
                   label="Return Time"
-                  value={selectedTime}
-                  onChange={handleTimeChange}
+                  value={selectedTimeReturn}
+                  onChange={handleTimeChangeReturn}
                   autoFocus
                 />
               </Grid>

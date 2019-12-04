@@ -17,6 +17,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import { Redirect } from 'react-router-dom';
+import CompanyLogo from '../logo.png'
 
 function Copyright() {
   return (
@@ -57,6 +58,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  logo: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(1)
   },
   avatar: {
     margin: theme.spacing(1),
@@ -235,9 +240,9 @@ export default function SignUp() {
      <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <div className={classes.logo}>
+            <img src = {CompanyLogo} />
+          </div>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
@@ -362,7 +367,7 @@ export default function SignUp() {
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link href="/" variant="body2">
+                <Link href="/signin" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

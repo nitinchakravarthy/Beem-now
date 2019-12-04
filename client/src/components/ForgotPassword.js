@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import CompanyLogo from '../logo.png'
 
 function Copyright() {
   return (
@@ -42,6 +43,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  logo: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(3)
   },
   avatar: {
     margin: theme.spacing(1),
@@ -102,9 +107,9 @@ export default function SignIn() {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <div className={classes.logo}>
+          <img src = {CompanyLogo} />
+        </div>
         <Typography component="h1" variant="h5">
           Forgot Password
         </Typography>
@@ -137,7 +142,7 @@ export default function SignIn() {
           </Button>
           <Grid container>
             <Grid item xs={12}>
-              <Link href="/" variant="body2" className={classes.centerAlign}>
+              <Link href="/signin" variant="body2" className={classes.centerAlign}>
                 {"Sign in here"}
               </Link>
             </Grid>

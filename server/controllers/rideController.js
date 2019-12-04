@@ -18,9 +18,10 @@ exports.createRide = function(req, res, next) {
   // check for if user has created ride in same dates...
   
   // Geocode address into coordinates
-  geocode();
+  //geocode();
   function geocode() {
-    var location = req.body.initialAddress;
+    var location = req.body.originCity;
+    console.log(location);
     axios.get('http://www.datasciencetoolkit.org/maps/api/geocode/json',
     {
       params: {
@@ -28,14 +29,14 @@ exports.createRide = function(req, res, next) {
       }
     })
     .then(function(res){
-      console.log(res);
-      var formattedAddress = res.data.results[0].formatted_Address;
-      console.log(formattedAddress); // pretty display
+      //console.log(res);
+      //var formattedAddress = res.data.results[0].formatted_Address;
+      //console.log(formattedAddress); // pretty display
       var lat = parseFloat(res.data.results[0].geometry.location.lat);
       var lng = parseFloat(res.data.results[0].geometry.location.lng);
       var initialCoords = ([lng, lat]);
     });
-    location = req.body.finalAddress;
+    location = req.body.destinationCity;
     axios.get('http://www.datasciencetoolkit.org/maps/api/geocode/json',
     {
       params: {
@@ -51,8 +52,11 @@ exports.createRide = function(req, res, next) {
       var finalCoords = ([lng, lat]);
     });
   } // function geocode()
-  const initialPoint = { type: 'Point', coordinates: initialCoords };
-  const finalPoint = { type: 'Point', coordinates: finalCoords };
+  console.log("Coordinates:------------");
+  //console.log(initialCoords);
+  //console.log(finalCoords); 
+  //const initialPoint = { type: 'Point', coordinates: initialCoords };
+  //const finalPoint = { type: 'Point', coordinates: finalCoords };
   ride = new Ride({
     roundTrip : req.body.roundTrip,
     departDate : req.body.departDate,
@@ -61,16 +65,18 @@ exports.createRide = function(req, res, next) {
     pricePerSeat : req.body.pricePerSeat,
     originCity : req.body.originCity,
     destinationCity : req.body.destinationCity,
-    initialAddress : req.body.initialAddress,
-    occupiedCapacity : req.body.occupiedCapacity,
-    initialCoords : initialPoint,
-    finalCoords : finalPoint
+    host: '5dde3fb52b0cf155a442f43e'
+    // initialAddress : req.body.initialAddress,
+    // occupiedCapacity : req.body.occupiedCapacity,
+    // initialCoords : initialPoint,
+    // finalCoords : finalPoint
     // initialCoords and finalCoords are .coordinates within geoschema
   }); // new Ride ()
 
   ride.save(function(err) {
     if (err) { return res.status(500).send({ msg: err.message }); }
     console.log("Ride Saved");
+    res.send({'rideStatus' : true})
   });
   console.log(ride);
 };

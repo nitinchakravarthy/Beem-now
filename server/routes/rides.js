@@ -12,16 +12,16 @@ router.get('/', function(req, res, next) {
 
 router.post('/createRide',
   [
-    check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
-    check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
-    check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
-    check('maxCapacity', 'Invalid vehicle capacity').not().isEmpty().isNumeric(),
-    check('occupiedCapacity', 'Invalid occupied capacity').not().isEmpty().isNumeric(),
-    check('pricePerSeat', 'Invalid price per seat').not().isEmpty().isCurrency(),
-    check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
-    check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
-    check('initialAddress', 'Invalid starting address').not().isEmpty(),
-    check('finalAddress', 'Invalid final address').not().isEmpty()
+     check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+     check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
+     //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
+     check('maxCapacity', 'Invalid vehicle capacity').not().isEmpty().isNumeric(),
+     check('occupiedCapacity', 'Invalid occupied capacity').not().isEmpty().isNumeric(),
+     check('pricePerSeat', 'Invalid price per seat').not().isEmpty().isCurrency(),
+     check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
+     check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
+    //check('initialAddress', 'Invalid starting address').not().isEmpty(),
+    //check('finalAddress', 'Invalid final address').not().isEmpty()
   ], rideController.createRide);
 
 

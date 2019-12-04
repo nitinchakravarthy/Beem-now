@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Redirect } from 'react-router-dom';
+import CompanyLogo from '../logo.png'
 
 function Copyright() {
   return (
@@ -38,6 +39,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  logo: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(3)
   },
   avatar: {
     margin: theme.spacing(1),
@@ -112,9 +117,9 @@ export default function ResetPassword() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <div className={classes.logo}>
+            <img src = {CompanyLogo} />
+          </div>
           <Typography component="h1" variant="h5">
             Reset Password
           </Typography>

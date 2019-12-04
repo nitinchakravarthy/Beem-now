@@ -15,6 +15,8 @@ import Container from '@material-ui/core/Container';
 import { Redirect } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CompanyLogo from '../logo.png'
+import BgImage from '../background.jpg'
 
 toast.configure({
   autoClose: 8000,
@@ -40,17 +42,23 @@ const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
       backgroundColor: theme.palette.common.white,
+      // backgroundImage: `url(${BgImage})`,
+      // backgroundRepeat: "no-repeat",
+      // backgroundPosition: "center center",
+      // backgroundSize: "cover",
+      // height: "100%"
     },
   },
   paper: {
+    backgroundColor: theme.palette.common.white,
     marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+  logo: {
+    textAlign: 'center',
+    marginBottom: theme.spacing(3)
   },
   form: {
     width: '100%',
@@ -116,9 +124,9 @@ export default function SignIn(props) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <div className={classes.logo}>
+          <img src = {CompanyLogo} />
+        </div>
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
@@ -154,6 +162,7 @@ export default function SignIn(props) {
             fullWidth
             variant="contained"
             color="primary"
+            backgroundColor = '#62c9f2'
             className={classes.submit}
           >
             Sign In
@@ -172,9 +181,9 @@ export default function SignIn(props) {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
+      <div style = {{marginTop: '10%', marginBottom: '10%'}}>
         <Copyright />
-      </Box>
+      </div>
     </Container>
     </div>
   );
