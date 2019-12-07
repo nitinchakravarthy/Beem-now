@@ -65,7 +65,7 @@ exports.createRide = function(req, res, next) {
     pricePerSeat : req.body.pricePerSeat,
     originCity : req.body.originCity,
     destinationCity : req.body.destinationCity,
-    host: '5dda28848c13c71c90384456'
+    host: '5de1aaaad055f316f87c57ef'
     // initialAddress : req.body.initialAddress,
     // occupiedCapacity : req.body.occupiedCapacity,
     // initialCoords : initialPoint,
@@ -244,3 +244,30 @@ exports.searchRide = function(req, res, next) {
       }
     });
 };
+
+//Search Rides by userID (both passenger and driver) 
+//if no rides, empty array are returned
+exports.rideHistory = function(req, res, next) {
+  // Check for validation error
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+  console.log('UserID', req.body.user_id);
+  var ObjectId = require('mongoose').Types.ObjectId; 
+  Ride.find({
+        //match the object id of host 
+        host: new ObjectId(req.body.user_id)
+      }).exec(function(err, driver_rides){ 
+      if (err) return res.status(500).send({ msg: err.message });
+      const driver_rides = JSON.stringify(driver_rides);
+      Ride.find({
+          //search in riders array for user_id
+          riders : req.body.user_id
+        }).exec(function(err, passenger_rides){
+        if (err) return res.status(500).send({ msg: err.message });
+        const passenger_rides = JSON.stringify(passenger_rides);  
+        console.log(driver_rides, passenger_rides)                     
+        res.send({ error_code: 0, passenger_rides: passenger_rides,
+               driver_rides: driver_rides });
+        });
+    });
