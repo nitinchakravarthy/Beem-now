@@ -65,7 +65,7 @@ exports.createRide = function(req, res, next) {
     pricePerSeat : req.body.pricePerSeat,
     originCity : req.body.originCity,
     destinationCity : req.body.destinationCity,
-    host: '5dde3fb52b0cf155a442f43e'
+    host: '5de6bdcc9a846d19302c0c41'
     // initialAddress : req.body.initialAddress,
     // occupiedCapacity : req.body.occupiedCapacity,
     // initialCoords : initialPoint,
@@ -195,3 +195,75 @@ exports.getRiderRides = function(req, res, next) {
     res.send({ ride : result });
   });
 };
+
+//Search Rides by origin, destination, 
+exports.searchRide = function(req, res, next) {
+  // Check for validation error
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+  console.log('Input:', req.body);
+  var departDate_start = new Date(req.body.departDate)
+  var departDate_end = new Date(departDate_start.getTime()+(1*24*60*60*1000))
+  Ride.find( 
+      { departDate:{"$gte": departDate_start, 
+                    "$lt": departDate_end
+                  },
+        originCity:req.body.originCity, 
+        destinationCity:req.body.destinationCity
+      }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+      ).populate('host').exec(function(err, departure_rides){ 
+      if (err) return res.status(500).send({ msg: err.message });
+      const result_d = JSON.stringify(departure_rides);
+
+      if (req.body.returnDate){
+        returnDate_start = new Date(req.body.returnDate)
+        returnDate_end = new Date(returnDate_start.getTime() + (1*24*60*60*1000))
+        Ride.find(
+          { departDate:{"$gte": returnDate_start, 
+                        "$lt": returnDate_end
+                        }, 
+            originCity:req.body.destinationCity , 
+            destinationCity:req.body.originCity
+          }).populate('host').exec(function(err, return_rides){
+          if (err) return res.status(500).send({ msg: err.message });
+          const result_r = JSON.stringify(return_rides);  
+          console.log(result_d, result_r)                     
+          res.send({ departure_rides: result_d,
+                 return_rides: result_r });
+          });
+      }
+      else{
+        console.log(result_d, result_r) 
+        const result_r = JSON.stringify([]);
+        res.send({ departure_rides: result_d,
+                 return_rides: result_r });
+      }
+    });
+};
+  
+
+
+  // if (!req.body.roundTrip){
+  //   Ride.find( 
+  //     { $or : [ {departDate:req.body.departDate}, {returnDate:req.body.departDate} ] , 
+  //       originCity:req.body.originCity , 
+  //       destinationCity:req.body.destinationCity}, function(err, departure_rides){  
+  //     if (err) return res.status(500).send({ msg: err.message });
+  //     if (departure_rides.length == 0){
+  //       console.log(departure_rides);
+  //       return res.status(400).send({ msg: 'There are no departure rides for your search query.' });
+  //     }
+  //     const result = JSON.stringify(departure_rides);
+  //     res.send({ departure_rides: result });
+  //  });
+  // }
+  
+
+  // Ride.find({ _id : req.body.rid, uid : req.body.uid }, function(err, ride){
+  //   if (err) return res.status(500).send({ msg: err.message });
+  //   if (!ride) return res.status(400).send({ msg: 'We were unable to find your ride information' });
+
+  //   const result = ride.toJSON();
+  //   res.send({ ride: result });
+  // }); // Ride.find()

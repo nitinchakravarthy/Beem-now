@@ -56,7 +56,7 @@ router.get('/userRideInfo',
 
 
     // Returns all rides by a driver
-router.get('/driverRides',
+  router.get('/driverRides',
   [
     check('uid', 'UID invalid').not().isEmpty()
   ], rideController.getDriverRides);
@@ -68,6 +68,13 @@ router.get('/driverRides',
       check('uid', 'UID invalid').not().isEmpty()
     ], rideController.getRiderRides);
 
-
+  router.post('/searchRide',
+  [
+    //check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+    //check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
+    //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
+    //check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
+    //check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
+  ], rideController.searchRide);
 
 module.exports = router;
