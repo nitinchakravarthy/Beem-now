@@ -196,13 +196,16 @@ exports.getRiderRides = function(req, res, next) {
   });
 };
 
-//Search Rides by origin, destination, 
+//Search Rides by origin, destination, departure date and return date
+//if returnDate is null, returnRides are returned as null.
+//if no search results exists empty array is returned. 
 exports.searchRide = function(req, res, next) {
   // Check for validation error
   const errors = validationResult(req);
   console.log(errors);
   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
   console.log('Input:', req.body);
+  //dates for query
   var departDate_start = new Date(req.body.departDate)
   var departDate_end = new Date(departDate_start.getTime()+(1*24*60*60*1000))
   Ride.find( 
@@ -217,6 +220,7 @@ exports.searchRide = function(req, res, next) {
       const result_d = JSON.stringify(departure_rides);
 
       if (req.body.returnDate){
+        //dates for query
         returnDate_start = new Date(req.body.returnDate)
         returnDate_end = new Date(returnDate_start.getTime() + (1*24*60*60*1000))
         Ride.find(
@@ -235,9 +239,8 @@ exports.searchRide = function(req, res, next) {
           });
       }
       else{
-        const result_r = JSON.stringify([]);
         res.send({ error_code: 0, departure_rides: result_d,
-                 return_rides: result_r });
+                 return_rides: null });
       }
     });
 };
