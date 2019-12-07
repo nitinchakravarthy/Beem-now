@@ -16,8 +16,16 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import SvgIcon from '@material-ui/core/SvgIcon';
+import homeIcon from '../icons/home.svg';
+import profileIcon from '../icons/profile.svg';
+import ridePostIcon from '../icons/ridepost.svg';
+import historyIcon from '../icons/history.svg';
+import messageIcon from '../icons/message.svg';
+import signOutIcon from '../icons/signout.svg';
+import {NavLink} from 'react-router-dom';
+import Icon from '@material-ui/core/Icon';
+import Box from '@material-ui/core/Box';
 
 const drawerWidth = 240;
 
@@ -56,12 +64,19 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
     justifyContent: 'flex-end',
+  },
+  drawerFooter: {
+    position: 'absolute', 
+    bottom: '0', 
+    right: '0', 
+    left: '0'
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -75,9 +90,16 @@ const useStyles = makeStyles(theme => ({
     }),
     marginLeft: 0,
   },
+  inline: {
+    display: 'inline',
+  },
 }));
 
-export default function Home() {
+function ListItemLink(props) {
+  return <ListItem button component="a" {...props} />
+}
+
+export default function Home(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -129,54 +151,72 @@ export default function Home() {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          <ListItem button key={"My Profile"}>
+        <List component="nav">
+
+          <ListItemLink key={"Home"} href = "#">
               <ListItemIcon>
-                <SvgIcon>
-                  <path fill="#848484" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
-                </SvgIcon>
+                <Icon><img src={homeIcon}/></Icon>
+              </ListItemIcon>
+              <ListItemText primary={"Home"} />
+          </ListItemLink >
+
+          <ListItemLink key={"profile"} href="#profile">
+              <ListItemIcon>
+                <Icon><img src={profileIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"My Profile"} />
-          </ListItem>
-          <ListItem button key={"Post a Ride"}>
+          </ListItemLink>
+
+          <ListItemLink key = {"postride"} href="#postride">
               <ListItemIcon>
-                <SvgIcon>
-                  <path fill="#848484" d="M5,14H19L17.5,9.5H6.5L5,14M17.5,19A1.5,1.5 0 0,0 19,17.5A1.5,1.5 0 0,0 17.5,16A1.5,1.5 0 0,0 16,17.5A1.5,1.5 0 0,0 17.5,19M6.5,
-                  19A1.5,1.5 0 0,0 8,17.5A1.5,1.5 0 0,0 6.5,16A1.5,1.5 0 0,0 5,17.5A1.5,1.5 0 0,0 6.5,19M18.92,9L21,15V23A1,1 0 0,1 20,24H19A1,1 0 0,1 18,23V22H6V23A1,
-                  1 0 0,1 5,24H4A1,1 0 0,1 3,23V15L5.08,9C5.28,8.42 5.85,8 6.5,8H17.5C18.15,8 18.72,8.42 18.92,9M12,0C14.12,0 16.15,0.86 17.65,2.35L16.23,3.77C15.11,
-                  2.65 13.58,2 12,2C10.42,2 8.89,2.65 7.77,3.77L6.36,2.35C7.85,0.86 9.88,0 12,0M12,4C13.06,4 14.07,4.44 14.82,5.18L13.4,6.6C13.03,6.23 12.53,6 12,6C11.5,
-                  6 10.97,6.23 10.6,6.6L9.18,5.18C9.93,4.44 10.94,4 12,4Z" />
-                </SvgIcon>
+                <Icon><img src={ridePostIcon}/></Icon>
               </ListItemIcon>
-              <ListItemText primary={"Post a Ride"} />
-          </ListItem>
-          <ListItem button key={"Ride History"}>
+            <ListItemText primary={"Post a Ride"} />
+          </ListItemLink>
+          
+          <ListItemLink key = {"ridehistory"} href="#ridehistory">
               <ListItemIcon>
-                <SvgIcon>
-                  <path fill="#848484" d="M13.5,8H12V13L16.28,15.54L17,14.33L13.5,12.25V8M13,3A9,9 0 0,0 4,12H1L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3" />
-                </SvgIcon>
+                <Icon><img src={historyIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Ride History"} />
-          </ListItem>
-          <ListItem button key={"Messages"}>
-              <ListItemIcon><MailIcon /></ListItemIcon>
-              <ListItemText primary={"Messages"} />
-          </ListItem>
-          <ListItem button key={"Sign Out"}>
+          </ListItemLink>
+
+          <ListItemLink key={"Messages"} href="#messages">
               <ListItemIcon>
-                <SvgIcon>
-                  <path fill="#848484" d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z" />
-                </SvgIcon>
+                <Icon><img src={messageIcon}/></Icon>
+              </ListItemIcon>
+              <ListItemText primary={"Messages"} />
+          </ListItemLink>
+
+          <ListItem button key={"Sign Out"} component="a" href = "/signin">
+              <ListItemIcon>
+                <Icon><img src={signOutIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Sign Out"} />
           </ListItem>
+
         </List>
         <Divider />
+        <div className = {classes.drawerFooter}>
         <List>
-          <ListItem button key={"Sign Out"}>
-              <ListItemText primary={"Terms of service"} />
-          </ListItem>
+          <ListItemLink key={"Terms of service"} href = "/termsofservice" target="_blank" style = {{textAlign: 'center'}}>
+              <ListItemText primary={
+                <React.Fragment>
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    className={classes.inline}
+                    color="textPrimary"
+                  >
+                    <Box fontStyle="italic" m={1}>
+                      Terms of service
+                    </Box>
+                  </Typography>
+                </React.Fragment>
+              }/>
+          </ListItemLink>
         </List>
+        </div>
       </Drawer>
       <main
         className={clsx(classes.content, {
