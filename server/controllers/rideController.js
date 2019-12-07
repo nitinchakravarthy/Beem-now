@@ -259,15 +259,16 @@ exports.rideHistory = function(req, res, next) {
         host: new ObjectId(req.body.user_id)
       }).exec(function(err, driver_rides){ 
       if (err) return res.status(500).send({ msg: err.message });
-      const driver_rides = JSON.stringify(driver_rides);
+      const driver_rides_result = JSON.stringify(driver_rides);
       Ride.find({
           //search in riders array for user_id
           riders : req.body.user_id
         }).exec(function(err, passenger_rides){
         if (err) return res.status(500).send({ msg: err.message });
-        const passenger_rides = JSON.stringify(passenger_rides);  
+        const passenger_rides_result = JSON.stringify(passenger_rides);  
         console.log(driver_rides, passenger_rides)                     
-        res.send({ error_code: 0, passenger_rides: passenger_rides,
-               driver_rides: driver_rides });
+        res.send({ error_code: 0, passenger_rides: driver_rides_result,
+               driver_rides: passenger_rides_result });
         });
     });
+  }
