@@ -235,8 +235,8 @@ exports.searchRide = function(req, res, next) {
           });
       }
       else{
-        
-        res.send({ error_code: 0, departure_rides: null,
+        const result_r = JSON.stringify([]);
+        res.send({ error_code: 0, departure_rides: result_d,
                  return_rides: result_r });
       }
     });
