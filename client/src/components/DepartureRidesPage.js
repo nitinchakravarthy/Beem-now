@@ -128,9 +128,9 @@ export default function ScrollableTabsButtonAuto(props) {
         <div style={{width: '100%'}}>
         {dates.map((date, index) => (
             <TabPanel value={value} index={index}>
-              <DepartureRideList 
-                departureRides={departureRides} 
-                returnRides={returnRides} 
+              <DepartureRideList
+                departureRides={departureRides}
+                returnRides={returnRides}
                 originCity={originCity}
                 destinationCity={destinationCity}
                 returnDate={returnDate}

@@ -150,10 +150,12 @@ export default function SearchRide() {
          console.log(data);
          console.log(typeof data.departure_rides)
          if(data.error_code == 0){
-             var obj_d, obj_r
+             var obj_d, obj_r;
              try {
                 obj_d = JSON.parse(data.departure_rides);
                 obj_r = JSON.parse(data.return_rides);
+                console.log(obj_d);
+                console.log(obj_r);
               } catch (ex) {
                 console.error(ex);
               }

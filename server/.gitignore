@@ -57,4 +57,5 @@ typings/
 # next.js build output
 .next
 s e n d g r i d . e n v  
+package-lock.json
  

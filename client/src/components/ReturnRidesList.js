@@ -76,14 +76,14 @@ export default function AlignItemsList(props) {
         </ListItemText>
       </Container>
         <ListItemText>
-          <Typography variant="h5" align="right">{item.pricePerSeat}$</Typography>        
+          <Typography variant="h5" align="right">{item.pricePerSeat}$</Typography>
         </ListItemText>
 
       </ListItem>
       <Divider/>
       </div>
       ))}
-    </List> </Container> : <Typography variant="body1" color="textSecondary">No rides found</Typography>}
+    </List> </Container> : <Typography variant="h2" color="textSecondary" align="center">No rides found</Typography>}
     </div>
   );
 }
