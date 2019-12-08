@@ -16,76 +16,126 @@ exports.createRide = function(req, res, next) {
   const errors = validationResult(req);
   console.log(errors);
   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-
   console.log(req.body);
   // ** TODO
   // check for if user has created ride in same dates...
-
-  // Geocode address into coordinates
-  //geocode();
   function geocode() {
-    var location = req.body.originCity;
-    console.log(location);
-    axios.get('http://www.datasciencetoolkit.org/maps/api/geocode/json',
+    var originLocation = req.body.originCity;
+    var destinationLocation = req.body.destinationCity;
+    return axios.all([
+      axios.get('https://nominatim.openstreetmap.org/search?format=json',
     {
       params: {
-        address : location
+        q : originLocation
+      }
+    }),
+     axios.get('https://nominatim.openstreetmap.org/search?format=json',
+    {
+      params: {
+        q : destinationLocation
+      }
+    })
+    ])
+    .then((resArr)=> {
+      var initialCoords = ([parseFloat(resArr[0].data[0].lon), parseFloat(resArr[0].data[0].lat)]);
+      var finalCoords = ([parseFloat(resArr[1].data[0].lon), parseFloat(resArr[1].data[0].lat)]);
+      //console.log("Inside");
+      //console.log(initialCoords);
+      //console.log(finalCoords);
+      //return ([initialCoords, finalCoords]);
+      const initialPoint = { type: 'Point', coordinates: initialCoords };
+      const finalPoint = { type: 'Point', coordinates: finalCoords };
+      ride = new Ride({
+        roundTrip : req.body.roundTrip,
+        departDate : new Date(req.body.departDate),
+        maxCapacity : req.body.maxCapacity,
+        pricePerSeat : req.body.pricePerSeat,
+        originCity : req.body.originCity,
+        destinationCity : req.body.destinationCity,
+        host: '5de1aaaad055f316f87c57ef',
+        // initialAddress : req.body.initialAddress,
+        // occupiedCapacity : req.body.occupiedCapacity,
+        initialCoords : initialPoint,
+        finalCoords : finalPoint
+        // initialCoords and finalCoords are .coordinates within geoschema
+      }); // new Ride ()
+
+      ride.save(function(err) {
+        if (err) { console.log(err.message);
+          return res.status(500).send({ msg: err.message }); }
+      });
+      if (req.body.roundTrip) {
+        console.log("RoundTrip is present!");
+        returnRide = new Ride({
+        roundTrip : req.body.roundTrip,
+        departDate : new Date(req.body.returnDate),
+        maxCapacity : req.body.maxCapacity,
+        pricePerSeat : req.body.pricePerSeat,
+        originCity : req.body.destinationCity,
+        destinationCity : req.body.originCity,
+        host: '5de1aaaad055f316f87c57ef',
+        // initialAddress : req.body.initialAddress,
+        // occupiedCapacity : req.body.occupiedCapacity,
+        initialCoords : finalPoint,
+        finalCoords : initialPoint
+        // initialCoords and finalCoords are .coordinates within geoschema
+      }); // new Ride ()
+      returnRide.save(function(err) {
+        if (err) { console.log(err.message);
+          return res.status(500).send({ msg: err.message }); }
+        console.log("Ride Saved");
+      });
+      }
+      //console.log("Transactions Done");
+      res.send({'rideStatus' : true});
+      
+    });
+    /*axios.get('https://nominatim.openstreetmap.org/search?format=json',
+    {
+      params: {
+        q : location,
       }
     })
     .then(function(res){
       //console.log(res);
+      //console.log(res.data[0].lat)
+      //console.log(res.data[0].lon)
       //var formattedAddress = res.data.results[0].formatted_Address;
       //console.log(formattedAddress); // pretty display
-      var lat = parseFloat(res.data.results[0].geometry.location.lat);
-      var lng = parseFloat(res.data.results[0].geometry.location.lng);
-      var initialCoords = ([lng, lat]);
+      var lat = parseFloat(res.data[0].lat);
+      var lng = parseFloat(res.data[0].lon);
+      initialCoords = ([lng, lat]);
+      console.log(initialCoords);
     });
     location = req.body.destinationCity;
-    axios.get('http://www.datasciencetoolkit.org/maps/api/geocode/json',
+    axios.get('https://nominatim.openstreetmap.org/search?format=json',
     {
       params: {
-        address : location
+        q : location
       }
     })
     .then(function(res){
-      console.log(res);
-      formattedAddress = res.data.results[0].formatted_Address;
-      console.log(formattedAddress); // pretty display
-      var lat = parseFloat(res.data.results[0].geometry.location.lat);
-      var lng = parseFloat(res.data.results[0].geometry.location.lng);
-      var finalCoords = ([lng, lat]);
-    });
+      //console.log(res);
+      //formattedAddress = res.data.results[0].formatted_Address;
+      //console.log(formattedAddress); // pretty display
+      var lat = parseFloat(res.data[0].lat);
+      var lng = parseFloat(res.data[0].lon);
+      finalCoords = ([lng, lat]);
+      console.log("Inside")
+      console.log(finalCoords);
+    });*/
   } // function geocode()
-  console.log("Coordinates:------------");
-  //console.log(initialCoords);
-  //console.log(finalCoords);
-  //const initialPoint = { type: 'Point', coordinates: initialCoords };
-  //const finalPoint = { type: 'Point', coordinates: finalCoords };
-  ride = new Ride({
-    roundTrip : req.body.roundTrip,
-    departDate : req.body.departDate,
-    returnDate : req.body.returnDate,
-    maxCapacity : req.body.maxCapacity,
-    pricePerSeat : req.body.pricePerSeat,
-    originCity : req.body.originCity,
-    destinationCity : req.body.destinationCity,
-    host: '5de1aaaad055f316f87c57ef'
-    // initialAddress : req.body.initialAddress,
-    // occupiedCapacity : req.body.occupiedCapacity,
-    // initialCoords : initialPoint,
-    // finalCoords : finalPoint
-    // initialCoords and finalCoords are .coordinates within geoschema
-  }); // new Ride ()
-
-  ride.save(function(err) {
-    if (err) { return res.status(500).send({ msg: err.message }); }
-    console.log("Ride Saved");
-    res.send({'rideStatus' : true})
-  });
-  console.log(ride);
+    // Geocode address into coordinates
+  geocode();
+ /* async function call() {
+    var Testoutput= await geocode();
+    console.log(Testoutput);
+    return Testoutput;
+  }
+  call();
+  console.log(output);*/
+  //console.log("Done");
 };
-
-
 
 
 // Return "all" ride specific info to driver

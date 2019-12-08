@@ -15,12 +15,14 @@ router.post('/createRide',
      check('uid', 'Please log in to post rides').not().isEmpty(),
      check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
      check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
-     //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
+     check('departTime', 'Invalid Time').not().isEmpty(),
      check('maxCapacity', 'Invalid vehicle capacity').not().isEmpty().isNumeric(),
      check('occupiedCapacity', 'Invalid occupied capacity').not().isEmpty().isNumeric(),
      check('pricePerSeat', 'Invalid price per seat').not().isEmpty().isCurrency(),
      check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
      check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
+     //check('returnDate', 'Invalid return date').not().isEmpty().not().isAfter('departDate'),
+     //check('returnTime', 'Invalid Time')
     //check('initialAddress', 'Invalid starting address').not().isEmpty(),
     //check('finalAddress', 'Invalid final address').not().isEmpty()
   ], rideController.createRide);
