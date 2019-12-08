@@ -61,11 +61,14 @@ export default function PostRide() {
   };
   const handleSubmit = (event) => {
       event.preventDefault();
+      const uid = localStorage.getItem('uid');
+      console.log(uid);
       const data = new FormData(event.target);
       if(data.get('email') === 'A' &&  data.get('password') === 'B'){
         setIsAuthenticated(true);
       }
       const body = {
+        uid: uid,
         originCity : data.get('originCity'),
         destinationCity: data.get('destinationCity'),
         pricePerSeat: data.get('pricePerSeat'),
@@ -101,7 +104,7 @@ export default function PostRide() {
     //   const notify = (toastString) => {
     //   toast(toastString);
     // };
-  
+
   }
   const [expanded, setExpanded] = useState(false);
 
@@ -211,7 +214,7 @@ export default function PostRide() {
                 />
               }
               label = "Make This a Round Trip"
-              labelPlacement="start" 
+              labelPlacement="start"
               name ="roundTrip"
             />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>

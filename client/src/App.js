@@ -8,11 +8,13 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import PostRide from './components/PostRide';
 import ErrorNotFound from './components/ErrorNotFound';
+import AccountVerified from './components/AccountVerifiedPage';
 
 import TermsOfService from './components/TermsOfService';
 import { Switch, Route, Link } from 'react-router-dom'
 
-function App() {
+function App(app) {
+
   return (
   	<Switch>
       <Route exact path="/" component={Landing}/>
@@ -22,6 +24,8 @@ function App() {
       <Route exact path="/termsofservice" component={TermsOfService} />
       <Route exact path="/home" component={Home}/>
       <Route exact path="/signup" component={SignUp}/>
+      <Route exact path="/accountverified" component={AccountVerified}/>
+
       /* add 404 page */
       <Route path="*" component={ErrorNotFound} />
     </Switch>

@@ -11,11 +11,15 @@ const router = express.Router();
 
 
 exports.sendConnectStripePage = function (req,res,next){
+    console.log("sending stripe connect page");
   // const errors = validationResult(req);
   // console.log(errors);
   // if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-  res.render('paymentsIndex');
-
+  //res.render('paymentsIndex');
+  uri = "http://localhost:3001/payments/ConnectedToStripe";
+  strip_link = "https://connect.stripe.com/oauth/authorize?";
+  full_uri = stripe_link + "response_type=code&client_id=" + process.env.STRIPE_CLIENT_ID + "&scope=read_write&redirect_uri="+uri;
+  res.render(full_uri);
 };
 
 exports.authorize = function (req,res,next){

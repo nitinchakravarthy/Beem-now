@@ -17,6 +17,7 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider, KeyboardTimePicker} from "
 import DateFnsUtils from '@date-io/date-fns';
 import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import CompanyLogo from '../logo.png'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -119,7 +120,10 @@ export default function SearchRide() {
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
+      const uid = localStorage.getItem('uid');
+      console.log(uid);
       const params = {
+          uid: uid,
           roundTrip: data.get('roundTrip'),
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
@@ -160,7 +164,7 @@ export default function SearchRide() {
      });
 
 
-      
+
   }
   const [expanded, setExpanded] = useState(false);
 
@@ -185,6 +189,9 @@ export default function SearchRide() {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+      <div className={classes.logo}>
+        <img src = {CompanyLogo} />
+      </div>
         <Typography component="h1" variant="h5">
           Search Ride
         </Typography>
@@ -222,7 +229,7 @@ export default function SearchRide() {
               }
               name = 'roundTrip'
               label = "Round Trip"
-              labelPlacement="start" 
+              labelPlacement="start"
             />
            <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container spacing={2}>

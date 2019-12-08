@@ -69,9 +69,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
   },
   drawerFooter: {
-    position: 'absolute', 
-    bottom: '0', 
-    right: '0', 
+    position: 'absolute',
+    bottom: '0',
+    right: '0',
     left: '0'
   },
   content: {
@@ -111,6 +111,11 @@ export default function Home(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const clearLocalStorage = () => {
+      console.log('clearing local storage');
+      localStorage.clear();
+  }
 
   return (
     <div className={classes.root}>
@@ -173,7 +178,7 @@ export default function Home(props) {
               </ListItemIcon>
             <ListItemText primary={"Post a Ride"} />
           </ListItemLink>
-          
+
           <ListItemLink key = {"ridehistory"} href="#ridehistory">
               <ListItemIcon>
                 <Icon><img src={historyIcon}/></Icon>
@@ -188,7 +193,7 @@ export default function Home(props) {
               <ListItemText primary={"Messages"} />
           </ListItemLink>
 
-          <ListItem button key={"Sign Out"} component="a" href = "/signin">
+          <ListItem button key={"Sign Out"} component="a" href = "/">
               <ListItemIcon>
                 <Icon><img src={signOutIcon}/></Icon>
               </ListItemIcon>
@@ -224,7 +229,7 @@ export default function Home(props) {
         })}
       >
         <div className={classes.drawerHeader} />
-        
+
       </main>
     </div>
   );
