@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   major : String,
   university : { type: String, default: 'Texas A&M university'},
   contactNumber : { type: String},
-  avatar: String,
+  avatar: { type: String, default: null},
   createdAt : { type: Date, default: Date.now },
 });
 

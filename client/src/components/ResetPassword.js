@@ -15,19 +15,6 @@ import Container from '@material-ui/core/Container';
 import { Redirect } from 'react-router-dom';
 import CompanyLogo from '../logo.png'
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Beem Now
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -73,7 +60,7 @@ export default function ResetPassword() {
       }
       else{
           var pass = event.target.value;
-          var reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,32}$/;
+          var reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*#?&]{8,32}$/;
           var test = reg.test(pass);
           if (test) {
               setPasswordError('')
@@ -168,9 +155,6 @@ export default function ResetPassword() {
             </Button>
           </form>
         </div>
-        <Box mt={5}>
-          <Copyright />
-        </Box>
       </Container>
     </div>
   );

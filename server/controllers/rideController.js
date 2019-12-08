@@ -65,7 +65,7 @@ exports.createRide = function(req, res, next) {
     pricePerSeat : req.body.pricePerSeat,
     originCity : req.body.originCity,
     destinationCity : req.body.destinationCity,
-    host: '5dde3fb52b0cf155a442f43e'
+    host: '5de1aaaad055f316f87c57ef'
     // initialAddress : req.body.initialAddress,
     // occupiedCapacity : req.body.occupiedCapacity,
     // initialCoords : initialPoint,
@@ -195,3 +195,80 @@ exports.getRiderRides = function(req, res, next) {
     res.send({ ride : result });
   });
 };
+
+//Search Rides by origin, destination, departure date and return date
+//if returnDate is null, returnRides are returned as null.
+//if no search results exists empty array is returned. 
+exports.searchRide = function(req, res, next) {
+  // Check for validation error
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+  console.log('Input:', req.body);
+  //dates for query
+  var departDate_start = new Date(req.body.departDate)
+  var departDate_end = new Date(departDate_start.getTime()+(1*24*60*60*1000))
+  Ride.find( 
+      { departDate:{"$gte": departDate_start, 
+                    "$lt": departDate_end
+                  },
+        originCity:req.body.originCity, 
+        destinationCity:req.body.destinationCity
+      }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+      ).populate('host').exec(function(err, departure_rides){ 
+      if (err) return res.status(500).send({ msg: err.message });
+      const result_d = JSON.stringify(departure_rides);
+
+      if (req.body.returnDate){
+        //dates for query
+        returnDate_start = new Date(req.body.returnDate)
+        returnDate_end = new Date(returnDate_start.getTime() + (1*24*60*60*1000))
+        Ride.find(
+          { departDate:{"$gte": returnDate_start, 
+                        "$lt": returnDate_end
+                        }, 
+            originCity:req.body.destinationCity , 
+            destinationCity:req.body.originCity
+          }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+          ).populate('host').exec(function(err, return_rides){
+          if (err) return res.status(500).send({ msg: err.message });
+          const result_r = JSON.stringify(return_rides);  
+          console.log(result_d, result_r)                     
+          res.send({ error_code: 0, departure_rides: result_d,
+                 return_rides: result_r });
+          });
+      }
+      else{
+        res.send({ error_code: 0, departure_rides: result_d,
+                 return_rides: null });
+      }
+    });
+};
+
+//Search Rides by userID (both passenger and driver) 
+//if no rides, empty array are returned
+exports.rideHistory = function(req, res, next) {
+  // Check for validation error
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+  console.log('UserID', req.body.user_id);
+  var ObjectId = require('mongoose').Types.ObjectId; 
+  Ride.find({
+        //match the object id of host 
+        host: new ObjectId(req.body.user_id)
+      }).exec(function(err, driver_rides){ 
+      if (err) return res.status(500).send({ msg: err.message });
+      const driver_rides_result = JSON.stringify(driver_rides);
+      Ride.find({
+          //search in riders array for user_id
+          riders : req.body.user_id
+        }).exec(function(err, passenger_rides){
+        if (err) return res.status(500).send({ msg: err.message });
+        const passenger_rides_result = JSON.stringify(passenger_rides);  
+        console.log(driver_rides, passenger_rides)                     
+        res.send({ error_code: 0, passenger_rides: driver_rides_result,
+               driver_rides: passenger_rides_result });
+        });
+    });
+  }

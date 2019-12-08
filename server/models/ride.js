@@ -18,10 +18,10 @@ const GeoSchema = new mongoose.Schema({
 });
 
 const rideSchema = new mongoose.Schema({
-  //host: { type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'User' },
-  host : { type : String,
-          required : true },
+  host: { type: mongoose.Schema.Types.ObjectId,
+    ref: 'User' },
+  //host : { type : String,
+    //      required : true },
   createdAt : { type : Date,
             default : Date.now },
   roundTrip : { type : Boolean,
