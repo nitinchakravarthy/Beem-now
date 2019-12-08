@@ -268,12 +268,12 @@ exports.searchRide = function(req, res, next) {
   //get co-ordniates
   Ride.find(
       { departDate:{"$gte": departDate_start,
-                    "$lt": departDate_end},
+                    "$lt": departDate_end
+                },
         originCity:req.body.originCity, // second is a geospacial query
         destinationCity:req.body.destinationCity,
-        //host: {"$ne":{uid}}
       }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
-      ).populate('host').select("-password").exec(function(err, departure_rides){
+      ).populate('host').exec(function(err, departure_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const result_d = JSON.stringify(departure_rides);
       console.log("result_d");
@@ -288,7 +288,6 @@ exports.searchRide = function(req, res, next) {
                         },
             originCity:req.body.destinationCity ,
             destinationCity:req.body.originCity,
-            //host: {"$ne ":{ uid}}
           }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
           ).populate('host').exec(function(err, return_rides){
           if (err) return res.status(500).send({ msg: err.message });
@@ -383,7 +382,7 @@ exports.chooseride = function(req,res,next){
   //                                     }
   //                                 }
   //                 }
-  //             ] // second is a geospacial query
+  //             ], // second is a geospacial query
   //         $or: [ destinationCity:req.body.destinationCity,
   //             {finalCoords: {$near:
   //                             {
