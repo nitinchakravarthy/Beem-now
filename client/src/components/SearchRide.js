@@ -138,8 +138,6 @@ export default function SearchRide() {
         body:  JSON.stringify(params)
       }).then(response => response.json())
       .then((data) => {
-         console.log(data);
-         console.log(typeof data.departure_rides)
          if(data.error_code == 0){
              var obj_d, obj_r
              try {
@@ -158,9 +156,6 @@ export default function SearchRide() {
          console.log(error);
          //notify(error.msg)
      });
-
-
-      
   }
   const [expanded, setExpanded] = useState(false);
 

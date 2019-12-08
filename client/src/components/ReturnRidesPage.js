@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -58,6 +59,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const headingTheme = createMuiTheme({
+  typography: {
+    h5: {
+      fontWeight: 500,
+    },
+  },
+});
+
 export default function ReturnRidesPage(props) {
   const classes = useStyles();
   const [returnRides, setReturnRides] = useState(props.location.state.returnRides);
@@ -108,6 +117,11 @@ export default function ReturnRidesPage(props) {
   <Container component = "main" maxWidth='md'>
       <CssBaseline />
       <div className = {classes.paper}>
+        <ThemeProvider theme={headingTheme}>
+          <div style = {{marginBottom: '3%'}}>
+            <Typography variant="h5" color = "primary">Return</Typography>
+          </div>
+        </ThemeProvider>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
