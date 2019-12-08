@@ -2,8 +2,12 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var axios = require('axios');
 const path = require('path');
+const User = require('../models/user');
 const Ride = require('../models/ride');
 const {check, validationResult} = require('express-validator');
+const nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({ service: 'Sendgrid',
+                                              auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
 
 
 // Create a ride with required values
@@ -16,7 +20,7 @@ exports.createRide = function(req, res, next) {
   console.log(req.body);
   // ** TODO
   // check for if user has created ride in same dates...
-  
+
   // Geocode address into coordinates
   //geocode();
   function geocode() {
@@ -54,7 +58,7 @@ exports.createRide = function(req, res, next) {
   } // function geocode()
   console.log("Coordinates:------------");
   //console.log(initialCoords);
-  //console.log(finalCoords); 
+  //console.log(finalCoords);
   //const initialPoint = { type: 'Point', coordinates: initialCoords };
   //const finalPoint = { type: 'Point', coordinates: finalCoords };
   ride = new Ride({
@@ -198,7 +202,7 @@ exports.getRiderRides = function(req, res, next) {
 
 //Search Rides by origin, destination, departure date and return date
 //if returnDate is null, returnRides are returned as null.
-//if no search results exists empty array is returned. 
+//if no search results exists empty array is returned.
 exports.searchRide = function(req, res, next) {
   // Check for validation error
   const errors = validationResult(req);
@@ -208,14 +212,14 @@ exports.searchRide = function(req, res, next) {
   //dates for query
   var departDate_start = new Date(req.body.departDate)
   var departDate_end = new Date(departDate_start.getTime()+(1*24*60*60*1000))
-  Ride.find( 
-      { departDate:{"$gte": departDate_start, 
+  Ride.find(
+      { departDate:{"$gte": departDate_start,
                     "$lt": departDate_end
                   },
-        originCity:req.body.originCity, 
+        originCity:req.body.originCity,
         destinationCity:req.body.destinationCity
       }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
-      ).populate('host').exec(function(err, departure_rides){ 
+      ).populate('host').exec(function(err, departure_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const result_d = JSON.stringify(departure_rides);
 
@@ -224,16 +228,16 @@ exports.searchRide = function(req, res, next) {
         returnDate_start = new Date(req.body.returnDate)
         returnDate_end = new Date(returnDate_start.getTime() + (1*24*60*60*1000))
         Ride.find(
-          { departDate:{"$gte": returnDate_start, 
+          { departDate:{"$gte": returnDate_start,
                         "$lt": returnDate_end
-                        }, 
-            originCity:req.body.destinationCity , 
+                        },
+            originCity:req.body.destinationCity ,
             destinationCity:req.body.originCity
           }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
           ).populate('host').exec(function(err, return_rides){
           if (err) return res.status(500).send({ msg: err.message });
-          const result_r = JSON.stringify(return_rides);  
-          console.log(result_d, result_r)                     
+          const result_r = JSON.stringify(return_rides);
+          console.log(result_d, result_r)
           res.send({ error_code: 0, departure_rides: result_d,
                  return_rides: result_r });
           });
@@ -245,7 +249,7 @@ exports.searchRide = function(req, res, next) {
     });
 };
 
-//Search Rides by userID (both passenger and driver) 
+//Search Rides by userID (both passenger and driver)
 //if no rides, empty array are returned
 exports.rideHistory = function(req, res, next) {
   // Check for validation error
@@ -253,11 +257,11 @@ exports.rideHistory = function(req, res, next) {
   console.log(errors);
   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
   console.log('UserID', req.body.user_id);
-  var ObjectId = require('mongoose').Types.ObjectId; 
+  var ObjectId = require('mongoose').Types.ObjectId;
   Ride.find({
-        //match the object id of host 
+        //match the object id of host
         host: new ObjectId(req.body.user_id)
-      }).exec(function(err, driver_rides){ 
+      }).exec(function(err, driver_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const driver_rides_result = JSON.stringify(driver_rides);
       Ride.find({
@@ -265,10 +269,36 @@ exports.rideHistory = function(req, res, next) {
           riders : req.body.user_id
         }).exec(function(err, passenger_rides){
         if (err) return res.status(500).send({ msg: err.message });
-        const passenger_rides_result = JSON.stringify(passenger_rides);  
-        console.log(driver_rides, passenger_rides)                     
+        const passenger_rides_result = JSON.stringify(passenger_rides);
+        console.log(driver_rides, passenger_rides)
         res.send({ error_code: 0, passenger_rides: driver_rides_result,
                driver_rides: passenger_rides_result });
         });
     });
+};
+
+exports.chooseride = function(req,res,next){
+      const errors = validationResult(req);
+      console.log(errors);
+      if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+      console.log(req.body.uid);
+      console.log(req.body.depart_rid);
+      console.log(req.body.user);
+      Ride.find({_id : req.body.rid}).exec(function(err,ride){
+          if (err) return res.status(500).send({ msg: err.message });
+          const host = ride.host;
+          console.log(host);
+          console.log(host._id);
+
+          const mailOptions = { from: process.env.SENDGRID_EMAIL, to: host.email, subject: 'Someone wants to pick your ride',
+                            text: "Hi, " + req.body.user.name + " wants to choose your ride from " + ride.originCity + " to " + ride.destinationCity };
+          console.log(mailOptions);
+          // notify the host that a person wants to ride with them.
+          transporter.sendMail(mailOptions, function (err) {
+                  if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
+                  console.log("Mail sent");
+                  const resp = {'mailSent': true, 'email': user.email};
+                  res.status(200).send(resp);
+          });
+      })
   }

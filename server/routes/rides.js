@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/createRide',
   [
+     check('uid', 'Please log in to post rides').not().isEmpty(),
      check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
      check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
      //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
@@ -76,5 +77,10 @@ router.get('/userRideInfo',
     //check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
     //check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
   ], rideController.searchRide);
+
+  router.post('/chooseride', [check('uid', 'Please log in to post rides').not().isEmpty(),
+                              check('user','Invalid user').not().isEmpty(),
+                              check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+                              check('depart_rid','Invalid ride object Id').not().isEmpty(),], rideController.chooseride);
 
 module.exports = router;

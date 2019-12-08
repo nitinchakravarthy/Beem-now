@@ -8,6 +8,9 @@ const nodemailer = require('nodemailer');
 const multer = require("multer");
 const fs = require("fs");
 const upload= multer({ dest: 'uploads/' })
+var transporter = nodemailer.createTransport({ service: 'Sendgrid',
+                                                auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+
 // limits: {fileSize: 4 * 1024 * 1024}
 
 //error_code 0- success
@@ -68,8 +71,7 @@ exports.signUpHandler = function (req,res,next){
 
         // sending a verification email
         // Change the service
-        var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        const mailOptions = { from: 'nitin.chakravarthy21@gmail.com', to: user.email, subject: 'New Account Verification',
+        const mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'New Account Verification',
                           text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/users\/confirmation\/?token=' + token.token + '.\n' };
         console.log(mailOptions);
         // sgMail.send(mailOptions);
@@ -129,7 +131,7 @@ exports.resendToken = function(req,res,next){
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        var mailOptions = { from: 'nitin.chakravarthy21@gmail.com', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/users\/confirmation\/?token=' + token.token + '.\n' };
+        var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/users\/confirmation\/?token=' + token.token + '.\n' };
         transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
             res.status(200).send('A verification email has been sent to ' + user.email + '.');
@@ -172,7 +174,7 @@ exports.resetPasswordStart = function(req,res,next){
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        var mailOptions = { from: 'nitin.chakravarthy21@gmail.com', to: user.email, subject: 'Password Reset', text: 'Hello,\n\n' + 'Please click on the link below to reset your password: \nhttp:\/\/' + req.headers.host + '\/users\/setNewPassword\/?token=' + token.token + '.\n' };
+        var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Password Reset', text: 'Hello,\n\n' + 'Please click on the link below to reset your password: \nhttp:\/\/' + req.headers.host + '\/users\/setNewPassword\/?token=' + token.token + '.\n' };
         transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
             res.status(200).send('A verification email has been sent to ' + user.email + '.');
