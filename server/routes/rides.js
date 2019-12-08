@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {check, validationResult} = require('express-validator');
+const {checkIf, check, validationResult} = require('express-validator');
 
 const rideController = require('../controllers/rideController');
 
@@ -15,12 +15,14 @@ router.post('/createRide',
      check('uid', 'Please log in to post rides').not().isEmpty(),
      check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
      check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
-     //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
+     check('departTime', 'Invalid Time').not().isEmpty(),
      check('maxCapacity', 'Invalid vehicle capacity').not().isEmpty().isNumeric(),
      check('occupiedCapacity', 'Invalid occupied capacity').not().isEmpty().isNumeric(),
      check('pricePerSeat', 'Invalid price per seat').not().isEmpty().isCurrency(),
-     check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
-     check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
+     check('originCity', 'Invalid Origin city').not().isEmpty(),
+     check('destinationCity', 'Invalid Destination city').not().isEmpty(),
+     //check('returnDate', 'Invalid return date').not().isEmpty().not().isAfter('departDate'),
+     //check('returnTime', 'Invalid Time')
     //check('initialAddress', 'Invalid starting address').not().isEmpty(),
     //check('finalAddress', 'Invalid final address').not().isEmpty()
   ], rideController.createRide);
@@ -70,12 +72,12 @@ router.get('/userRideInfo',
     ], rideController.getRiderRides);
 
   router.post('/searchRide',
-  [
-    //check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
-    //check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
-    //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
-    //check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
-    //check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
+  [ check('uid', 'Please login to search for rides').not().isEmpty(),
+    check('roundTrip', 'Invalid trip type').optional().not().isEmpty().isBoolean(),
+    check('departDate', 'Invalid departure date').not().isEmpty(),
+    check('returnDate', 'Invalid return date').optional().not().isEmpty(),
+    check('originCity', 'Invalid Origin city').not().isEmpty(),
+    check('destinationCity', 'Invalid Destination city').not().isEmpty(),
   ], rideController.searchRide);
 
   router.post('/chooseride', [check('uid', 'Please log in to post rides').not().isEmpty(),

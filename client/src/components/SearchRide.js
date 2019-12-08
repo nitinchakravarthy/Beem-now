@@ -124,11 +124,15 @@ export default function SearchRide() {
       console.log(uid);
       const params = {
           uid: uid,
-          roundTrip: data.get('roundTrip'),
+          //roundTrip: data.get('roundTrip') ? data.get('roundTrip') : false,
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
           departDate: data.get('departDate'),
-          returnDate: data.get('returnDate')
+          //returnDate: data.get('returnDate')
+      }
+      if(data.get('roundTrip')){
+          params['roundTrip'] = true;
+          params['returnDate'] = data.get('returnDate');
       }
       setOriginCity(data.get('originCity'))
       setDestinationCity(data.get('destinationCity'))
@@ -142,6 +146,7 @@ export default function SearchRide() {
         body:  JSON.stringify(params)
       }).then(response => response.json())
       .then((data) => {
+         console.log("in success");
          console.log(data);
          console.log(typeof data.departure_rides)
          if(data.error_code == 0){
@@ -159,6 +164,7 @@ export default function SearchRide() {
              //notify(data.msg)
          }
      }).catch((error) => {
+         console.log("in error");
          console.log(error);
          //notify(error.msg)
      });
