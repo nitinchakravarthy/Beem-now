@@ -28,8 +28,6 @@ const rideSchema = new mongoose.Schema({
               required : true },
   departDate : { type : Date,
                 required : true },
-  returnDate : { type : Date,
-                required : true },
   maxCapacity : { type : Number,
                 required : true},
   occupiedCapacity : { type : Number,

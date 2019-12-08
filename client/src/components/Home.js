@@ -18,7 +18,6 @@ import DepartureRideList from './DepartureRideList';
 import DepartTrip from './DepartureRidesPage'
 import ReturnTrip from './ReturnRidesPage'
 import { Switch, Route, Link, HashRouter, NavLink} from 'react-router-dom';
-
 export default function Home() {
   return (
       <HashRouter>

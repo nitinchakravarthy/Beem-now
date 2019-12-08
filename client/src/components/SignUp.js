@@ -87,7 +87,7 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [agreementError, setAgreementError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState(''); 
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [agreeToTermsOfUse, setAgreeToTermsOfUse] = useState(false);
 
   const validateEmailAddress = (event) =>{
@@ -128,7 +128,7 @@ export default function SignUp() {
   }
   const validatePasswordComfirmation = (event) => {
       let name = event.target.name
-      let value = event.target.value 
+      let value = event.target.value
       var pass = event.target.value
       if (pass === password) {
           setConfirmPasswordError('')
@@ -138,7 +138,7 @@ export default function SignUp() {
   }
   const handleInputChange = event => {
     let name = event.target.name
-    let value = event.target.value 
+    let value = event.target.value
     if(name === 'firstName'){
       if (value === '') {
           setFNameError('First Name is required')
@@ -176,7 +176,7 @@ export default function SignUp() {
       if(data.get('lastName') === ''){
         setLNameError('Last name is required')
         success = false
-      } 
+      }
       if(data.get('gender') === ''){
         setGenderError('Please make a selection')
         success = false
@@ -232,7 +232,7 @@ export default function SignUp() {
   }
   return (
       <div>
-      { accountCreated ? <Redirect to={{ pathname : "/",
+      { accountCreated ? <Redirect to={{ pathname : "/signin",
                                         state : {accountCreated :{accountCreated},
                                                 signUpSucess: {signUpSucess}
                                         }

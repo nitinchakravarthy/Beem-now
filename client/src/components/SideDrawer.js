@@ -69,9 +69,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
   },
   drawerFooter: {
-    position: 'absolute', 
-    bottom: '0', 
-    right: '0', 
+    position: 'absolute',
+    bottom: '0',
+    right: '0',
     left: '0'
   },
   content: {
@@ -111,6 +111,11 @@ export default function Home(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const clearLocalStorage = () => {
+      console.log('clearing local storage');
+      localStorage.clear();
+  }
 
   return (
     <div className={classes.root}>
@@ -153,42 +158,42 @@ export default function Home(props) {
         <Divider />
         <List component="nav">
 
-          <ListItemLink key={"Home"} href = "#">
+          <ListItemLink key={"Home"} href = "#" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={homeIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Home"} />
           </ListItemLink >
 
-          <ListItemLink key={"profile"} href="#profile">
+          <ListItemLink key={"profile"} href="#profile" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={profileIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"My Profile"} />
           </ListItemLink>
 
-          <ListItemLink key = {"postride"} href="#postride">
+          <ListItemLink key = {"postride"} href="#postride" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={ridePostIcon}/></Icon>
               </ListItemIcon>
             <ListItemText primary={"Post a Ride"} />
           </ListItemLink>
-          
-          <ListItemLink key = {"ridehistory"} href="#ridehistory">
+
+          <ListItemLink key = {"ridehistory"} href="#ridehistory" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={historyIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Ride History"} />
           </ListItemLink>
 
-          <ListItemLink key={"Messages"} href="#messages">
+          <ListItemLink key={"Messages"} href="#messages" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={messageIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Messages"} />
           </ListItemLink>
 
-          <ListItem button key={"Sign Out"} component="a" href = "/signin">
+          <ListItem button key={"Sign Out"} component="a" href = "/" onClick = {clearLocalStorage}>
               <ListItemIcon>
                 <Icon><img src={signOutIcon}/></Icon>
               </ListItemIcon>
@@ -224,7 +229,7 @@ export default function Home(props) {
         })}
       >
         <div className={classes.drawerHeader} />
-        
+
       </main>
     </div>
   );

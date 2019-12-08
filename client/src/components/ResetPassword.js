@@ -71,7 +71,7 @@ export default function ResetPassword() {
     }
   const validatePasswordComfirmation = (event) => {
       let name = event.target.name
-      let value = event.target.value 
+      let value = event.target.value
       var pass = event.target.value;
       if (pass === password) {
           setConfirmPasswordError('')
@@ -96,7 +96,7 @@ export default function ResetPassword() {
         // });
         setResetSuccess(true);
       }
-      
+
   }
   return (
     <div>

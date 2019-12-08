@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -49,14 +49,14 @@ const useStyles = makeStyles(theme => ({
     height: "118px"
   },
   marginText: {
-    float: 'right',  
-    alignText: 'center', 
+    float: 'right',
+    alignText: 'center',
     height: '100%',
-    marginRight: '5%', 
-    //fontSize: 30, 
+    marginRight: '5%',
+    //fontSize: 30,
     fontFamily: 'Quicksand',
-    right: 0, 
-    top: 0, 
+    right: 0,
+    top: 0,
     // background: 'green'
   }
 }));
@@ -82,6 +82,7 @@ function ScrollTop(props) {
   };
 
   return (
+
     <Zoom in={trigger}>
       <div onClick={handleClick} role="presentation" className={classes.root}>
         {children}
@@ -98,12 +99,17 @@ ScrollTop.propTypes = {
 export default function Landing(props) {
   const classes = useStyles();
   const [directToSignIn, setDirectToSignIn] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!(localStorage.getItem('uid') === null));
+  
+  console.log(localStorage.getItem('uid'))
   //const [isDesktop, setIsDesktop] = useState(false);
   var isDesktop = window.innerWidth > 1000 ? true : false;
   const sendToSignIn = event => {
     setDirectToSignIn(true)
   }
   return (
+      <div>
+    {isAuthenticated ? <Redirect to="/home"/> : null}
     <React.Fragment>
       {directToSignIn ? <Redirect to="/signin"/> : null}
       <CssBaseline />
@@ -124,11 +130,11 @@ export default function Landing(props) {
           </p>
         </div>
       </div>
-      
+
       <Typography style = {{marginTop: '2%' ,textAlign: 'center', fontSize: 30, fontFamily: 'Quicksand'}}>
           Rides made easy and profitable !
       </Typography>
-      
+
       <Container>
             <p> Need to be somewhere? Beem-Now has got you covered ! With our app, now search for rides offered by
             fellow students going to same destination. This service is exclusively for students. Our platform
@@ -136,14 +142,15 @@ export default function Landing(props) {
             Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text.</p>
-            <p> Heading out somewhere? With our platform make extra money on the side by giving ride to a fellow student, 
+            <p> Heading out somewhere? With our platform make extra money on the side by giving ride to a fellow student,
             delivering small items or packages to or from those locations. Just post your travel details and number of
-            people/packages you can take with you. User searching for a ride or item delivery to your destination 
+            people/packages you can take with you. User searching for a ride or item delivery to your destination
             will get in touch with you. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text.</p>
       </Container>
-      
+
     </React.Fragment>
+    </div>
   );
 }

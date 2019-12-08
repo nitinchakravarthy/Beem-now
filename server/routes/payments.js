@@ -13,12 +13,13 @@ router.get('/', function(req, res, next) {
 });
 
 // insert uid check
-router.get('/connectToStripe', stripeController.sendConnectStripePage);
+router.get('/openStripe', stripeController.sendConnectStripePage);
 
 // http://localhost:3001/payments/stripeConnected?scope=read_write&code=ac_G9H5LcR9u4Ydb3LFhdDcqNKfhhUlKOke
 router.get('/ConnectedToStripe',[check("code").not().isEmpty()],
             stripeController.authorize);
 
 
+router.get('createCharge',[],stripeController.createCharge);
 
 module.exports = router;

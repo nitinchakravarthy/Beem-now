@@ -92,8 +92,13 @@ export default function SignIn(props) {
       .then((data) => {
          console.log(data);
          if(data.error_code == 0){
-             setIsAuthenticated(true);
              //save the user object in the
+             console.log(data.user);
+             localStorage.setItem('user',data.user);
+             localStorage.setItem('uid', data.user._id);
+             localStorage.setItem('first_name', data.user.first_name);
+             localStorage.setItem('last_name', data.user.last_name);
+             setIsAuthenticated(true);
          }else{
              notify(data.msg)
          }
@@ -152,10 +157,6 @@ export default function SignIn(props) {
             type="password"
             id="password"
             autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
           />
           <Button
             type="submit"

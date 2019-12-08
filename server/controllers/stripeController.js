@@ -11,11 +11,15 @@ const router = express.Router();
 
 
 exports.sendConnectStripePage = function (req,res,next){
+    console.log("sending stripe connect page");
   // const errors = validationResult(req);
   // console.log(errors);
   // if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-  res.render('paymentsIndex');
-
+  //res.render('paymentsIndex');
+  uri = "http://localhost:3001/payments/ConnectedToStripe";
+  strip_link = "https://connect.stripe.com/oauth/authorize?";
+  full_uri = stripe_link + "response_type=code&client_id=" + process.env.STRIPE_CLIENT_ID + "&scope=read_write&redirect_uri="+uri;
+  res.render(full_uri);
 };
 
 exports.authorize = function (req,res,next){
@@ -77,11 +81,17 @@ exports.createCharge = function (req,res,next){
       amount: 1000,
       currency: "usd",
       source: "tok_visa",
-      application_fee_amount: 123,
+      application_fee_amount: 1,
     }, {
       stripe_account: "{{CONNECTED_STRIPE_ACCOUNT_ID}}",
     }).then(function(charge) {
+        Console.log("Charge succesfully created");
       // asynchronously called
     });
 
 }
+
+// api to retrieve charges on and from this account
+//list of application fees collected
+
+//issue refund

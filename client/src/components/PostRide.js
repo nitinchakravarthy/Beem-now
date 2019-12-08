@@ -55,26 +55,31 @@ export default function PostRide() {
   //   checkedB: true,
   // });
   const [isChecked, setIsChecked] = useState(false);
-
+  console.log("isChecked value: ");
+  console.log(isChecked);
   const handleSwitch  =  () =>{
     setIsChecked(prev => !prev);
   };
   const handleSubmit = (event) => {
       event.preventDefault();
+      const uid = localStorage.getItem('uid');
+      console.log(uid);
       const data = new FormData(event.target);
       if(data.get('email') === 'A' &&  data.get('password') === 'B'){
         setIsAuthenticated(true);
       }
       const body = {
+        uid: uid,
         originCity : data.get('originCity'),
         destinationCity: data.get('destinationCity'),
         pricePerSeat: data.get('pricePerSeat'),
         departDate: data.get('departDate'),
         returnDate: data.get('returnDate'),
-        roundTrip: data.get('roundTrip'),
+        roundTrip: data.get('roundTrip') ? true: false,
         maxCapacity: data.get('maxCapacity'),
-        occupiedCapacity : data.get('maxCapacity')
-
+        occupiedCapacity : data.get('maxCapacity'),
+        departTime: data.get('departTime'),
+        returnTime: data.get('returnTime')
       }
       fetch('/rides/createRide', {
         method: 'POST',
@@ -101,7 +106,7 @@ export default function PostRide() {
     //   const notify = (toastString) => {
     //   toast(toastString);
     // };
-  
+
   }
   const [expanded, setExpanded] = useState(false);
 
@@ -177,7 +182,7 @@ export default function PostRide() {
                 required
                 disablePast
                 inputVariant = "outlined"
-                label = "Travel Date"
+                label = "Depart Date"
                 name = "departDate"
                 value={selectedDate}
                 onChange={date => handleDateChange(date)}
@@ -193,7 +198,8 @@ export default function PostRide() {
                   required
                   ampm={true}
                   inputVariant="outlined"
-                  label="Travel Time"
+                  label="Depart Time"
+                  name="departTime"
                   value={selectedTime}
                   onChange={handleTimeChange}
                   autoFocus
@@ -208,10 +214,11 @@ export default function PostRide() {
                   onChange={handleSwitch}
                   value={isChecked}
                   color="primary"
+                  name ="roundTrip"
                 />
               }
               label = "Make This a Round Trip"
-              labelPlacement="start" 
+              labelPlacement="start"
               name ="roundTrip"
             />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -227,7 +234,8 @@ export default function PostRide() {
                 name = "returnDate"
                 value={selectedDateReturn}
                 onChange={date => handleDateChangeReturn(date)}
-                minDate={new Date()}
+                minDate={selectedDate}
+                minDateMessage="Return Date should be after Depart Date"
                 format="MM/dd/yyyy"
                 autoFocus
               />
@@ -240,6 +248,7 @@ export default function PostRide() {
                   ampm={true}
                   inputVariant="outlined"
                   label="Return Time"
+                  name = "returnTime"
                   value={selectedTimeReturn}
                   onChange={handleTimeChangeReturn}
                   autoFocus

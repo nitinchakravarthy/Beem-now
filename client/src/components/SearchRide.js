@@ -17,6 +17,7 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider, KeyboardTimePicker} from "
 import DateFnsUtils from '@date-io/date-fns';
 import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import CompanyLogo from '../logo.png'
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -119,12 +120,19 @@ export default function SearchRide() {
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
+      const uid = localStorage.getItem('uid');
+      console.log(uid);
       const params = {
-          roundTrip: data.get('roundTrip'),
+          uid: uid,
+          //roundTrip: data.get('roundTrip') ? data.get('roundTrip') : false,
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
           departDate: data.get('departDate'),
-          returnDate: data.get('returnDate')
+          //returnDate: data.get('returnDate')
+      }
+      if(data.get('roundTrip')){
+          params['roundTrip'] = true;
+          params['returnDate'] = data.get('returnDate');
       }
       setOriginCity(data.get('originCity'))
       setDestinationCity(data.get('destinationCity'))
@@ -153,6 +161,7 @@ export default function SearchRide() {
              //notify(data.msg)
          }
      }).catch((error) => {
+         console.log("in error");
          console.log(error);
          //notify(error.msg)
      });
@@ -180,6 +189,9 @@ export default function SearchRide() {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+      <div className={classes.logo}>
+        <img src = {CompanyLogo} />
+      </div>
         <Typography component="h1" variant="h5">
           Search Ride
         </Typography>
@@ -217,7 +229,7 @@ export default function SearchRide() {
               }
               name = 'roundTrip'
               label = "Round Trip"
-              labelPlacement="start" 
+              labelPlacement="start"
             />
            <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container spacing={2}>
