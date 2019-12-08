@@ -77,11 +77,17 @@ exports.createCharge = function (req,res,next){
       amount: 1000,
       currency: "usd",
       source: "tok_visa",
-      application_fee_amount: 123,
+      application_fee_amount: 1,
     }, {
       stripe_account: "{{CONNECTED_STRIPE_ACCOUNT_ID}}",
     }).then(function(charge) {
+        Console.log("Charge succesfully created");
       // asynchronously called
     });
 
 }
+
+// api to retrieve charges on and from this account
+//list of application fees collected
+
+//issue refund

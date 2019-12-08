@@ -7,7 +7,8 @@ import Home from "./components/Home";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import PostRide from './components/PostRide';
-import TermsOfService from './components/TermsOfService'
+
+import TermsOfService from './components/TermsOfService';
 import { Switch, Route, Link } from 'react-router-dom'
 
 function App() {

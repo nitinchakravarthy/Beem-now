@@ -20,5 +20,6 @@ router.get('/ConnectedToStripe',[check("code").not().isEmpty()],
             stripeController.authorize);
 
 
+router.get('createCharge',[],stripeController.createCharge);
 
 module.exports = router;
