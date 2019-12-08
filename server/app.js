@@ -24,7 +24,8 @@ const usersRouter = require('./routes/users');
 const itemsRouter = require('./routes/items');
 const ridesRouter = require('./routes/rides');
 const paymentsRouter = require('./routes/payments');
-
+const chatRouter = require('./routes/chats');
+console.log("TESTING")
 // mongoose.connect('mongodb://localhost:27017/beem', {useNewUrlParser: true});
 //
 // var db = mongoose.connection;
@@ -79,6 +80,7 @@ app.use('/users', usersRouter);
 app.use('/items', itemsRouter);
 app.use('/rides',ridesRouter);
 app.use('/payments',paymentsRouter);
+app.use('/Cars',chatRouter);
 
 
 
@@ -101,6 +103,33 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 
+});
+
+//setting up the socket for messaging
+var io = require('socket.io')(3002);
+var userToSocketId = {}
+
+io.on('connection',socket => {
+
+socket.on('new-user', message =>{
+// if(!userToSocketId[message.userName]){   //Commented as overwriting should be  allowed
+userToSocketId[message.userName] = socket.id
+// }
+console.log("userToSocketId:"+message.userName+":"+userToSocketId[message.userName])
+})
+socket.on('send-chat-message',  message => {
+
+    console.log("message To:"+message.to)
+
+    if(userToSocketId[message.to]){
+    console.log("Right place, deliver to : "+userToSocketId[message.to])
+
+    socket.to(userToSocketId[message.to]).emit("client-message",{from:message.from, msg:message.message, time:message.messageTime})
+    }
+    else{
+        console.log("WRONG PLACE!")
+    }
+});
 });
 
 module.exports = app;

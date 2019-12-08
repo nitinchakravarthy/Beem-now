@@ -26,6 +26,7 @@ import signOutIcon from '../icons/signout.svg';
 import {NavLink} from 'react-router-dom';
 import Icon from '@material-ui/core/Icon';
 import Box from '@material-ui/core/Box';
+import {Link } from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -186,12 +187,11 @@ export default function Home(props) {
               <ListItemText primary={"Ride History"} />
           </ListItemLink>
 
-          <ListItemLink key={"Messages"} href="#messages" onClick = {handleDrawerClose}>
-              <ListItemIcon>
-                <Icon><img src={messageIcon}/></Icon>
-              </ListItemIcon>
+          <ListItem button key={"Messages"} component={Link} to={{
+            pathname:'/friendList', state: {name: localStorage.getItem('first_name')}}}>
+              <ListItemIcon><img src={messageIcon}/></ListItemIcon>
               <ListItemText primary={"Messages"} />
-          </ListItemLink>
+          </ListItem>
 
           <ListItem button key={"Sign Out"} component="a" href = "/" onClick = {clearLocalStorage}>
               <ListItemIcon>

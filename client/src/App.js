@@ -9,7 +9,8 @@ import ResetPassword from "./components/ResetPassword";
 import PostRide from './components/PostRide';
 import ErrorNotFound from './components/ErrorNotFound';
 import AccountVerified from './components/AccountVerifiedPage';
-
+import FriendList from './components/FriendList'
+import Dashboard from './components/Dashboard'
 import TermsOfService from './components/TermsOfService';
 import { Switch, Route, Link } from 'react-router-dom'
 
@@ -25,7 +26,8 @@ function App(app) {
       <Route exact path="/home" component={Home}/>
       <Route exact path="/signup" component={SignUp}/>
       <Route exact path="/accountverified" component={AccountVerified}/>
-
+      <Route exact path = '/friendList' component = {FriendList}/>
+      <Route exact path = '/chat' component = {Dashboard}/>
       /* add 404 page */
       <Route path="*" component={ErrorNotFound} />
     </Switch>
