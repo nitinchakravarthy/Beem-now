@@ -159,40 +159,41 @@ export default function Home(props) {
         <Divider />
         <List component="nav">
 
-          <ListItemLink key={"Home"} href = "#">
+          <ListItemLink key={"Home"} href = "#" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={homeIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Home"} />
           </ListItemLink >
 
-          <ListItemLink key={"profile"} href="#profile">
+          <ListItemLink key={"profile"} href="#profile" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={profileIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"My Profile"} />
           </ListItemLink>
 
-          <ListItemLink key = {"postride"} href="#postride">
+          <ListItemLink key = {"postride"} href="#postride" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={ridePostIcon}/></Icon>
               </ListItemIcon>
             <ListItemText primary={"Post a Ride"} />
           </ListItemLink>
 
-          <ListItemLink key = {"ridehistory"} href="#ridehistory">
+          <ListItemLink key = {"ridehistory"} href="#ridehistory" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={historyIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Ride History"} />
           </ListItemLink>
+
           <ListItem button key={"Messages"} component={Link} to={{
             pathname:'/friendList', state: {name: localStorage.getItem('first_name')}}}>
               <ListItemIcon><img src={messageIcon}/></ListItemIcon>
               <ListItemText primary={"Messages"} />
           </ListItem>
 
-          <ListItem button key={"Sign Out"} component="a" href = "/">
+          <ListItem button key={"Sign Out"} component="a" href = "/" onClick = {clearLocalStorage}>
               <ListItemIcon>
                 <Icon><img src={signOutIcon}/></Icon>
               </ListItemIcon>

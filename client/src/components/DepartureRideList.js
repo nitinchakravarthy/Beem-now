@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
   inline: {
     display: 'inline',
   },
+  avatar: {
+    marginBottom: theme.spacing(1),
+  },
   paper: {
     display: 'flex',
     // flexDirection: 'column',
@@ -77,6 +80,16 @@ export default function DepartureRideList(props) {
       setIsClicked(true)
   }
 
+  const formatDepartureDate = (date) => {
+      var t = date.split('T')
+      var time = t[1].split(':')
+      var meridian = (parseInt(time[0]) < 12) ? "AM" : "PM"
+      var t_date = new Date(date)
+      var dateString = t_date.getDate() + " " + monthNames[t_date.getMonth()] + " • "
+                       + time[0] + ":"+ time[1] + " " + meridian
+      return dateString
+  }
+
   return (
     <div>
     {departureRides.length != 0 ?
@@ -97,27 +110,29 @@ export default function DepartureRideList(props) {
     <List>
       {departureRides.map(item => (
       <div>
-      <ListItem button key={item._id} alignItems="flex-start">
-        <ListItemAvatar>
-        <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
-           {item.host.first_name[0]}
-        </Avatar>
-        </ListItemAvatar>
-      <Container maxWidth='md'>
-        <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
-          <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
-          <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-          <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-
-          <Typography variant="subtitle2" align='justify' color="textPrimary">{item.departDate}</Typography>
-        </ListItemText>
-      </Container>
-        <ListItemText>
-          <Typography variant="h5" align="right">{item.pricePerSeat}$</Typography>
-        </ListItemText>
-
-      </ListItem>
-      <Divider/>
+        <ListItem button key={item._id} alignItems="flex-start">
+          <ListItemAvatar>
+            <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
+               {item.host.first_name[0]}
+            </Avatar>
+            <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
+          </ListItemAvatar>
+          <Container maxWidth='md'>
+            <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
+              <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
+              <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+              <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
+              <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+              <Typography variant="subtitle2" align='justify' color="textSecondary">
+                {formatDepartureDate(item.departDate)}
+              </Typography>
+            </ListItemText>
+          </Container>
+          <ListItemText>
+            <Typography variant="h5" align="right">{item.pricePerSeat}$</Typography>
+          </ListItemText>
+        </ListItem>
+        <Divider/>
       </div>
       ))}
     </List> </Container></div> : <Typography variant="h2" color="textSecondary" align="center">No rides found</Typography>}

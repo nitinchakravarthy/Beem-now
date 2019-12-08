@@ -99,8 +99,9 @@ ScrollTop.propTypes = {
 export default function Landing(props) {
   const classes = useStyles();
   const [directToSignIn, setDirectToSignIn] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(!(localStorage.getItem('uid') === null));
+  
+  console.log(localStorage.getItem('uid'))
   //const [isDesktop, setIsDesktop] = useState(false);
   var isDesktop = window.innerWidth > 1000 ? true : false;
   const sendToSignIn = event => {

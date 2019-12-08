@@ -77,7 +77,6 @@ export default function SignIn(props) {
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target)
-      const rememberme = data.get('rememberme');
       const body = {
           email : data.get('email'),
           password: data.get('password'),
@@ -99,9 +98,7 @@ export default function SignIn(props) {
              localStorage.setItem('uid', data.user._id);
              localStorage.setItem('first_name', data.user.first_name);
              localStorage.setItem('last_name', data.user.last_name);
-             localStorage.setItem('remember',rememberme);
              setIsAuthenticated(true);
-
          }else{
              notify(data.msg)
          }
@@ -160,11 +157,6 @@ export default function SignIn(props) {
             type="password"
             id="password"
             autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-            id="rememberme"
           />
           <Button
             type="submit"
