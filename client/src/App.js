@@ -13,6 +13,8 @@ import FriendList from './components/FriendList';
 import Dashboard from './components/Dashboard';
 import TermsOfService from './components/TermsOfService';
 import { Switch, Route, Link } from 'react-router-dom'
+import Review from './components/Review';
+
 
 function App(app) {
 
@@ -28,6 +30,8 @@ function App(app) {
       <Route exact path="/accountverified" component={AccountVerified}/>
       <Route exact path = '/friendList' component = {FriendList}/>
       <Route exact path = '/chat' component = {Dashboard}/>
+      <Route exact path="/ridesummary" component={Review}/>
+
       /* add 404 page */
       <Route path="*" component={ErrorNotFound} />
     </Switch>
