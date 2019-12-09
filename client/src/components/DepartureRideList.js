@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Redirect } from 'react-router-dom';
+import { pink } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
@@ -27,13 +28,24 @@ const useStyles = makeStyles(theme => ({
   inline: {
     display: 'inline',
   },
+  avatarBlock: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   avatar: {
     marginBottom: theme.spacing(1),
+    backgroundColor: pink[400],
   },
   paper: {
     display: 'flex',
-    // flexDirection: 'column',
-    // alignItems: 'center',
+  },
+  card: {
+    backgroundColor: theme.palette.common.white,
+    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)',
+    borderRadius: '15px',
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -104,9 +116,9 @@ export default function DepartureRideList(props) {
     <CssBaseline />
     <List>
       {departureRides.map(item => (
-      <div>
+      <div className = {classes.card}>
         <ListItem button key={item._id} alignItems="flex-start">
-          <ListItemAvatar>
+          <ListItemAvatar className = {classes.avatarBlock}>
             <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
                {item.host.first_name[0]}
             </Avatar>
@@ -121,13 +133,10 @@ export default function DepartureRideList(props) {
               <Typography variant="subtitle2" align='justify' color="textSecondary">
                 {formatDepartureDate(item.departDate)}
               </Typography>
+              <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
             </ListItemText>
           </Container>
-          <ListItemText>
-            <Typography variant="h5" align="right">{item.pricePerSeat}$</Typography>
-          </ListItemText>
         </ListItem>
-        <Divider/>
       </div>
       ))}
     </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
