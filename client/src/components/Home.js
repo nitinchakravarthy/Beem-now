@@ -13,10 +13,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import SideDrawer from './SideDrawer';
 import PostRide from './PostRide';
-import SearchRide from './SearchRide'
+import SearchRide from './SearchRide';
 import DepartureRideList from './DepartureRideList';
-import DepartTrip from './DepartureRidesPage'
-import ReturnTrip from './ReturnRidesPage'
+import DepartTrip from './DepartureRidesPage';
+import ReturnTrip from './ReturnRidesPage';
+import Review from './Review';
 import { Switch, Route, Link, HashRouter, NavLink} from 'react-router-dom';
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
             <Route path="/departresults" component={DepartTrip}/>
             <Route path="/returnresults" component={ReturnTrip}/>
             <Route path="/postride" component={PostRide}/>
+            <Route path="/ridesummary" component={Review}/>
           </div>
         </div>
       </HashRouter>

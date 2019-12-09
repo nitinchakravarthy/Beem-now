@@ -9,8 +9,8 @@ import ResetPassword from "./components/ResetPassword";
 import PostRide from './components/PostRide';
 import ErrorNotFound from './components/ErrorNotFound';
 import AccountVerified from './components/AccountVerifiedPage';
-import FriendList from './components/FriendList'
-import Dashboard from './components/Dashboard'
+import FriendList from './components/FriendList';
+import Dashboard from './components/Dashboard';
 import TermsOfService from './components/TermsOfService';
 import { Switch, Route, Link } from 'react-router-dom'
 

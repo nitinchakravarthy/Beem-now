@@ -74,7 +74,7 @@ export default function DepartureRidesPage(props) {
   const [originCity, setOriginCity] = useState(props.location.state.originCity);
   const [destinationCity, setDestinationCity] = useState(props.location.state.destinationCity);
   const [returnDate, setReturnDate] = useState(props.location.state.returnDate);
-
+  const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
   const [dates, setDates] = useState(props.location.state.dates);
   const [value, setValue] = React.useState(15);
 
@@ -147,6 +147,7 @@ export default function DepartureRidesPage(props) {
                 originCity={originCity}
                 destinationCity={destinationCity}
                 returnDate={returnDate}
+                roundTrip={roundTrip}
                 />
             </TabPanel>
           ))}

@@ -8,6 +8,8 @@ const nodemailer = require('nodemailer');
 const multer = require("multer");
 const fs = require("fs");
 const upload= multer({ dest: 'uploads/' })
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 var transporter = nodemailer.createTransport({ service: 'Sendgrid',
                                                 auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
 
@@ -71,8 +73,8 @@ exports.signUpHandler = function (req,res,next){
 
         // sending a verification email
         // Change the service
-        var transporter = nodemailer.createTransport({ service: 'Sendgrid',
-                                                        auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+        // var transporter = nodemailer.createTransport({ service: 'Sendgrid',
+        //                                                 auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
         const mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'New Account Verification',
                           text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/users\/confirmation\/?token=' + token.token + '.\n' };
         console.log(mailOptions);

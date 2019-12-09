@@ -13,6 +13,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Redirect } from 'react-router-dom';
 
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -38,23 +39,22 @@ export default function AlignItemsList(props) {
   const classes = useStyles();
   const [departId, setDepartId] = useState(props.departId);
   const [returnRides, setReturnRides] = useState(props.returnRides);
-
+  const [originCity, setOriginCity] = useState(props.originCity);
+  const [destinationCity, setDestinationCity] = useState(props.destinationCity);
+  const [roundTrip, setRoundTrip] =  useState(props.roundTrip);
+  const [returnId, setReturnId] = useState('');
+  const [isClicked, setIsClicked] = useState(false);
   const handleSelect = (item) => {
-      //console.log(item.host.first_name)
-      // fetch('/rides/searchRide', {
-      // method: 'POST',
-      // headers: {
-      //       Accept: 'application/json',
-      //       'Content-Type': 'application/json',
-      //   },
-      // body: JSON.stringify(params)
-      // });
+      console.log(item._id)
+      setReturnId(item._id)
+      setIsClicked(true)
   }
 
   return (
     <div>
     {returnRides.length != 0 ?
-
+    <div>
+    {isClicked ? <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip,departId:departId, returnId:returnId, originCity:originCity, destinationCity:destinationCity}}}/>:null}
     <Container component = "main" maxWidth='md'>
     <CssBaseline />
     <List>
@@ -83,7 +83,7 @@ export default function AlignItemsList(props) {
       <Divider/>
       </div>
       ))}
-    </List> </Container> : <Typography variant="h2" color="textSecondary" align="center">No rides found</Typography>}
+    </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
     </div>
   );
 }

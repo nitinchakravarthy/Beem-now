@@ -72,6 +72,7 @@ export default function DepartureRideList(props) {
   const [returnDateArray, setReturnDateArray] = useState(props.returnDate);
   const [isClicked, setIsClicked] = useState(false);
   const [departId, setDepartId] = useState('');
+  const [roundTrip, setRoundTrip] =  useState(props.roundTrip);
 
   const handleSelect = (item) => {
       setReturnDateArray(getDates(returnDate))
@@ -94,17 +95,11 @@ export default function DepartureRideList(props) {
     <div>
     {departureRides.length != 0 ?
     <div>
-    {isClicked ? <Redirect to={{
-                              pathname: "/returnresults",
-                              state: {
-
-                                departId: departId,
-                                returnRides: returnRides,
-                                originCity: originCity,
-                                destinationCity: destinationCity,
-                                dates: returnDateArray,
-                              }
-                              }}/> : null}
+    {isClicked ?
+        (roundTrip ?
+            <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip,departId: departId, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
+            <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip,departId:departId, originCity:originCity, destinationCity:destinationCity}}}/>
+        ): null}
     <Container component = "main" maxWidth='md'>
     <CssBaseline />
     <List>
@@ -135,7 +130,7 @@ export default function DepartureRideList(props) {
         <Divider/>
       </div>
       ))}
-    </List> </Container></div> : <Typography variant="h2" color="textSecondary" align="center">No rides found</Typography>}
+    </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
     </div>
   );
 }

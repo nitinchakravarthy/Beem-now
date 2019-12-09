@@ -110,7 +110,7 @@ export default function SearchRide() {
   const [returnRides, setReturnRides] = useState([]);
   const [originCity, setOriginCity] = useState('');
   const [destinationCity, setDestinationCity] = useState('');
-
+  const [roundTrip, setRoundTrip] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
   const handleSwitch  =  () =>{
@@ -134,9 +134,10 @@ export default function SearchRide() {
           params['roundTrip'] = true;
           params['returnDate'] = data.get('returnDate');
       }
-      setOriginCity(data.get('originCity'))
-      setDestinationCity(data.get('destinationCity'))
-      setDateArray(getDates(selectedDate))
+      setOriginCity(data.get('originCity'));
+      setDestinationCity(data.get('destinationCity'));
+      setDateArray(getDates(selectedDate));
+      setRoundTrip(data.get('roundTrip'));
       fetch('/rides/searchRide', {
         method: 'POST',
         headers: {
@@ -179,7 +180,7 @@ export default function SearchRide() {
     {isAuthenticated ? <Redirect to={{
                               pathname: "/departresults",
                               state: {
-
+                                roundTrip:roundTrip,
                                 departure_rides: departureRides,
                                 return_ride: returnRides,
                                 originCity: originCity,
