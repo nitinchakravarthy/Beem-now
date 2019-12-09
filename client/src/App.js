@@ -14,7 +14,6 @@ import Dashboard from './components/Dashboard';
 import TermsOfService from './components/TermsOfService';
 import { Switch, Route, Link } from 'react-router-dom'
 
-
 function App(app) {
 
   return (

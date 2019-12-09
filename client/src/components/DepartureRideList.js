@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
@@ -15,7 +14,6 @@ import { Redirect } from 'react-router-dom';
 import { pink } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
@@ -112,7 +110,7 @@ export default function DepartureRideList(props) {
             <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip,departId: departId, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
             <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip,departId:departId, originCity:originCity, destinationCity:destinationCity}}}/>
         ): null}
-    <Container component = "main" maxWidth='md'>
+    <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
     <CssBaseline />
     <List>
       {departureRides.map(item => (
@@ -139,7 +137,8 @@ export default function DepartureRideList(props) {
         </ListItem>
       </div>
       ))}
-    </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
+    </List> 
+    </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
     </div>
   );
 }

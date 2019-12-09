@@ -83,8 +83,15 @@ export default function AlignItemsList(props) {
     <div>
     {returnRides.length != 0 ?
     <div>
-    {isClicked ? <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip,departId:departId, returnId:returnId, originCity:originCity, destinationCity:destinationCity}}}/>:null}
-    <Container component = "main" maxWidth='md'>
+    {isClicked ? <Redirect to={{pathname:"/ridesummary", 
+                                state: {
+                                  roundTrip: roundTrip,
+                                  departId: departId, 
+                                  returnId: returnId, 
+                                  originCity: originCity, 
+                                  destinationCity: destinationCity,
+                                }}}/> : null}
+    <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>
     <CssBaseline />
     <List>
       {returnRides.map(item => (

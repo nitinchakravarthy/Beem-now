@@ -123,35 +123,35 @@ export default function DepartureRidesPage(props) {
             <Typography variant="h5" color = "primary">Departure</Typography>
           </div>
         </ThemeProvider>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example"
-          >
+          <AppBar position = "Static" color="default">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label="scrollable auto tabs example"
+            >
+            {dates.map((date, index) => (
+              <Tab label={date[0]} {...a11yProps(index)} />
+            ))}
+            </Tabs>
+          </AppBar>
+          <div style = {{width: '100%'}}>
           {dates.map((date, index) => (
-            <Tab label={date[0]} {...a11yProps(index)} />
-          ))}
-          </Tabs>
-        </AppBar>
-        <div style={{width: '100%'}}>
-        {dates.map((date, index) => (
-            <TabPanel value={value} index={index}>
-              <DepartureRideList
-                departureRides={departureRides}
-                returnRides={returnRides}
-                originCity={originCity}
-                destinationCity={destinationCity}
-                returnDate={returnDate}
-                roundTrip={roundTrip}
-                />
-            </TabPanel>
-          ))}
-        </div>
+              <TabPanel value={value} index={index}>
+                <DepartureRideList 
+                  departureRides={departureRides}
+                  returnRides={returnRides}
+                  originCity={originCity}
+                  destinationCity={destinationCity}
+                  returnDate={returnDate}
+                  roundTrip={roundTrip}
+                  />
+              </TabPanel>
+            ))}
+          </div>
       </div>
   </Container>
   );
