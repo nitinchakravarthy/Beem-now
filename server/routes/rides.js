@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
 router.post('/createRide',
   [
      check('uid', 'Please log in to post rides').not().isEmpty(),
-     check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+     check('roundTrip', 'Invalid trip type').isBoolean().not().isEmpty(),
      check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
      check('departTime', 'Invalid Time').not().isEmpty(),
      check('maxCapacity', 'Invalid vehicle capacity').not().isEmpty().isNumeric(),
@@ -21,10 +21,9 @@ router.post('/createRide',
      check('pricePerSeat', 'Invalid price per seat').not().isEmpty().isCurrency(),
      check('originCity', 'Invalid Origin city').not().isEmpty(),
      check('destinationCity', 'Invalid Destination city').not().isEmpty(),
-     //check('returnDate', 'Invalid return date').not().isEmpty().not().isAfter('departDate'),
-     //check('returnTime', 'Invalid Time')
-    //check('initialAddress', 'Invalid starting address').not().isEmpty(),
-    //check('finalAddress', 'Invalid final address').not().isEmpty()
+     check('returnDate', 'Invalid return date').optional().not().isEmpty().not().isAfter('departDate'),
+     check('returnTime', 'Invalid Time').optional().not().isEmpty(),
+     check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
   ], rideController.createRide);
 
 
@@ -78,7 +77,18 @@ router.get('/userRideInfo',
     check('returnDate', 'Invalid return date').optional().not().isEmpty(),
     check('originCity', 'Invalid Origin city').not().isEmpty(),
     check('destinationCity', 'Invalid Destination city').not().isEmpty(),
-  ], rideController.searchRide);
+    check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
+  ], rideController.searchRideExhaustive);
+
+  router.post('/searchRideNew',
+  [ check('uid', 'Please login to search for rides').not().isEmpty(),
+    check('roundTrip', 'Invalid trip type').optional().not().isEmpty().isBoolean(),
+    check('departDate', 'Invalid departure date').not().isEmpty(),
+    check('returnDate', 'Invalid return date').optional().not().isEmpty(),
+    check('originCity', 'Invalid Origin city').not().isEmpty(),
+    check('destinationCity', 'Invalid Destination city').not().isEmpty(),
+    check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
+  ], rideController.searchRideExhaustive);
 
   router.post('/rideHistory',
   [

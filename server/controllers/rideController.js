@@ -8,8 +8,10 @@ const {check, validationResult} = require('express-validator');
 const nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({ service: 'Sendgrid',
                                               auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-
-
+var moment = require('moment-timezone');
+//moment().format('L');
+var MILES_TO_METRE = 1609.34;
+var MAX_DISTANCE = 20 * MILES_TO_METRE;
 // Create a ride with required values
 exports.createRide = function(req, res, next) {
   // Check for validation error
@@ -17,7 +19,12 @@ exports.createRide = function(req, res, next) {
   console.log(errors);
   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
   console.log(req.body);
-  // ** TODO
+  var departDate = moment(req.body.departDate + " " + req.body.departTime, 'MM-DD-YYYY hh:mm A').tz(req.body.timeZone);
+  var utcDepartDate = new Date(departDate.format());
+  console.log("Printing........");
+  console.log(departDate.format());
+  console.log(new Date(departDate.format()));
+  console.log(departDate.utc().format());
   // check for if user has created ride in same dates...
   function geocode() {
     var originLocation = req.body.originCity;
@@ -47,37 +54,34 @@ exports.createRide = function(req, res, next) {
       const finalPoint = { type: 'Point', coordinates: finalCoords };
       ride = new Ride({
         roundTrip : req.body.roundTrip,
-        departDate : new Date(req.body.departDate),
+        departDate : utcDepartDate, //converts to UTC
         maxCapacity : req.body.maxCapacity,
         capacityLeft : req.body.maxCapacity,
         pricePerSeat : req.body.pricePerSeat,
         originCity : req.body.originCity,
         destinationCity : req.body.destinationCity,
         host:req.body.uid,
-        // host: '5de1aaaad055f316f87c57ef',
-        // initialAddress : req.body.initialAddress,
-        // occupiedCapacity : req.body.occupiedCapacity,
         initialCoords : initialPoint,
         finalCoords : finalPoint
         // initialCoords and finalCoords are .coordinates within geoschema
       }); // new Ride ()
 
       ride.save(function(err) {
-        if (err) { console.log(err.message);
+        if (err) { console.log("Error inside rideController!!"); console.log(err.message);
           return res.status(500).send({ msg: err.message }); }
       });
       if (req.body.roundTrip) {
         console.log("RoundTrip is present!");
+        var returnDate = moment(req.body.returnDate + " " + req.body.returnTime, 'MM-DD-YYYY hh:mm A').tz(req.body.timeZone);
+        var utcReturnDate = new Date(returnDate.format());
         returnRide = new Ride({
         roundTrip : req.body.roundTrip,
-        departDate : new Date(req.body.returnDate),
+        departDate : utcReturnDate,
         maxCapacity : req.body.maxCapacity,
         pricePerSeat : req.body.pricePerSeat,
         originCity : req.body.destinationCity,
         destinationCity : req.body.originCity,
-        host: '5de1aaaad055f316f87c57ef',
-        // initialAddress : req.body.initialAddress,
-        // occupiedCapacity : req.body.occupiedCapacity,
+        host: req.body.uid,
         initialCoords : finalPoint,
         finalCoords : initialPoint
         // initialCoords and finalCoords are .coordinates within geoschema
@@ -91,51 +95,15 @@ exports.createRide = function(req, res, next) {
       //console.log("Transactions Done");
       res.send({'rideStatus' : true});
 
-    });
-    /*axios.get('https://nominatim.openstreetmap.org/search?format=json',
-    {
-      params: {
-        q : location,
-      }
     })
-    .then(function(res){
-      //console.log(res);
-      //console.log(res.data[0].lat)
-      //console.log(res.data[0].lon)
-      //var formattedAddress = res.data.results[0].formatted_Address;
-      //console.log(formattedAddress); // pretty display
-      var lat = parseFloat(res.data[0].lat);
-      var lng = parseFloat(res.data[0].lon);
-      initialCoords = ([lng, lat]);
-      console.log(initialCoords);
+    .catch((error) => {
+      console.log("Error while fetching GeoSpatial Information!!")
+      if (err) { console.log(err.message);
+        return res.status(500).send({ msg: err.message }); }
     });
-    location = req.body.destinationCity;
-    axios.get('https://nominatim.openstreetmap.org/search?format=json',
-    {
-      params: {
-        q : location
-      }
-    })
-    .then(function(res){
-      //console.log(res);
-      //formattedAddress = res.data.results[0].formatted_Address;
-      //console.log(formattedAddress); // pretty display
-      var lat = parseFloat(res.data[0].lat);
-      var lng = parseFloat(res.data[0].lon);
-      finalCoords = ([lng, lat]);
-      console.log("Inside")
-      console.log(finalCoords);
-    });*/
   } // function geocode()
     // Geocode address into coordinates
   geocode();
- /* async function call() {
-    var Testoutput= await geocode();
-    console.log(Testoutput);
-    return Testoutput;
-  }
-  call();
-  console.log(output);*/
   //console.log("Done");
 };
 
@@ -262,7 +230,7 @@ exports.searchRide = function(req, res, next) {
   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
   console.log('Input:', req.body);
   //dates for query
-  var departDate_start = new Date(req.body.departDate)
+  var departDate_start = new Date(moment(req.body.departDate).format())
   var departDate_end = new Date(departDate_start.getTime()+(1*24*60*60*1000))
   console.log(departDate_start);
   console.log(departDate_end);
@@ -274,7 +242,7 @@ exports.searchRide = function(req, res, next) {
         originCity:req.body.originCity, // second is a geospacial query
         destinationCity:req.body.destinationCity,
       }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
-      ).populate('host').exec(function(err, departure_rides){
+    ).populate('host', {}).exec(function(err, departure_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const result_d = JSON.stringify(departure_rides);
       console.log("result_d");
@@ -477,70 +445,91 @@ exports.rideRejected = function(req,res,next){
 //   }
 
 
-  // exports.searchRideExhaustive = function(req, res, next) {
-  //   // Check for validation error
-  //   const errors = validationResult(req);
-  //   console.log(errors);
-  //   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-  //   console.log('Input:', req.body);
-  //   //dates for query
-  //   var departDate_start = new Date(req.body.departDate)
-  //   var departDate_end = new Date(departDate_start.getTime()+(1*24*60*60*1000))
-  //   console.log(departDate_start);
-  //   console.log(departDate_end);
-  //   //get co-ordniates
-  //   Ride.find(
-  //       { departDate:{"$gte": departDate_start,
-  //                     "$lt": departDate_end
-  //                   },
-  //         $or: [ originCity:req.body.originCity,
-  //                 {initialCoords: {$near:
-  //                                     {$maxDistance:30,
-  //                                      $geometry:{type:"Point", coordinate:[,]}
-  //                                     }
-  //                                 }
-  //                 }
-  //             ], // second is a geospacial query
-  //         $or: [ destinationCity:req.body.destinationCity,
-  //             {finalCoords: {$near:
-  //                             {
-  //                                 $maxDistance:30,
-  //                                 $geometry:{type:"Point",coordinate:[,]}
-  //                             }
-  //                         }
-  //
-  //             }
-  //         ]
-  //         host._id: { $not: { req.body.uid },
-  //
-  //       }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
-  //       ).populate('host').select("-password").exec(function(err, departure_rides){
-  //       if (err) return res.status(500).send({ msg: err.message });
-  //       const result_d = JSON.stringify(departure_rides);
-  //       console.log("result_d");
-  //       console.log(result_d);
-  //       if (req.body.returnDate){
-  //         //dates for query
-  //         returnDate_start = new Date(req.body.returnDate)
-  //         returnDate_end = new Date(returnDate_start.getTime() + (1*24*60*60*1000))
-  //         Ride.find(
-  //           { departDate:{"$gte": returnDate_start,
-  //                         "$lt": returnDate_end
-  //                         },
-  //             originCity:req.body.destinationCity ,
-  //             destinationCity:req.body.originCity,
-  //           }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
-  //           ).populate('host').exec(function(err, return_rides){
-  //           if (err) return res.status(500).send({ msg: err.message });
-  //           const result_r = JSON.stringify(return_rides);
-  //           console.log(result_d, result_r)
-  //           res.send({ error_code: 0, departure_rides: result_d,
-  //                  return_rides: result_r });
-  //           });
-  //       }
-  //       else{
-  //         res.send({ error_code: 0, departure_rides: result_d,
-  //                  return_rides: null });
-  //       }
-  //     });
-  // };
+  exports.searchRideExhaustive = function(req, res, next) {
+    // Check for validation error
+    console.log("Reached!!!!!")
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+    console.log('Input:', req.body);
+    //dates for query
+    var departDate_start = moment(req.body.departDate, "MM/DD/YYYY").tz(req.body.timeZone);
+    var departDate_end = departDate_start.clone().add(1, 'day');//moment(departDate_start.getTime()+(1*24*60*60*1000))
+    console.log(new Date(departDate_start.format()));
+    console.log(new Date(departDate_end.format()));
+
+    var originLocation = req.body.originCity;
+    var destinationLocation = req.body.destinationCity;
+    //get co-ordniates
+    axios.all([
+      axios.get('https://nominatim.openstreetmap.org/search?format=json',
+    {
+      params: {
+        q : originLocation
+      }
+    }),
+     axios.get('https://nominatim.openstreetmap.org/search?format=json',
+    {
+      params: {
+        q : destinationLocation
+      }
+    })
+    ])
+    .then((resArr)=> {
+      var initialCoords = ([parseFloat(resArr[0].data[0].lon), parseFloat(resArr[0].data[0].lat)]);
+      var finalCoords = ([parseFloat(resArr[1].data[0].lon), parseFloat(resArr[1].data[0].lat)]);
+
+      Ride.find(
+          { departDate:{"$gte": (new Date(departDate_start.format())), // Date converts local to UTC which is better for $lt and $gt
+                        "$lt": (new Date (departDate_end.format()))
+                      },
+            initialCoords: {$near:
+                                {$maxDistance: MAX_DISTANCE,
+                                 $geometry: {type:"Point", coordinates:initialCoords}
+                                }
+                            },
+            finalCoords: {$geoWithin:
+                                {$centerSphere : [ finalCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
+                            }
+          },  'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+        ).populate('host', {first_name : 1}).exec(function(err, departure_rides){
+          console.log("Got from DB")
+          if (err) {
+            console.log(err.message);
+            return res.status(500).send({ msg: err.message })
+          };
+          const result_d = JSON.stringify(departure_rides);
+          console.log("result_d");
+          console.log(result_d);
+          if (req.body.roundTrip) {
+            //dates for query
+            var returnDate_start = moment(req.body.returnDate, "MM/DD/YYYY").tz(req.body.timeZone);
+            var returnDate_end =  returnDate_start.clone().add(1, 'day');
+            Ride.find(
+              { departDate:{"$gte": (new Date(returnDate_start.format())),
+                            "$lt": (new Date(returnDate_end.format()))
+                            },
+                initialCoords: {$near:
+                                    {$maxDistance: MAX_DISTANCE,
+                                     $geometry: {type:"Point", coordinates:finalCoords}
+                                    }
+                                },
+                finalCoords: {$geoWithin:
+                                    {$centerSphere : [ initialCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
+                                }
+              }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+            ).populate('host', {first_name : 1}).exec(function(err, return_rides){
+              if (err) return res.status(500).send({ msg: err.message });
+              const result_r = JSON.stringify(return_rides);
+              console.log(result_d, result_r)
+              res.send({ error_code: 0, departure_rides: result_d,
+                     return_rides: result_r });
+              });
+          }
+          else{
+            res.send({ error_code: 0, departure_rides: result_d,
+                     return_rides: null });
+          }
+        });
+      });
+  };

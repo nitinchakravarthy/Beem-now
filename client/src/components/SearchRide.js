@@ -98,7 +98,7 @@ function getDates(date) {
     }
     return dateArray;
 }
-
+console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
 export default function SearchRide() {
   const classes = useStyles();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -128,6 +128,7 @@ export default function SearchRide() {
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
           departDate: data.get('departDate'),
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
           //returnDate: data.get('returnDate')
       }
       if(data.get('roundTrip')){

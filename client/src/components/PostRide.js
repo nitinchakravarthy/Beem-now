@@ -56,6 +56,7 @@ export default function PostRide() {
   // });
   const [isChecked, setIsChecked] = useState(false);
   console.log("isChecked value: ");
+  console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
   console.log(isChecked);
   const handleSwitch  =  () =>{
     setIsChecked(prev => !prev);
@@ -68,18 +69,23 @@ export default function PostRide() {
       if(data.get('email') === 'A' &&  data.get('password') === 'B'){
         setIsAuthenticated(true);
       }
+      console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
       const body = {
         uid: uid,
         originCity : data.get('originCity'),
         destinationCity: data.get('destinationCity'),
         pricePerSeat: data.get('pricePerSeat'),
         departDate: data.get('departDate'),
-        returnDate: data.get('returnDate'),
         roundTrip: data.get('roundTrip') ? true: false,
         maxCapacity: data.get('maxCapacity'),
         occupiedCapacity : data.get('maxCapacity'),
         departTime: data.get('departTime'),
-        returnTime: data.get('returnTime')
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+
+      }
+      if (data.get('roundTrip')) {
+        body['returnDate'] = data.get('returnDate');
+        body['returnTime'] = data.get('returnTime');
       }
       fetch('/rides/createRide', {
         method: 'POST',
