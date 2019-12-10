@@ -92,7 +92,7 @@ function getDates(date) {
     var currentDate = startDate;
     while (currentDate <= stopDate) {
         var t_date = new Date (currentDate);
-        var actualDate = String(t_date.getYear()+1900)+"-"+String(t_date.getMonth()+1)+"-"+String(t_date.getDate());
+        var actualDate = String(t_date.getMonth()+1)+"/"+String(t_date.getDate())+"/"+String(t_date.getYear()+1900);
         dateArray.push([String(t_date.getDate())+" "+monthNames[t_date.getMonth()], actualDate]);
         currentDate = currentDate.addDays(1);
     }
@@ -124,7 +124,7 @@ export default function SearchRide() {
       console.log(uid);
       const params = {
           uid: uid,
-          //roundTrip: data.get('roundTrip') ? data.get('roundTrip') : false,
+          roundTrip: data.get('roundTrip') ? data.get('roundTrip') : false,
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
           departDate: data.get('departDate'),
@@ -264,7 +264,8 @@ export default function SearchRide() {
                 label = "Return Date"
                 value={selectedDateReturn}
                 onChange={date => handleDateChangeReturn(date)}
-                minDate={new Date()}
+                minDate={isChecked? selectedDate:null}
+                minDateMessage="Return Date should be after Depart Date"
                 format="MM/dd/yyyy"
                 autoFocus
               />

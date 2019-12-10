@@ -80,19 +80,10 @@ router.get('/userRideInfo',
     check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
   ], rideController.searchRideExhaustive);
 
-  router.post('/searchRideNew',
-  [ check('uid', 'Please login to search for rides').not().isEmpty(),
-    check('roundTrip', 'Invalid trip type').optional().not().isEmpty().isBoolean(),
-    check('departDate', 'Invalid departure date').not().isEmpty(),
-    check('returnDate', 'Invalid return date').optional().not().isEmpty(),
-    check('originCity', 'Invalid Origin city').not().isEmpty(),
-    check('destinationCity', 'Invalid Destination city').not().isEmpty(),
-    check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
-  ], rideController.searchRideExhaustive);
 
   router.post('/rideHistory',
   [
-    //check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+    check('user_id', 'Please login to search for rides').not().isEmpty(),
     //check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
     //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
     //check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
