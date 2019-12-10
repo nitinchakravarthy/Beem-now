@@ -71,15 +71,19 @@ export default function ResendTokenPage(props) {
   const notify = (toastString) => {
       toast(toastString);
     };
-
+    useEffect(() => {
+        console.log("in resend token");
+        console.log(signUpSucess);
+        console.log(email.email);
+    }, []);
   const resendToken = (event) => {
 
         event.preventDefault();
         console.log("resend token");
-        fetch('/users/resendToken?email=' + email).then(response => response.json())
+        fetch('/users/resendToken?email=' + email.email).then(response => response.json())
         .then((data) => {
             console.log(data);
-            notify("Email sent to " + email + " with a new confirmation link.");
+            notify("Email sent to " + email.email + " with a new confirmation link.");
         })
         .catch(() => {
             notify("Could not send an email. Please try again");

@@ -30,7 +30,7 @@ function App(app) {
       <Route exact path="/home" component={Home}/>
       <Route exact path="/signup" component={SignUp}/>
       <Route exact path="/verifyaccount/:token" component={AccountVerified}/>
-      <Route exact path="/resetpassword" component={ChangePassword}/>
+      <Route exact path="/resetpassword/:token" component={ChangePassword}/>
       <Route exact path = '/friendList' component = {FriendList}/>
       <Route exact path = '/chat' component = {Dashboard}/>
       <Route exact path = '/confirmride' component = {ConfirmRideEmail}/>

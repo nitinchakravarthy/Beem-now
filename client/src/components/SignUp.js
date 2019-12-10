@@ -230,7 +230,6 @@ export default function SignUp() {
               if(resp.error_code == 0){
                   console.log(resp);
                   console.log(resp.email);
-                  notify(resp.msg);
                   setEmail(resp.email);
                   setSignUpSuccess(resp);
                   setAccountCreated(true);
