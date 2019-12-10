@@ -212,7 +212,7 @@ export default function Home(props) {
               <ListItemIcon>
                 <Icon><img src={homeIcon}/></Icon>
               </ListItemIcon>
-              <ListItemText pr4imary={"Home"} />
+              <ListItemText primary={"Home"} />
           </ListItemLink >
 
           <ListItemLink key={"profile"} href="#profile" onClick = {handleDrawerClose}>

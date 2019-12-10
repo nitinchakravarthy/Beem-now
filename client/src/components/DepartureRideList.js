@@ -17,7 +17,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -31,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: theme.spacing(2),
   },
   avatar: {
     marginBottom: theme.spacing(1),
@@ -122,7 +122,8 @@ export default function DepartureRideList(props) {
             </Avatar>
             <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
           </ListItemAvatar>
-          <Container maxWidth='md'>
+          <Grid container spacing={1}>
+            <Grid item xs>
             <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
               <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
               <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
@@ -131,9 +132,16 @@ export default function DepartureRideList(props) {
               <Typography variant="subtitle2" align='justify' color="textSecondary">
                 {formatDepartureDate(item.departDate)}
               </Typography>
-              <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
             </ListItemText>
-          </Container>
+            </Grid>
+            <Grid item sm>
+              <Grid container direction="column" justify="space-between" alignItems="flex-end">
+                <Grid item sm>
+                    <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </ListItem>
       </div>
       ))}

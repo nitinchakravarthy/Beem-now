@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Redirect } from 'react-router-dom';
-import { pink } from '@material-ui/core/colors';
+import { pink, green } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -43,13 +43,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    //backgroundColor: '#4db6ac',
   },
   card: {
-    //backgroundColor: theme.palette.common.white,
-    //boxShadow: '0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)',
-    //borderRadius: '15px',
-    //marginBottom: theme.spacing(1),
     width: '100%'
   },
   mainContainer: {
@@ -65,6 +60,11 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },
+  chatButton: {
+    margin: theme.spacing(3, 0, 2),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -115,6 +115,10 @@ export default function RideSummary(props) {
       console.log("Ride confirmed...")
   }
 
+  const handleChat = (event) => {
+      
+  }
+
   return (
     <Container component = "main" maxWidth='xs'>
       <CssBaseline />
@@ -137,6 +141,11 @@ export default function RideSummary(props) {
                      {"Mohinish"[0]}
                   </Avatar>
                   <Typography variant="body1" color="textSecondary">{departDriver}</Typography>
+                  <ThemeProvider theme={headingTheme}>
+                    <Button variant="contained" color = "primary" className={classes.chatButton} onClick = {handleChat}>
+                      Chat
+                    </Button>
+                  </ThemeProvider>
                 </ListItemAvatar>
                 <Grid container spacing={1}>
                   <Grid item xs>
@@ -152,7 +161,7 @@ export default function RideSummary(props) {
                   <Grid item md>
                     <ListItemText>
                       <Typography variant="h6" align = "center" color="textSecondary">Price</Typography>
-                     <Typography variant="h6" align = "center" color="textSecondary">{departPrice}$</Typography>
+                      <Typography variant="h6" align = "center" color="textSecondary">{departPrice}$</Typography>
                     </ListItemText>
                   </Grid>
                 </Grid>
@@ -172,6 +181,16 @@ export default function RideSummary(props) {
                          {"David"[0]}
                       </Avatar>
                       <Typography variant="body1" color="textSecondary">{returnDriver}</Typography>
+                      <ThemeProvider theme={headingTheme}>
+                        <Button
+                          variant="contained"
+                          color = "primary"
+                          className={classes.chatButton}
+                          onClick = {handleChat}
+                        >
+                          Chat
+                        </Button>
+                      </ThemeProvider>
                     </ListItemAvatar>
                     <Grid container spacing={1}>
                       <Grid item xs>
