@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 const User = require('./user');
 
@@ -8,14 +9,15 @@ const GeoSchema = new mongoose.Schema({
   type: {
       type: String,
       enum: ['Point'],
-      required: true
+      required: true,
+      default: "Point"
   },
   coordinates: {
     type: [Number],
-    index: "2dsphere",
     required: true
-  }
+  },
 });
+
 
 const rideSchema = new mongoose.Schema({
   host: { type: mongoose.Schema.Types.ObjectId,
@@ -47,7 +49,8 @@ const rideSchema = new mongoose.Schema({
   finalCoords : { type : GeoSchema,
               required : false }
 });
-
+rideSchema.index({initialCoords: "2dsphere"});
+rideSchema.index({finalCoords: "2dsphere"});
 const Ride = mongoose.model('Ride', rideSchema);
 
 module.exports = Ride;
