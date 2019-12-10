@@ -14,7 +14,6 @@ import Container from '@material-ui/core/Container';
 import SideDrawer from './SideDrawer';
 import PostRide from './PostRide';
 import SearchRide from './SearchRide';
-import DepartureRideList from './DepartureRideList';
 import DepartTrip from './DepartureRidesPage';
 import ReturnTrip from './ReturnRidesPage';
 import RideSummary from './RideSummary';
