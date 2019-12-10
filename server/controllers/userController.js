@@ -75,7 +75,7 @@ exports.signUpHandler = function (req,res,next){
         // Change the service
         // var transporter = nodemailer.createTransport({ service: 'Sendgrid',
         //                                                 auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount?' + '?token=' + token.token;
+        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount\/' + token.token;
         const mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'New Account Verification',
                             text: 'Hello, \n\n To verify your email, please click on the link below. \n\n' + link  + '.\n\n' };
         console.log(mailOptions);
@@ -83,7 +83,7 @@ exports.signUpHandler = function (req,res,next){
         transporter.sendMail(mailOptions, function (err) {
                 if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
                 console.log("Mail sent");
-                const resp = {'verified': false, 'mailSent': true, 'email': user.email};
+                const resp = {error_code:0, verified: false, mailSent: true, email: user.email, msg:'Confirmation email sent'};
                 res.status(200).send(resp);
         });
       });
@@ -136,7 +136,7 @@ exports.resendToken = function(req,res,next){
     token.save(function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
-        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount?' + '?token=' + token.token;
+        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount\/?' + token.token;
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
         var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Account Verification Resend',
             text: 'Hello, \n\n To verify your email, please click on the link below. \n\n' + link  + '.\n\n' };

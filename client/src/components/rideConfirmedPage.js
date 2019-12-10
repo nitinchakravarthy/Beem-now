@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import CompanyLogo from '../logo.png';
+import { ToastContainer, toast } from 'react-toastify';
 
 function Copyright() {
   return (
@@ -61,76 +62,56 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AccountVerified(props) {
+export default function RideConfirmed(props) {
   const classes = useStyles();
-  const [emailError, setEmailError] = useState('');
-  const [token,setToken] = useState(props.match.params.token);
-  const [verificationText, setVerificationText] = useState("Verifying your account");
-  const [verified, setVerified] = useState(false);
-
-  const openStripe = (event) => {
-        //TODO
-        event.preventDefault();
-        console.log("openstripe");
-        // fetch('/payments/openStripe',{
-        //     method: 'GET',
-        // })
-  };
-
-  useEffect(() => {
-        console.log("in component did mount");
-        fetch( '/users/confirmation?token=' + token).then(response => response.json())
-        .then((data) => {
-            console.log(data);
-            setVerificationText("Account Verified");
-            setVerified(true);
-        }).catch((error) => {
-            console.log(error);
-            setVerificationText("unable to verify your account. Please resend and email and verifiy again.");
-            setVerified(false);
-        });
-    });
+  const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
+  const [departSuccess, setdepartSuccess] = useState(props.location.state.departSuccess);
+  const [returnSuccess, setreturnSuccess] = useState(props.location.state.returnSuccess);
+  const notify = (toastString) => {
+      toast(toastString);
+    };
 
   return (
+  <div>
+  <ToastContainer />
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <div className={classes.logo}>
           <img src = {CompanyLogo} />
         </div>
+        <form className={classes.form} onSubmit={resendToken}>
+        {roundTrip ?
         <Typography component="h1" variant="h5" align='center'>
-         {this.VerificationText}
+          Your ride request has been sent succesfully.
         </Typography>
-        <Typography variant="body1" align='center' style={{marginTop: '60px'}}>
-          Your account has been verified. Now you can login
+        :
+        <Typography component="h1" variant="h5" align='center'>
+          Your ride requests have been sent succesfully.
         </Typography>
-        {verified ? <div>
-        <form className={classes.form} onSubmit={openStripe}>
-        <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
-          Before continuing to login, please take a minute to connect your payments profile via stripe.
-        </Typography>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-        >
-          Connect to Stripe
-        </Button>
+        }
+        {roundTrip ?
+            <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
+              Your request has been succesfully sent to the host. You will recieve a ride confirmation email when the host accepts you ride request.
+            </Typography>
+            :
+            <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
+               Your request has been succesfully sent to the host. You will recieve a ride confirmation emails for your departure ride and your return rides when the hosts accepts you ride request.
+            </Typography>
+        }
           <Grid container>
             <Grid item xs={12}>
-              <Link href="/signin" variant="body2" className={classes.centerAlign}>
-                {"Go back to sign in page"}
-              </Link>
+             <Link href="/home" variant="body2" className={classes.centerAlign}>
+              {"Go back to Home page"}
+            </Link>
             </Grid>
           </Grid>
           </form>
-          </div> : null}
       </div>
       <Box mt={8}>
         <Copyright />
       </Box>
     </Container>
+    </div>
   );
 }
