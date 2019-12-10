@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import CompanyLogo from '../logo.png'
+import { ToastContainer, toast } from 'react-toastify';
 
 function Copyright() {
   return (
@@ -60,8 +61,11 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+const notify = (toastString) => {
+    toast(toastString);
+  };
 
-export default function SignIn() {
+export default function ForgotPassword() {
   const classes = useStyles();
   const [emailError, setEmailError] = useState('');
 
@@ -101,7 +105,11 @@ export default function SignIn() {
       }).then(response => response.json())
       .then(data => {
          console.log(data);
-      });
+         notify("An email has been sent. Please follow the instructions provided in the email to change your password.");
+     }).catch(error => {
+         console.log(data);
+         notify("We are unable process your request. Please try again later.");
+     });
   }
   return (
     <Container component="main" maxWidth="xs">

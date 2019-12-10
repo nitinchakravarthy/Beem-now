@@ -49,6 +49,7 @@ exports.createRide = function(req, res, next) {
         roundTrip : req.body.roundTrip,
         departDate : new Date(req.body.departDate),
         maxCapacity : req.body.maxCapacity,
+        capacityLeft : req.body.maxCapacity,
         pricePerSeat : req.body.pricePerSeat,
         originCity : req.body.originCity,
         destinationCity : req.body.destinationCity,
@@ -337,26 +338,141 @@ exports.chooseride = function(req,res,next){
       console.log(errors);
       if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
       console.log(req.body.uid);
-      console.log(req.body.depart_rid);
-      console.log(req.body.user);
-      Ride.find({_id : req.body.rid}).exec(function(err,ride){
-          if (err) return res.status(500).send({ msg: err.message });
-          const host = ride.host;
-          console.log(host);
-          console.log(host._id);
+      console.log(req.body.rid);
+      Ride.findOne({_id : req.body.rid}).populate('host').populate('riders').exec(function(err,ride){
+            if (err) return res.status(500).send({ msg: err.message });
+            console.log("found ride");
+            User.findOne({_id: req.body.uid},function(err,user){
+                if (err) { return res.status(500).send({ msg: err.message }); }
+                if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
+                if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
 
-          const mailOptions = { from: process.env.SENDGRID_EMAIL, to: host.email, subject: 'Someone wants to pick your ride',
-                            text: "Hi, " + req.body.user.name + " wants to choose your ride from " + ride.originCity + " to " + ride.destinationCity };
-          console.log(mailOptions);
-          // notify the host that a person wants to ride with them.
-          transporter.sendMail(mailOptions, function (err) {
-                  if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
-                  console.log("Mail sent");
-                  const resp = {'mailSent': true, 'email': user.email};
-                  res.status(200).send(resp);
-          });
-      })
-  }
+              const mailOptions_host = { from: process.env.SENDGRID_EMAIL, to: host.email, subject: 'Someone wants to pick the ride you posted',
+                                text: "Hi, " + user.first_name + " wants to ride with you from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + "." };
+              console.log(mailOptions_host);
+              // notify the host that a person wants to ride with them.
+              transporter.sendMail(mailOptions_host, function (err) {
+                      if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
+                      console.log("Mail sent");
+                      const resp = {'mailSent': true, 'email': host.email, rideStatus:'REQUEST_SENT'};
+                      res.status(200).send(resp);
+              });
+
+            });
+      });
+}
+exports.rideConfirmed = function(req,res,next){
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+    console.log(req.query.uid);
+    console.log(req.query.rid);
+    Ride.findOne({_id : req.query.rid}).populate('host').populate('riders').exec(function(err,ride){
+        if (err) return res.status(500).send({ msg: err.message });
+        console.log("found ride");
+        var riders = ride.riders;
+        User.findOne({_id: req.query.uid},function(err,user){
+            if (err) { return res.status(500).send({ msg: err.message }); }
+            if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
+            if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
+
+            riders.push(user)
+            ride.riders = riders;
+            ride.capacityLeft = ride.capacityLeft-1;
+            ride.save(function(err){
+                if (err)  { return res.status(500).send({ msg: err.message }); }
+                const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been accepted',
+                                  text: "Hi, Your Ride with "+ host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
+                console.log(mailOptions_self);
+                transporter.sendMail(mailOptions_self, function (err) {
+                        if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
+                        console.log("Mail sent");
+                        return res.status(200).json({rideStatus:'COMFIRMED', ride: ride });
+                        //const resp = {'mailSent': true, 'email': user.email};
+                        //res.status(200).send(resp);
+                });
+            });
+        });
+    });
+}
+
+exports.rideRejected = function(req,res,next){
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+    console.log(req.query.uid);
+    console.log(req.query.rid);
+    Ride.findOne({_id : req.query.rid}).populate('host').populate('riders').exec(function(err,ride){
+        if (err) return res.status(500).send({ msg: err.message });
+        console.log("found ride");
+        var riders = ride.riders;
+        User.findOne({_id: req.query.uid},function(err,user){
+            if (err) { return res.status(500).send({ msg: err.message }); }
+            if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
+            if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
+
+            const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been accepted',
+                              text: "Hi, Your Ride with "+ host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
+            console.log(mailOptions_self);
+            transporter.sendMail(mailOptions_self, function (err) {
+                    if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
+                    console.log("Mail sent");
+                    return res.status(200).json({rideStatus:'REJECTED', ride: ride });
+            });
+
+        });
+    });
+}
+// exports.chooseride = function(req,res,next){
+//       const errors = validationResult(req);
+//       console.log(errors);
+//       if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+//       console.log(req.body.uid);
+//       console.log(req.body.rid);
+//       Ride.findOne({_id : req.body.rid}).populate('host').populate('riders').exec(function(err,ride){
+//           if (err) return res.status(500).send({ msg: err.message });
+//           console.log("found ride");
+//           console.log(ride);
+//           var host = ride.host;
+//           console.log(host._id);
+//
+//           User.findOne({_id: req.body.uid},function(err,user){
+//               if (err) { return res.status(500).send({ msg: err.message }); }
+//               if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
+//               if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
+//               console.log("found user with uid");
+//
+//               var riders = ride.riders;
+//               riders.push(user)
+//               ride.riders = riders;
+//               ride.capacityLeft = ride.capacityLeft-1;
+//               ride.save(function(err){
+//                   if (err)  { return res.status(500).send({ msg: err.message }); }
+//                   return res.status(200).json({rideStatus:'COMFIRMED', ride: ride });
+//                 });
+//               const mailOptions_host = { from: process.env.SENDGRID_EMAIL, to: host.email, subject: 'Someone wants to pick your ride',
+//                                 text: "Hi, " + user.first_name + " wants to ride with you from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + "." };
+//               console.log(mailOptions_host);
+//               // notify the host that a person wants to ride with them.
+//               transporter.sendMail(mailOptions_host, function (err) {
+//                       if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
+//                       console.log("Mail sent");
+//                       //const resp = {'mailSent': true, 'email': host.email};
+//                       //res.status(200).send(resp);
+//               });
+//
+//               const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Someone wants to pick your ride',
+//                                 text: "Hi, Your Ride with "+ host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
+//               console.log(mailOptions_self);
+//               transporter.sendMail(mailOptions_self, function (err) {
+//                       if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
+//                       console.log("Mail sent");
+//                       //const resp = {'mailSent': true, 'email': user.email};
+//                       //res.status(200).send(resp);
+//               });
+//           });
+//       });
+//   }
 
 
   // exports.searchRideExhaustive = function(req, res, next) {

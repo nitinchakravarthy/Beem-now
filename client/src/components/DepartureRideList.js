@@ -137,7 +137,7 @@ export default function DepartureRideList(props) {
         </ListItem>
       </div>
       ))}
-    </List> 
+    </List>
     </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
     </div>
   );

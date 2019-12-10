@@ -32,8 +32,8 @@ router.post('/resendToken', [check('email','Email is not valid').not().isEmpty()
 router.post('/requestPasswordReset',[check('email','Email is not valid').not().isEmpty().isEmail().normalizeEmail({ remove_dots: false })],
                             userController.resetPasswordStart);
 
-router.get('/setNewPassword',[check('token', 'token cannot be empty').not().isEmpty()],
-                            userController.SendPasswordResetPage);
+// router.get('/setNewPassword',[check('token', 'token cannot be empty').not().isEmpty()],
+//                             userController.SendPasswordResetPage);
 
 router.post('/resetPassword',[check('token', 'token cannot be empty').not().isEmpty(),
                             check('newPassword', 'Password must be at least 4 characters long').not().isEmpty().isLength({min: 4}),
@@ -53,15 +53,5 @@ router.post('/editProfile',[check('uid','uid cannot be empty').not().isEmpty()],
 // need a method to update payment options
 
 router.get('/logout',[check('uid','uid cannot be empty').not().isEmpty()],userController.logout);
-
-// post id in the queries for these get reqests
-// router.get('/ridesPosted',[check('uid','uid cannot be empty').not().isEmpty()],);
-//
-// router.get('/ridestaken',[check('uid','uid cannot be empty').not().isEmpty()], );
-//
-// router.get('/itemsPosted',[check('uid','uid cannot be empty').not().isEmpty()], );
-//
-// router.get('/itemsPicked',[check('uid','uid cannot be empty').not().isEmpty()],);
-
 
 module.exports = router;

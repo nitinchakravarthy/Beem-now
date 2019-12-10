@@ -81,8 +81,12 @@ router.get('/userRideInfo',
   ], rideController.searchRide);
 
   router.post('/chooseride', [check('uid', 'Please log in to post rides').not().isEmpty(),
-                              check('user','Invalid user').not().isEmpty(),
-                              check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
-                              check('depart_rid','Invalid ride object Id').not().isEmpty(),], rideController.chooseride);
+                              check('rid','Invalid ride object Id').not().isEmpty(),], rideController.chooseride);
+
+  router.get('/updateRideConfirmed', [check('uid', 'Please log in to post rides').not().isEmpty(),
+                              check('rid','Invalid ride object Id').not().isEmpty()],rideController.rideConfirmed);
+
+  router.get('/updateRideRejected', [check('uid', 'Please log in to post rides').not().isEmpty(),
+                              check('rid','Invalid ride object Id').not().isEmpty()],rideController.rideRejected);
 
 module.exports = router;

@@ -30,11 +30,10 @@ const rideSchema = new mongoose.Schema({
                 required : true },
   maxCapacity : { type : Number,
                 required : true},
-  occupiedCapacity : { type : Number,
-                returied : true },
+  capacityLeft : { type : Number},
   pricePerSeat : { type : Number,
                 required : true },
-  riders : [String], // string array of rider UIDs
+  riders : [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // string array of rider UIDs
   originCity: { type : String,
               required : true },
   destinationCity : { type : String,

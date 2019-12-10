@@ -75,8 +75,9 @@ exports.signUpHandler = function (req,res,next){
         // Change the service
         // var transporter = nodemailer.createTransport({ service: 'Sendgrid',
         //                                                 auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
+        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount?' + '?token=' + token.token;
         const mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'New Account Verification',
-                          text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/users\/confirmation\/?token=' + token.token + '.\n' };
+                            text: 'Hello, \n\n To verify your email, please click on the link below. \n\n' + link  + '.\n\n' };
         console.log(mailOptions);
         // sgMail.send(mailOptions);
         transporter.sendMail(mailOptions, function (err) {
@@ -111,7 +112,8 @@ exports.confirmationPost = function(req,res,next){
       user.verified = true;
       user.save(function(err){
         if (err)  { return res.status(500).send({ msg: err.message }); }
-        res.status(200).send("The account has been verified. Please log in.");
+        delete user.password;
+        res.status(200).send({verified:true, user:user});
       });
     });
   });
@@ -134,11 +136,13 @@ exports.resendToken = function(req,res,next){
     token.save(function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
+        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount?' + '?token=' + token.token;
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/users\/confirmation\/?token=' + token.token + '.\n' };
+        var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Account Verification Resend',
+            text: 'Hello, \n\n To verify your email, please click on the link below. \n\n' + link  + '.\n\n' };
         transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
-            res.status(200).send('A verification email has been sent to ' + user.email + '.');
+            res.status(200).send( {resentEmail:true, email:user.email });
         });
     });
   });
@@ -177,41 +181,43 @@ exports.resetPasswordStart = function(req,res,next){
     token.save(function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
+        var link = '\nhttp:\/\/' + req.headers.host + '\/resetpassword?' + '?token=' + token.token;
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Password Reset', text: 'Hello,\n\n' + 'Please click on the link below to reset your password: \nhttp:\/\/' + req.headers.host + '\/users\/setNewPassword\/?token=' + token.token + '.\n' };
+        var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Password Reset',
+        text: 'Hello, \n\n Please click on the link below to reset your password. \n\n' + link  + '.\n\n' };
         transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
-            res.status(200).send('A verification email has been sent to ' + user.email + '.');
+            res.status(200).send({passwordResetStatus:"START", emailSent:true,email:user.email });
         });
     });
 
   });
 };
 
-exports.SendPasswordResetPage = function(req,res,next){
-  const errors = validationResult(req);
-  console.log(errors);
-  if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-
-  const token = req.query.token;
-  console.log(token);
-  // Find a matching token
-  Token.findOne({token : req.query.token}, function(err, token){
-    if(!token) res.status(400).send({ type: 'not-verified', msg: 'We were unable to find a valid token. Your token my have expired.' });
-
-    // If we found a token, find a matching user
-    User.findOne({_id: token._userId}, function(err,user){
-      if (err) { return res.status(500).send({ msg: err.message }); }
-      if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
-      if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
-
-      // send the password reset page
-      res.sendFile(path.join(path.resolve(__dirname, '..'), 'public','setNewPassword.html'));
-      //console.log("before render");
-      //res.render("http://http://192.168.0.5:3000/resetPassword");
-    });
-  });
-};
+// exports.SendPasswordResetPage = function(req,res,next){
+//   const errors = validationResult(req);
+//   console.log(errors);
+//   if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
+//
+//   const token = req.query.token;
+//   console.log(token);
+//   // Find a matching token
+//   Token.findOne({token : req.query.token}, function(err, token){
+//     if(!token) res.status(400).send({ type: 'not-verified', msg: 'We were unable to find a valid token. Your token my have expired.' });
+//
+//     // If we found a token, find a matching user
+//     User.findOne({_id: token._userId}, function(err,user){
+//       if (err) { return res.status(500).send({ msg: err.message }); }
+//       if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
+//       if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
+//
+//       // send the password reset page
+//       res.sendFile(path.join(path.resolve(__dirname, '..'), 'public','setNewPassword.html'));
+//       //console.log("before render");
+//       //res.render("http://http://192.168.0.5:3000/resetPassword");
+//     });
+//   });
+// };
 
 exports.resetPasswordEnd = function(req,res,next){
   const errors = validationResult(req);
@@ -232,7 +238,7 @@ exports.resetPasswordEnd = function(req,res,next){
           user.password = req.body.newPassword;
           user.save(function(err){
             if (err)  { return res.status(500).send({ msg: err.message }); }
-            res.status(200).send("Password updated");
+            res.status(200).send({passwordResetStatus:"END", passwordUpdated:true});
           });
       });
     });

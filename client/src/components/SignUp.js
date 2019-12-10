@@ -18,6 +18,7 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import { Redirect } from 'react-router-dom';
 import CompanyLogo from '../logo.png'
+import { ToastContainer, toast } from 'react-toastify';
 
 function Copyright() {
   return (
@@ -89,7 +90,7 @@ export default function SignUp() {
   const [agreementError, setAgreementError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [agreeToTermsOfUse, setAgreeToTermsOfUse] = useState(false);
-
+  const [email,setEmail] = useState('');
   const validateEmailAddress = (event) =>{
       console.log("password")
       let name = event.target.name
@@ -199,6 +200,10 @@ export default function SignUp() {
       }
       return success
   }
+
+  const notify = (toastString) => {
+      toast(toastString);
+    };
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
@@ -212,7 +217,6 @@ export default function SignUp() {
               gender: data.get('gender')
           }
           //console.log(body);
-
           fetch('/users/signup', {
             method: 'POST',
             headers: {
@@ -223,20 +227,24 @@ export default function SignUp() {
           }).then(response => response.json())
           .then((data) => {
              console.log(data);
+             setEmail(data.get('email'));
              setSignUpSuccess(data);
              setAccountCreated(true);
          }).catch( (error) => {
+            notify("unable to create a new account. Please try again later.");
              console.log(error);
          });
       }
   }
   return (
       <div>
-      { accountCreated ? <Redirect to={{ pathname : "/signin",
-                                        state : {accountCreated :{accountCreated},
-                                                signUpSucess: {signUpSucess}
-                                        }
-                                        }}  /> : null}
+      {accountCreated ? <Redirect to={{ pathname : "/resendToken",
+                                    state : {accountCreated :{accountCreated},
+                                            signUpSucess: {signUpSucess},
+                                            email: {email}
+                                    }
+        }} />: null }
+    <ToastContainer />
      <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -366,10 +374,10 @@ export default function SignUp() {
               Sign Up
             </Button>
             <Grid container justify="flex-end">
-              <Grid item>
-                <Link href="/signin" variant="body2">
-                  Already have an account? Sign in
-                </Link>
+              <Grid item >
+                  <Link href="/signin" variant="body2">
+                    {"Sign in"}
+                  </Link>
               </Grid>
             </Grid>
           </form>

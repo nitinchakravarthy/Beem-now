@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -109,7 +109,7 @@ export default function SignIn(props) {
 
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
       console.log("log in notify");
       console.log(signUpSucess);
       if (signUpSucess.mailSent) {
