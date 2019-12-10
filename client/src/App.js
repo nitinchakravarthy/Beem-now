@@ -14,6 +14,7 @@ import ChangePassword from './components/changepassword';
 import FriendList from './components/FriendList';
 import Dashboard from './components/Dashboard';
 import TermsOfService from './components/TermsOfService';
+import ConfirmRideEmail from './components/confirmRideEmail';
 import { Switch, Route, Link } from 'react-router-dom'
 
 function App(app) {
@@ -32,6 +33,7 @@ function App(app) {
       <Route exact path="/resetpassword" component={ChangePassword}/>
       <Route exact path = '/friendList' component = {FriendList}/>
       <Route exact path = '/chat' component = {Dashboard}/>
+      <Route exact path = '/confirmride' component = {ConfirmRideEmail}/>
 
       /* add 404 page */
       <Route path="*" component={ErrorNotFound} />

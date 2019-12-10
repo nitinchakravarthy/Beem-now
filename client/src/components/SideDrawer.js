@@ -126,7 +126,7 @@ export default function Home(props) {
       setIsRideHistoryClicked(false)
       const params = {
         user_id: localStorage.getItem('uid'),
-      } 
+      }
       fetch('/rides/rideHistory', {
         method: 'POST',
         headers: {
@@ -228,7 +228,7 @@ export default function Home(props) {
               </ListItemIcon>
             <ListItemText primary={"Post a Ride"} />
           </ListItemLink>
-          
+
           <ListItem button key = {"ridehistory"} onClick = {handleSelect}>
               <ListItemIcon>
                 <Icon><img src={historyIcon}/></Icon>
