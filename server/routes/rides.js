@@ -92,7 +92,7 @@ router.get('/userRideInfo',
 
   router.post('/rideHistory',
   [
-    //check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+    check('user_id', 'Please login to search for rides').not().isEmpty(),
     //check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
     //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
     //check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
