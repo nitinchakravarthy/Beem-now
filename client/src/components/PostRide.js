@@ -66,9 +66,6 @@ export default function PostRide() {
       const uid = localStorage.getItem('uid');
       console.log(uid);
       const data = new FormData(event.target);
-      if(data.get('email') === 'A' &&  data.get('password') === 'B'){
-        setIsAuthenticated(true);
-      }
       console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
       const body = {
         uid: uid,
@@ -240,7 +237,7 @@ export default function PostRide() {
                 name = "returnDate"
                 value={selectedDateReturn}
                 onChange={date => handleDateChangeReturn(date)}
-                minDate={selectedDate}
+                minDate={isChecked? selectedDate:null}
                 minDateMessage="Return Date should be after Depart Date"
                 format="MM/dd/yyyy"
                 autoFocus
