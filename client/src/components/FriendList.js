@@ -22,7 +22,7 @@ import { Input } from '@material-ui/core';
 const useStyles=makeStyles(theme =>({
 
     root:{
-      margin:'50px',
+      marginTop : theme.spacing(5),
       padding:theme.spacing(3,2),
     },
     flex:{
@@ -47,7 +47,7 @@ const useStyles=makeStyles(theme =>({
     },
     chat:{
         borderBottom: "1px solid rgb(212, 212, 212)" ,
-        //Can add styles to chat if want to afterwards
+        //Can add styles to chat if want to afterwards  
     },
     pink: {
       color: '#fff',
@@ -60,7 +60,7 @@ const useStyles=makeStyles(theme =>({
 
 export default function FriendList(props){
 
-  console.log("name = "+props.location.state.name)
+  console.log("name = "+props.location.state.name) 
 
     const classes = useStyles();
 
@@ -106,7 +106,7 @@ export default function FriendList(props){
 
     }
     useEffect(() => {fetchFriends()},[])
-    console.log("date = "+Date.now())
+    console.log("date = "+Date.now()) 
 
     //users will be rendered in 2nd render, so first render need to be handled explicitly for users doesnt exist and users exist cases.
     if(users!=null){
@@ -114,10 +114,10 @@ export default function FriendList(props){
       return  <div><Avatar className={classes.pink}>
               <PageviewIcon />
               </Avatar>
-              <Typography>Oops! No Old Chats Found</Typography>
+              <h2>Oops! No Old Chats Found</h2>
               </div>
-          }
     }
+  }
     var chatList = ''
     if(users!=null)
     {chatList = users.map(user =>{
@@ -135,7 +135,7 @@ export default function FriendList(props){
             variant="body2"
             className={classes.inline}
             color="textPrimary"
-          >
+          >         
             <div   style={{ whiteSpace: 'pre-wrap' ,color : "grey"}}>Last message at: {getDate(user.msgs[user.msgs.length-1].time)}</div>
           </Typography>
           <div>{user.msgs[user.msgs.length-1].from+":"+user.msgs[user.msgs.length-1].message}</div>
@@ -145,7 +145,7 @@ export default function FriendList(props){
         </ListItem>
       })}
     return(
-        <div>
+        <div className = {classes.root}>
 
           {chatList}
 

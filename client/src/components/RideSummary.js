@@ -18,6 +18,8 @@ import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import {Link } from 'react-router-dom'
+
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -115,10 +117,6 @@ export default function RideSummary(props) {
       console.log("Ride confirmed...")
   }
 
-  const handleChat = (event) => {
-      
-  }
-
   return (
     <Container component = "main" maxWidth='xs'>
       <CssBaseline />
@@ -142,7 +140,8 @@ export default function RideSummary(props) {
                   </Avatar>
                   <Typography variant="body1" color="textSecondary">{departDriver}</Typography>
                   <ThemeProvider theme={headingTheme}>
-                    <Button variant="contained" color = "primary" className={classes.chatButton} onClick = {handleChat}>
+                    <Button variant="contained" color = "primary" className={classes.chatButton} component = {Link} to={{
+                    pathname:'/chat', state: { to: departDriver, name: "Rishabh"}}}>
                       Chat
                     </Button>
                   </ThemeProvider>
@@ -186,7 +185,8 @@ export default function RideSummary(props) {
                           variant="contained"
                           color = "primary"
                           className={classes.chatButton}
-                          onClick = {handleChat}
+                          component = {Link} to={{
+                          pathname:'/chat', state: { to: returnDriver, name: user.name}}}
                         >
                           Chat
                         </Button>
