@@ -101,8 +101,9 @@ export default function ReturnRidesPage(props) {
   const [destinationCity, setDestinationCity] = useState(props.location.state.destinationCity);
   const [dates, setDates] = useState(props.location.state.dates)
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
-  const [departId, setDepartId] = useState(props.departId);
-  const [returnId, setReturnId] = useState('');
+  const [selectedDepartRide, setSelectedDepartRide] = useState(props.location.state.selectedDepartRide);
+  console.log(selectedDepartRide)
+  const [selectedReturnRide, setSelectedReturnRide] = useState('');
   const [isClicked, setIsClicked] = useState(false);
 
   const [value, setValue] = React.useState(15);
@@ -113,7 +114,8 @@ export default function ReturnRidesPage(props) {
 
   const handleSelect = (item) => {
       console.log(item._id)
-      setReturnId(item._id)
+      setSelectedReturnRide(item)
+
       setIsClicked(true)
   }
 
@@ -192,45 +194,43 @@ export default function ReturnRidesPage(props) {
         {dates.map((date, index) => (
             <TabPanel value={value} index={index}>
               <div>
-    {returnRides.length != 0 ?
-    <div>
-    {isClicked ? <Redirect to={{pathname:"/ridesummary", 
-                                state: {
-                                  roundTrip: roundTrip,
-                                  departId: departId, 
-                                  returnId: returnId, 
-                                  originCity: originCity, 
-                                  destinationCity: destinationCity,
-                                }}}/> : null}
-    <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>
-    <CssBaseline />
-    <List>
-      {returnRides.map(item => (
-      <div className = {classes.card}>
-        <ListItem button key={item._id} alignItems="flex-start">
-          <ListItemAvatar className = {classes.avatarBlock}>
-            <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
-               {item.host.first_name[0]}
-            </Avatar>
-            <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
-          </ListItemAvatar>
-          <Container maxWidth='md'>
-            <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
-              <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
-              <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-              <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-              <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
-              <Typography variant="subtitle2" align='justify' color="textSecondary">
-                {formatDepartureDate(item.departDate)}
-              </Typography>
-              <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
-            </ListItemText>
-          </Container>
-        </ListItem>
-      </div>
-      ))}
-    </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
-    </div>
+              {returnRides.length != 0 ?
+              <div>
+              {isClicked ? <Redirect to={{pathname:"/ridesummary", 
+                                          state: {
+                                            roundTrip: roundTrip,
+                                            selectedDepartRide: selectedDepartRide, 
+                                            selectedReturnRide: selectedReturnRide, 
+                                          }}}/> : null}
+              <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>
+              <CssBaseline />
+              <List>
+                {returnRides.map(item => (
+                <div className = {classes.card}>
+                  <ListItem button key={item._id} alignItems="flex-start">
+                    <ListItemAvatar className = {classes.avatarBlock}>
+                      <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
+                         {item.host.first_name[0]}
+                      </Avatar>
+                      <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
+                    </ListItemAvatar>
+                    <Container maxWidth='md'>
+                      <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
+                        <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
+                        <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+                        <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
+                        <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+                        <Typography variant="subtitle2" align='justify' color="textSecondary">
+                          {formatDepartureDate(item.departDate)}
+                        </Typography>
+                        <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
+                      </ListItemText>
+                    </Container>
+                  </ListItem>
+                </div>
+                ))}
+              </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
+              </div>
             </TabPanel>
           ))}
         </div>

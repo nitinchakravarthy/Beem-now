@@ -29,8 +29,8 @@ function TabPanel(props) {
       component="div"
       role="tabpanel"
       hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
+      id= {`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby= {`scrollable-auto-tab-${index}`}
       {...other}
     >
       <Box p={3}>{children}</Box>
@@ -93,6 +93,7 @@ const headingTheme = createMuiTheme({
   },
 });
 
+
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
@@ -111,6 +112,7 @@ function getDates(date) {
     var currentDate = startDate;
     while (currentDate <= stopDate) {
         var t_date = new Date (currentDate);
+        
         var actualDate = String(t_date.getMonth()+1)+"/"+String(t_date.getDate())+"/"+String(t_date.getYear()+1900);
         dateArray.push([String(t_date.getDate())+" "+monthNames[t_date.getMonth()], actualDate]);
         currentDate = currentDate.addDays(1);
@@ -128,14 +130,14 @@ export default function DepartureRidesPage(props) {
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
   const [returnDateArray, setReturnDateArray] = useState(props.returnDate);
   const [isClicked, setIsClicked] = useState(false);
-  const [departId, setDepartId] = useState('');
+  const [selectedDepartRide, setSelectedDepartRide] = useState('');
   const [dates, setDates] = useState(props.location.state.dates);
   const [value, setValue] = React.useState(15);
 
   const handleSelect = (item) => {
       setReturnDateArray(getDates(returnDate))
       console.log(item._id)
-      setDepartId(item._id)
+      setSelectedDepartRide(item)
       setIsClicked(true)
   }
 
@@ -216,47 +218,47 @@ export default function DepartureRidesPage(props) {
           {dates.map((date, index) => (
               <TabPanel value={value} index={index}>
                 <div>
-    {departureRides.length != 0 ?
-    <div>
-    {isClicked ?
-        (roundTrip ?
-            <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip,departId: departId, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
-            <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip,departId:departId, originCity:originCity, destinationCity:destinationCity}}}/>
-        ): null}
-    <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
-    <CssBaseline />
-    <List>
-      {departureRides.map(item => (
-      <div className = {classes.card}>
-        <ListItem button key={item._id} alignItems="flex-start">
-          <ListItemAvatar className = {classes.avatarBlock}>
-            <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
-               {item.host.first_name[0]}
-            </Avatar>
-            <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
-          </ListItemAvatar>
-          <Container maxWidth='md'>
-            <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
-              <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
-              <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-              <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-              <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
-              <Typography variant="subtitle2" align='justify' color="textSecondary">
-                {formatDepartureDate(item.departDate)}
-              </Typography>
-              <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
-            </ListItemText>
+                  {departureRides.length != 0 ?
+                  <div>
+                  {isClicked ?
+                      (roundTrip ?
+                          <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip, selectedDepartRide: selectedDepartRide, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
+                          <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip, selectedDepartRide:selectedDepartRide, selectedReturnRide:null}}}/>
+                      ): null}
+                  <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
+                  <CssBaseline />
+                  <List>
+                    {departureRides.map(item => (
+                    <div className = {classes.card}>
+                      <ListItem button key={item._id} alignItems="flex-start">
+                        <ListItemAvatar className = {classes.avatarBlock}>
+                          <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
+                             {item.host.first_name[0]}
+                          </Avatar>
+                          <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
+                        </ListItemAvatar>
+                        <Container maxWidth='md'>
+                          <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
+                            <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
+                            <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+                            <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
+                            <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+                            <Typography variant="subtitle2" align='justify' color="textSecondary">
+                              {formatDepartureDate(item.departDate)}
+                            </Typography>
+                            <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
+                          </ListItemText>
+                        </Container>
+                      </ListItem>
+                    </div>
+                    ))}
+                  </List> 
+                  </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
+                  </div>
+                </TabPanel>
+                ))}
+              </div>
+            </div>
           </Container>
-        </ListItem>
-      </div>
-      ))}
-    </List> 
-    </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
-    </div>
-              </TabPanel>
-            ))}
-          </div>
-      </div>
-  </Container>
-  );
+        );
 }

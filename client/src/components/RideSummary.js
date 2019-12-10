@@ -82,18 +82,11 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
 
 export default function RideSummary(props) {
   const classes = useStyles();
-  const [departId, setDepartId] = useState(props.location.state.departId);
-  const [returnId, setreturnId] = useState(props.location.state.returnId);
-  const [originCity, setOriginCity] = useState(props.location.state.originCity);
-  const [destinationCity, setDestinationCity] = useState(props.location.state.destinationCity);
+  const [departureRide, setDepartureRide] = useState(props.location.state.selectedDepartRide);
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
-  const [departDriver, setDepartDriver] = useState('Mohinish');
-  const [returnDriver, setReturnDriver] = useState('David');
-  const [departDate, setDepartDate] = useState('2019-01-01T06:00:00.000Z');
-  const [returnDate, setReturnDate] = useState('2019-01-02T07:30:00.000Z');
-  const [departPrice, setDepartPrice] = useState(10);
-  const [returnPrice, setReturnPrice] = useState(15);
+  const [returnRide, setReturnRide] = useState(props.location.state.selectedReturnRide);
 
+  var totalCost = parseFloat(departureRide.pricePerSeat) + (roundTrip?parseFloat(returnRide.pricePerSeat):0.0)
   const formatDepartureDate = (date) => {
       var t = date.split('T')
       var time = t[1].split(':')
@@ -104,12 +97,6 @@ export default function RideSummary(props) {
       return dateString
   }
 
-  const calculateTotalPrice = () => {
-      var total = 15
-      if(roundTrip) total =  departPrice + returnPrice;
-      else total = departPrice;
-      return total.toString();
-  }
 
   const handleConfirm = (event) => {
       console.log("Ride confirmed...")
@@ -120,7 +107,7 @@ export default function RideSummary(props) {
   }
 
   return (
-    <Container component = "main" maxWidth='xs'>
+    <Container component = "main" maxWidth='lg'>
       <CssBaseline />
       <div className = {classes.paper}>
         <ThemeProvider theme={headingTheme}>
@@ -135,12 +122,12 @@ export default function RideSummary(props) {
             </div>
             <Divider />
             <div className = {classes.card}>
-              <ListItem key={departId} alignItems="flex-start">
+              <ListItem key={departureRide._id} alignItems="flex-start">
                 <ListItemAvatar className = {classes.avatarBlock}>
-                  <Avatar alt="No Image" src={null} className={classes.avatar}>
-                     {"Mohinish"[0]}
+                  <Avatar alt="No Image" src={departureRide.host.avatar} className={classes.avatar}>
+                     {departureRide.host.first_name[0]}
                   </Avatar>
-                  <Typography variant="body1" color="textSecondary">{departDriver}</Typography>
+                  <Typography variant="body1" color="textSecondary">{departureRide.host.first_name}</Typography>
                   <ThemeProvider theme={headingTheme}>
                     <Button variant="contained" color = "primary" className={classes.chatButton} onClick = {handleChat}>
                       Chat
@@ -149,19 +136,19 @@ export default function RideSummary(props) {
                 </ListItemAvatar>
                 <Grid container spacing={1}>
                   <Grid item xs>
-                    <ListItemText key={departId}>
-                      <Typography variant="body1" color="textSecondary">⦿ {originCity}</Typography>
+                    <ListItemText key={departureRide._id}>
+                      <Typography variant="body1" color="textSecondary">⦿ {departureRide.originCity}</Typography>
                       <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-                      <Typography variant="body1" color="textSecondary">⦿ {destinationCity}</Typography>
+                      <Typography variant="body1" color="textSecondary">⦿ {departureRide.originCity}</Typography>
                       <Typography variant="subtitle2" align='justify' color="textSecondary">
-                        {formatDepartureDate(departDate)}
+                        {formatDepartureDate(departureRide.departDate)}
                       </Typography>
                     </ListItemText>
                   </Grid>
                   <Grid item md>
                     <ListItemText>
                       <Typography variant="h6" align = "center" color="textSecondary">Price</Typography>
-                      <Typography variant="h6" align = "center" color="textSecondary">{departPrice}$</Typography>
+                      <Typography variant="h6" align = "center" color="textSecondary">{departureRide.pricePerSeat}$</Typography>
                     </ListItemText>
                   </Grid>
                 </Grid>
@@ -175,12 +162,12 @@ export default function RideSummary(props) {
                 </div>
                 <Divider />
                 <div className = {classes.card}>
-                  <ListItem key={returnId} alignItems="flex-start">
+                  <ListItem key={returnRide._id} alignItems="flex-start">
                     <ListItemAvatar className = {classes.avatarBlock}>
-                      <Avatar alt="No Image" src={null} className={classes.avatar}>
-                         {"David"[0]}
+                      <Avatar alt="No Image" src={returnRide.host.avatar} className={classes.avatar}>
+                         {returnRide.host.first_name[0]}
                       </Avatar>
-                      <Typography variant="body1" color="textSecondary">{returnDriver}</Typography>
+                      <Typography variant="body1" color="textSecondary">{returnRide.host.first_name}</Typography>
                       <ThemeProvider theme={headingTheme}>
                         <Button
                           variant="contained"
@@ -194,19 +181,19 @@ export default function RideSummary(props) {
                     </ListItemAvatar>
                     <Grid container spacing={1}>
                       <Grid item xs>
-                        <ListItemText key={departId}>
-                          <Typography variant="body1" color="textSecondary">⦿ {destinationCity}</Typography>
+                        <ListItemText key={returnRide._id}>
+                          <Typography variant="body1" color="textSecondary">⦿ {returnRide.destinationCity}</Typography>
                           <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-                          <Typography variant="body1" color="textSecondary">⦿ {originCity}</Typography>
+                          <Typography variant="body1" color="textSecondary">⦿ {returnRide.originCity}</Typography>
                           <Typography variant="subtitle2" align='justify' color="textSecondary">
-                            {formatDepartureDate(returnDate)}
+                            {formatDepartureDate(returnRide.departDate)}
                           </Typography>
                         </ListItemText>
                       </Grid>
                       <Grid item md>
                         <ListItemText>
                           <Typography variant="h6" align = "center" color="textSecondary">Price</Typography>
-                         <Typography variant="h6" align = "center" color="textSecondary">{returnPrice}$</Typography>
+                         <Typography variant="h6" align = "center" color="textSecondary">{returnRide.pricePerSeat}$</Typography>
                         </ListItemText>
                       </Grid>
                     </Grid>
@@ -215,10 +202,10 @@ export default function RideSummary(props) {
             </div>
             <Divider style = {{marginTop: '5%'}}/>
             <div className = {classes.card}>  
-              <ListItem key={departId} alignItems="flex-start">
+              <ListItem key={departureRide._id} alignItems="flex-start">
                 <Grid container direction="row" justify="space-between" alignItems="flex-start">
                  <Typography variant="h6" color="textSecondary">Total</Typography>
-                 <Typography variant="h6" color="textSecondary" className = {classes.priceTag}>{"25"}$</Typography>
+                 <Typography variant="h6" color="textSecondary" className = {classes.priceTag}>{totalCost}$</Typography>
                 </Grid>
               </ListItem>
             </div>
