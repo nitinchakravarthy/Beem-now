@@ -264,7 +264,8 @@ export default function SearchRide() {
                 label = "Return Date"
                 value={selectedDateReturn}
                 onChange={date => handleDateChangeReturn(date)}
-                minDate={new Date()}
+                minDate={isChecked? selectedDate:null}
+                minDateMessage="Return Date should be after Depart Date"
                 format="MM/dd/yyyy"
                 autoFocus
               />
