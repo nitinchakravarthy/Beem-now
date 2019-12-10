@@ -80,6 +80,15 @@ router.get('/userRideInfo',
     check('destinationCity', 'Invalid Destination city').not().isEmpty(),
   ], rideController.searchRide);
 
+  router.post('/rideHistory',
+  [
+    //check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),
+    //check('departDate', 'Invalid departure date').not().isEmpty().not().isAfter('returnDate'),
+    //check('returnDate', 'Invalid return date').not().isEmpty().isAfter('departDate'),
+    //check('originCity', 'Invalid Origin city').not().isEmpty().isAlpha(),
+    //check('destinationCity', 'Invalid Destination city').not().isEmpty().isAlpha(),
+  ], rideController.rideHistory);
+
   router.post('/chooseride', [check('uid', 'Please log in to post rides').not().isEmpty(),
                               check('user','Invalid user').not().isEmpty(),
                               check('roundTrip', 'Invalid trip type').not().isEmpty().isBoolean(),

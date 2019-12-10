@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -19,6 +19,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import homeIcon from '../icons/home.svg';
 import profileIcon from '../icons/profile.svg';
+import { Redirect } from 'react-router-dom';
 import ridePostIcon from '../icons/ridepost.svg';
 import historyIcon from '../icons/history.svg';
 import messageIcon from '../icons/message.svg';
@@ -104,7 +105,10 @@ export default function Home(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-
+  const [driverRides, setDriverRides] = useState([]);
+  const [passengerRides, setPassengerRides] = useState([]);
+  const [isRideHistoryClicked, setIsRideHistoryClicked] = useState(false);
+  var redirect = null
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -116,10 +120,55 @@ export default function Home(props) {
   const clearLocalStorage = () => {
       console.log('clearing local storage');
       localStorage.clear();
+  };
+
+  const handleSelect = () => {
+      setIsRideHistoryClicked(false)
+      const params = {
+        user_id: localStorage.getItem('uid'),
+      } 
+      fetch('/rides/rideHistory', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(params)
+      }).then(response => response.json())
+      .then((data) => {
+         console.log(data);
+         if(data.error_code == 0){
+             var obj_d, obj_p
+             try {
+                obj_d = JSON.parse(data.driver_rides);
+                obj_p = JSON.parse(data.passenger_rides);
+              } catch (ex) {
+                console.error(ex);
+              }
+
+             setDriverRides(obj_d)
+             setPassengerRides(obj_p)
+             setIsRideHistoryClicked(true);
+         }else{
+             //notify(data.msg)
+         }
+     }).catch((error) => {
+         console.log(error);
+         //notify(error.msg)
+     });
+     handleDrawerClose()
+  };
+
+  if (isRideHistoryClicked) {
+    redirect = <Redirect to={{pathname: "/ridehistory",state: {driverRides: driverRides,passengerRides: passengerRides}}}/>;
+  }
+  else {
+    redirect = null;
   }
 
   return (
     <div className={classes.root}>
+    {redirect}
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -163,7 +212,7 @@ export default function Home(props) {
               <ListItemIcon>
                 <Icon><img src={homeIcon}/></Icon>
               </ListItemIcon>
-              <ListItemText primary={"Home"} />
+              <ListItemText pr4imary={"Home"} />
           </ListItemLink >
 
           <ListItemLink key={"profile"} href="#profile" onClick = {handleDrawerClose}>
@@ -179,13 +228,13 @@ export default function Home(props) {
               </ListItemIcon>
             <ListItemText primary={"Post a Ride"} />
           </ListItemLink>
-
-          <ListItemLink key = {"ridehistory"} href="#ridehistory" onClick = {handleDrawerClose}>
+          
+          <ListItem button key = {"ridehistory"} onClick = {handleSelect}>
               <ListItemIcon>
                 <Icon><img src={historyIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Ride History"} />
-          </ListItemLink>
+          </ListItem>
 
           <ListItem button key={"Messages"} component={Link} to={{
             pathname:'/friendList', state: {name: localStorage.getItem('first_name')}}}>
