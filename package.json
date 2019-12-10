@@ -4,8 +4,7 @@
   "description": "BEEM NOW APP - full stack environment",
   "main": "index.js",
   "scripts": {
-    "clientbuild": "cd client && npm install && npm bablebuild && npm run build"
-    "client": "cd client && npm install && npm bablebuild && npm start",
+    "client": "cd client && npm install && npm start",
     "server": "cd server && npm install && npm start",
     "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
