@@ -140,7 +140,7 @@ export default function Landing(props) {
       <Container>
             <p> Need to be somewhere? Beem-Now has got you covered ! With our app, now search for rides offered by
             fellow students going to same destination. This service is exclusively for students. Our platform
-            ensures value for money rides. Item delivery  can also be done with ride share. This way it is done. Some descriptive text. Some descriptive text. Some descriptive text.
+            ensures value for money rides. Item delivery  can also be done with ride share. This way it's done. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text. Some descriptive text.
             Some descriptive text. Some descriptive text.</p>
