@@ -81,16 +81,51 @@ export default function SearchRide() {
   const [destinationCity, setDestinationCity] = useState('');
   const [roundTrip, setRoundTrip] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [originCityError, setOriginCityError] = useState('');
+  const [destinationCityError, setDestinationCityError] = useState('');
 
   const handleSwitch  =  () =>{
     setIsChecked(prev => !prev);
   };
-
+  const handleInputChange = event => {
+    let name = event.target.name
+    let value = event.target.value
+    if(name === 'originCity'){
+      if (value === '') {
+          setOriginCityError('First name is required')
+      } else{
+          setOriginCityError('')
+      }
+    } else if(name === 'destinationCity'){
+      if (value === '') {
+          setDestinationCityError('Last Name is required')
+      } else{
+          setDestinationCityError('')
+      }
+    }
+  }
+  const handleEmptySubmission = data => {
+    var success = true
+    if (originCityError !== '' || destinationCityError !== '') {
+          success = false
+          return success
+        }
+    if(data.get('originCity') === '') {
+      setOriginCityError('Origin city is required')
+      success = false
+    }
+    if(data.get('destinationCity') === '') {
+      setDestinationCityError('Destination city is required')
+      success = false
+    }
+    return success
+  }
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
       const uid = localStorage.getItem('uid');
       console.log(uid);
+      const success = handleEmptySubmission(data);
       const params = {
           uid: uid,
           roundTrip: false,
@@ -105,33 +140,40 @@ export default function SearchRide() {
       setDestinationCity(data.get('destinationCity'));
       setDateArray(getDates(selectedDate));
       setRoundTrip(data.get('roundTrip'));
-      fetch('/rides/searchRide', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body:  JSON.stringify(params)
-      }).then(response => response.json())
-      .then((data) => {
-         if(data.error_code == 0){
-             var obj_d;
-             try {
-                obj_d = JSON.parse(data.departure_rides);
-                console.log(obj_d);
-              } catch (ex) {
-                console.error(ex);
-              }
-             setDepartureRides(obj_d)
-             setIsAuthenticated(true);
-         }else{
-             //notify(data.msg)
-         }
-     }).catch((error) => {
-         console.log("in error");
-         console.log(error);
-         //notify(error.msg)
-     });
+
+
+      if (success) {
+        fetch('/rides/searchRide', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body:  JSON.stringify(params)
+        }).then(response => response.json())
+        .then((data) => {
+           if(data.error_code == 0){
+               var obj_d, obj_r;
+               try {
+                  obj_d = JSON.parse(data.departure_rides);
+                  obj_r = JSON.parse(data.return_rides);
+                  console.log(obj_d);
+                  console.log(obj_r);
+                } catch (ex) {
+                  console.error(ex);
+                }
+               setDepartureRides(obj_d)
+               setReturnRides(obj_r)
+               setIsAuthenticated(true);
+           }else{
+               //notify(data.msg)
+           }
+       }).catch((error) => {
+           console.log("in error");
+           console.log(error);
+           //notify(error.msg)
+       });
+    }
   }
   const [expanded, setExpanded] = useState(false);
 
@@ -172,6 +214,9 @@ export default function SearchRide() {
             type="from"
             id="password"
             autoComplete="current-password"
+            error = {originCityError != ''}
+            helperText = {originCityError}
+            onChange = {handleInputChange}
           />
           <TextField
             variant="outlined"
@@ -183,6 +228,9 @@ export default function SearchRide() {
             name="destinationCity"
             autoComplete="email"
             autoFocus
+            error = {destinationCityError != ''}
+            helperText = {destinationCityError}
+            onChange = {handleInputChange}
           />
           <FormControlLabel
               control={

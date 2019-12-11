@@ -100,7 +100,7 @@ export default function SignUp() {
       }
       else{
           var email = event.target.value;
-          var reg = /^[a-zA-Z0-9/_/g]+@tamu\.edu$/;
+          var reg = /^[a-zA-Z0-9/_/g\.]+@tamu\.edu$/;
           var test = reg.test(email);
           if (test) {
               setEmailError('')
@@ -180,6 +180,9 @@ export default function SignUp() {
       }
       if(data.get('gender') === ''){
         setGenderError('Please make a selection')
+        success = false
+      }
+      if (emailError !== '') {
         success = false
       }
       if(data.get('email') === ''){
