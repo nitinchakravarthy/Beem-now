@@ -208,7 +208,7 @@ export default withRouter( function RideSummary(props) {
                   <ThemeProvider theme={headingTheme}>
                     <Button variant="contained" color = "primary" className={classes.chatButton} component = {Link} to={{
 
-                    pathname:'/chat', state: { to: departureRide.host.first_name, name: localStorage.getItem('first_name')}}}>
+                    pathname:'/home/chat', state: { to: departureRide.host.first_name, name: localStorage.getItem('first_name')}}}>
                       Chat
                     </Button>
                   </ThemeProvider>
@@ -254,7 +254,7 @@ export default withRouter( function RideSummary(props) {
                           className={classes.chatButton}
                           component = {Link} to={{
 
-                          pathname:'/chat', state: { to: returnRide.host.first_name, name: localStorage.getItem('first_name')}}}
+                          pathname:'/home/chat', state: { to: returnRide.host.first_name, name: localStorage.getItem('first_name')}}}
                         >
                           Chat
                         </Button>
