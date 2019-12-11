@@ -218,7 +218,7 @@ export default withRouter( function RideSummary(props) {
                     <ListItemText key={departureRide._id}>
                       <Typography variant="body1" color="textSecondary">⦿ {departureRide.originCity}</Typography>
                       <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-                      <Typography variant="body1" color="textSecondary">⦿ {departureRide.originCity}</Typography>
+                      <Typography variant="body1" color="textSecondary">⦿ {departureRide.destinationCity}</Typography>
                       <Typography variant="subtitle2" align='justify' color="textSecondary">
                         {formatDepartureDate(departureRide.departDate)}
                       </Typography>
@@ -263,9 +263,9 @@ export default withRouter( function RideSummary(props) {
                     <Grid container spacing={1}>
                       <Grid item xs>
                         <ListItemText key={returnRide._id}>
-                          <Typography variant="body1" color="textSecondary">⦿ {returnRide.destinationCity}</Typography>
-                          <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
                           <Typography variant="body1" color="textSecondary">⦿ {returnRide.originCity}</Typography>
+                          <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+                          <Typography variant="body1" color="textSecondary">⦿ {returnRide.destinationCity}</Typography>
                           <Typography variant="subtitle2" align='justify' color="textSecondary">
                             {formatDepartureDate(returnRide.departDate)}
                           </Typography>

@@ -195,7 +195,7 @@ export default function SearchRide(props) {
         }).then(response => response.json())
         .then((data) => {
            if(data.error_code == 0){
-               var obj_d;
+               var obj_d
                try {
                   obj_d = JSON.parse(data.departure_rides);
                   console.log(obj_d);
