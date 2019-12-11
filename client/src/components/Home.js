@@ -21,30 +21,24 @@ import RideSummary from './RideSummary';
 import FriendList from './FriendList';
 import Dashboard from './Dashboard';
 import RideHistory from './RideHistoryPage'
-
 import RideConfirmed from './rideConfirmedPage';
-// import RideHistory from './RideHistoryPage';
 
-import { Switch, Route, Link, HashRouter, NavLink} from 'react-router-dom';
+import { Switch, Route, Link, HashRouter, BrowserRouter} from 'react-router-dom';
 export default function Home() {
   return (
-      <HashRouter>
-        <div>
-          <div className="header">
-            <SideDrawer>...</SideDrawer>
-          </div>
-          <div className="content">
-            <Route exact path="/" component={SearchRide}/>
-            <Route path="/departresults" component={DepartTrip}/>
-            <Route path="/returnresults" component={ReturnTrip}/>
-            <Route path="/postride" component={PostRide}/>
-            <Route path="/ridesummary" component={RideSummary}/>
-            <Route path="/rideconfirmed" component={RideConfirmed}/>
-            <Route path="/ridehistory" component={RideHistory}/>
-            <Route exact path = '/friendList' component = {FriendList}/>
-            <Route exact path = '/chat' component = {Dashboard}/>
-          </div>
+      <BrowserRouter>
+        <div className="container">
+          <Route exact path="/home" component={SearchRide}/>
+          <Route path="/home/departresults" component={DepartTrip}/>
+          <Route path="/home/returnresults" component={ReturnTrip}/>
+          <Route path="/home/postride" component={PostRide}/>
+          <Route path="/home/ridesummary" component={RideSummary}/>
+          <Route path="/home/rideconfirmed" component={RideConfirmed}/>
+          <Route path="/home/ridehistory" component={RideHistory}/>
+          <Route path = '/home/friendList' component = {FriendList}/>
+          <Route path = '/home/chat' component = {Dashboard}/>
+          <SideDrawer />
         </div>
-      </HashRouter>
+       </BrowserRouter> 
     );
 }

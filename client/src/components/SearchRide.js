@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { KeyboardDatePicker, MuiPickersUtilsProvider, KeyboardTimePicker} from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import Switch from '@material-ui/core/Switch';
@@ -86,9 +86,9 @@ function getDates(date) {
 }
 console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
-
 export default function SearchRide(props) {
   const classes = useStyles();
+  let history = useHistory();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedDate, handleDateChange] = useState(new Date());
   const [selectedDateReturn, handleDateChangeReturn] = useState(new Date());
@@ -111,7 +111,16 @@ export default function SearchRide(props) {
         if(postSuccess){
             notify("Your ride was posted Successfully");
         }
+        setPostSuccess(false)
     });
+
+  history.listen((location, action) => {
+      if(location.pathname == "/home" && action == "POP"){
+      console.log("InHome")
+      history.replace({pathname: "/home"})
+    } 
+  })
+
   const handleSwitch  =  () =>{
     setIsChecked(prev => !prev);
   };
@@ -186,17 +195,14 @@ export default function SearchRide(props) {
         }).then(response => response.json())
         .then((data) => {
            if(data.error_code == 0){
-               var obj_d, obj_r;
+               var obj_d
                try {
                   obj_d = JSON.parse(data.departure_rides);
-                  obj_r = JSON.parse(data.return_rides);
                   console.log(obj_d);
-                  console.log(obj_r);
                 } catch (ex) {
                   console.error(ex);
                 }
                setDepartureRides(obj_d)
-               setReturnRides(obj_r)
                setIsAuthenticated(true);
            }else{
                //notify(data.msg)
@@ -216,18 +222,18 @@ export default function SearchRide(props) {
  const [value, setValue] = useState();
   return (
     <div>
-    {isAuthenticated ? <Redirect to={{
-                              pathname: "/departresults",
-                              state: {
-                                roundTrip:roundTrip,
-                                departure_rides: departureRides,
-                                originCity: originCity,
-                                destinationCity: destinationCity,
-                                dates: dateArray,
-                                returnDate: selectedDateReturn,
-                                seats:seats
-                              }
-                              }}/> : null}
+    {isAuthenticated ? props.history.push({
+                                          pathname: "/home/departresults",
+                                          state: {
+                                            roundTrip:roundTrip,
+                                            departure_rides: departureRides,
+                                            originCity: originCity,
+                                            destinationCity: destinationCity,
+                                            dates: dateArray,
+                                            returnDate: selectedDateReturn,
+                                            seats:seats
+                                          },
+                                            }) : null }
     <ToastContainer />
     <Container component="main" maxWidth="xs">
       <CssBaseline />

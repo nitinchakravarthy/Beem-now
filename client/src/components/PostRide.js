@@ -188,7 +188,7 @@ export default function PostRide() {
  const [value, setValue] = useState();
   return (
     <div>
-    {isAuthenticated ? <Redirect to={{pathname:"/" , state: {postSuccess:true} }}/> : null}
+    {isAuthenticated ? <Redirect to={{pathname:"/home" , state: {postSuccess:true} }}/> : null}
     <ToastContainer />
     <Container component="main" maxWidth="xs">
       <CssBaseline />

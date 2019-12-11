@@ -18,7 +18,7 @@ import BgImageLarge from '../background_large.jpg';
 import BgImageMedium from '../background_medium.jpg';
 import BgImageSmall from '../background_small.jpg';
 import Link from '@material-ui/core/Link';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -98,6 +98,7 @@ ScrollTop.propTypes = {
 
 export default function Landing(props) {
   const classes = useStyles();
+  let history = useHistory();
   const [directToSignIn, setDirectToSignIn] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!(localStorage.getItem('uid') === null));
   
@@ -107,11 +108,12 @@ export default function Landing(props) {
   const sendToSignIn = event => {
     setDirectToSignIn(true)
   }
+
   return (
       <div>
-    {isAuthenticated ? <Redirect to="/home"/> : null}
+    {isAuthenticated ? props.history.push({pathname: "/home"}) : null}
     <React.Fragment>
-      {directToSignIn ? <Redirect to="/signin"/> : null}
+      {directToSignIn ? props.history.push({pathname: "/signin"}) : null}
       <CssBaseline />
       <AppBar>
         <Toolbar>

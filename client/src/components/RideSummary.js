@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import { pink, green } from '@material-ui/core/colors';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -84,7 +84,7 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
 
-export default function RideSummary(props) {
+export default withRouter( function RideSummary(props) {
   const classes = useStyles();
   const [departureRide, setDepartureRide] = useState(props.location.state.selectedDepartRide);
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
@@ -92,6 +92,8 @@ export default function RideSummary(props) {
   const [departSuccess, setdepartSuccess] = useState(false);
   const [returnSuccess, setReturnSuccess] = useState(false);
   const [ridesRequested, setRidesRequested] = useState(false);
+  const [departId, setDepartId] = useState(props.location.state.departId);
+  const [returnId, setReturnId] = useState(props.location.state.returnId);
   const [seats, setSeats] = useState(props.location.state.seats);
 
   const notify = (toastString) => {
@@ -124,11 +126,11 @@ export default function RideSummary(props) {
   }
   const handleRoundTrip = () => {
         console.log("handling roundtrip");
-        chooseRidePost(departId,handleDepartResponse);
-        chooseRidePost(returnId,handleReturnResponse);
+        chooseRidePost(departureRide._id,handleDepartResponse);
+        chooseRidePost(returnRide._id,handleReturnResponse);
   }
   const handleSingleRide = () => {
-      chooseRidePost(departId,handleDepartResponse);
+      chooseRidePost(departureRide._id,handleDepartResponse);
   }
   const handleDepartResponse = (resp) =>{
       console.log("handling depart ride response");
@@ -175,14 +177,14 @@ export default function RideSummary(props) {
   }
 
   return (
-      <div>
-      { ((!roundTrip && departSuccess) || (roundTrip && departSuccess && returnSuccess))  ? <Redirect to={{ pathname : "/rideconfirmed",
+    <div>
+      { ((!roundTrip && departSuccess) || (roundTrip && departSuccess && returnSuccess))  ? props.history.push({ pathname : "/home/rideconfirmed",
                                     state : {roundTrip :{roundTrip},
                                             departSuccess: {departSuccess},
                                             returnSuccess: {returnSuccess}
                                     }
-        }} />: null}
-      <ToastContainer />
+        }) : null}
+    <ToastContainer />
     <Container component = "main" maxWidth='md'>
       <CssBaseline />
       <div className = {classes.paper}>
@@ -308,4 +310,4 @@ export default function RideSummary(props) {
     </Container>
     </div>
   );
-}
+})

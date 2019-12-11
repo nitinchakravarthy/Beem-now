@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter , useHistory} from 'react-router-dom';
 import { pink } from '@material-ui/core/colors';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -119,8 +119,9 @@ function getDates(date, startDate) {
     return dateArray;
 }
 
-export default function DepartureRidesPage(props) {
+export default withRouter ( function DepartureRidesPage(props) {
   const classes = useStyles();
+  let history = useHistory();
   const [departureRides, setDepartureRides] = useState(props.location.state.departure_rides);
   const [returnRides, setReturnRides] = useState("");
   const [originCity, setOriginCity] = useState(props.location.state.originCity);
@@ -189,7 +190,6 @@ export default function DepartureRidesPage(props) {
              console.log(error);
              //notify(error.msg)
       });
-
   }
 
   const formatDepartureDate = (date) => {
@@ -238,6 +238,8 @@ export default function DepartureRidesPage(props) {
          }else{
              //notify(data.msg)
          }
+      }).then((data) => {
+        props.history.push({pathname: "/home/returnresults", state: {roundTrip:roundTrip, departId: departId, returnRides: returnRides, originCity: originCity, destinationCity: destinationCity, dates: returnDateArray}});
       }).catch((error) => {
              console.log(error);
              //notify(error.msg)
@@ -245,6 +247,12 @@ export default function DepartureRidesPage(props) {
   }
 
   return (
+  <div>
+  {isClicked ?
+        (!roundTrip ?
+            props.history.push({pathname: "/home/ridesummary", state: {roundTrip:roundTrip, selectedDepartRide:selectedDepartRide, seats:seats,selectedReturnRide:null}}) :
+            props.history.push({pathname: "/home/returnresults", state: {roundTrip:roundTrip, selectedDepartRide: selectedDepartRide, seats:seats, returnRides: returnRides, originCity: originCity, destinationCity: destinationCity, dates: returnDateArray}})
+        ): null}
   <Container component = "main" maxWidth='md'>
       <CssBaseline />
       <div className = {classes.paper}>
@@ -271,48 +279,45 @@ export default function DepartureRidesPage(props) {
           <div style = {{width: '100%'}}>
           {dates.map((date, index) => (
               <TabPanel value={value} index={index}>
-                <div>
-                  {departureRides.length != 0 ?
-                  <div>
-                  {isClicked ?
-                      (!roundTrip ?
-                          <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip, selectedDepartRide:selectedDepartRide, seats:seats,selectedReturnRide:null}}}/>
-                          : <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip, selectedDepartRide: selectedDepartRide, seats:seats, returnRides: returnRides, originCity: originCity, destinationCity: destinationCity, dates: returnDateArray}}}/>
-                      ): null}
-                  <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
-                  <CssBaseline />
-                  <List>
-                    {departureRides.map(item => (
-                    <div className = {classes.card}>
-                      <ListItem button key={item._id} alignItems="flex-start">
-                        <ListItemAvatar className = {classes.avatarBlock}>
-                          <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
-                             {item.host.first_name[0]}
-                          </Avatar>
-                          <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
-                        </ListItemAvatar>
-                        <Container maxWidth='md'>
-                          <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
-                            <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
-                            <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-                            <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-                            <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
-                            <Typography variant="subtitle2" align='justify' color="textSecondary">
-                              {formatDepartureDate(item.departDate)}
-                            </Typography>
-                            <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
-                          </ListItemText>
-                        </Container>
-                      </ListItem>
-                    </div>
-                    ))}
-                  </List>
-                  </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
-                  </div>
-                </TabPanel>
+              <div>
+              {departureRides.length != 0 ?
+              <div>
+              <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
+              <CssBaseline />
+              <List>
+                {departureRides.map(item => (
+                <div className = {classes.card}>
+                  <ListItem button key={item._id} alignItems="flex-start">
+                    <ListItemAvatar className = {classes.avatarBlock}>
+                      <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
+                         {item.host.first_name[0]}
+                      </Avatar>
+                      <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
+                    </ListItemAvatar>
+                    <Container maxWidth='md'>
+                      <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
+                        <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
+                        <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+                        <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
+                        <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+                        <Typography variant="subtitle2" align='justify' color="textSecondary">
+                          {formatDepartureDate(item.departDate)}
+                        </Typography>
+                        <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
+                      </ListItemText>
+                    </Container>
+                  </ListItem>
+                </div>
                 ))}
+              </List> 
+              </Container>
+              </div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
               </div>
-            </div>
-          </Container>
-        );
-}
+              </TabPanel>
+            ))}
+          </div>
+      </div>
+  </Container>
+  </div>
+  );
+})

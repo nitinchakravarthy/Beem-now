@@ -19,7 +19,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import homeIcon from '../icons/home.svg';
 import profileIcon from '../icons/profile.svg';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import ridePostIcon from '../icons/ridepost.svg';
 import historyIcon from '../icons/history.svg';
 import messageIcon from '../icons/message.svg';
@@ -104,7 +104,7 @@ function ListItemLink(props) {
   return <ListItem button component="a" {...props} />
 }
 
-export default function Home(props) {
+export default withRouter ( function Home(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -123,6 +123,7 @@ export default function Home(props) {
   const clearLocalStorage = () => {
       console.log('clearing local storage');
       localStorage.clear();
+      props.history.clear();
   };
 
   const handleSelect = () => {
@@ -163,7 +164,9 @@ export default function Home(props) {
   };
 
   if (isRideHistoryClicked) {
-    redirect = <Redirect to={{pathname: "/ridehistory",state: {driverRides: driverRides,passengerRides: passengerRides}}}/>;
+    redirect = props.history.push({pathname: "/home/ridehistory",state: {driverRides: driverRides,passengerRides: passengerRides}});
+    setIsRideHistoryClicked(false);
+    console.log(redirect)
   }
   else {
     redirect = null;
@@ -211,21 +214,21 @@ export default function Home(props) {
         <Divider />
         <List component="nav">
 
-          <ListItemLink key={"Home"} href = "#" onClick = {handleDrawerClose}>
+          <ListItemLink key={"Home"} href = "/home" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={homeIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"Home"} />
           </ListItemLink >
 
-          <ListItemLink key={"profile"} href="#profile" onClick = {handleDrawerClose}>
+          <ListItemLink key={"profile"} href="/home/profile" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={profileIcon}/></Icon>
               </ListItemIcon>
               <ListItemText primary={"My Profile"} />
           </ListItemLink>
 
-          <ListItemLink key = {"postride"} href="#postride" onClick = {handleDrawerClose}>
+          <ListItemLink key = {"postride"} href="/home/postride" onClick = {handleDrawerClose}>
               <ListItemIcon>
                 <Icon><img src={ridePostIcon}/></Icon>
               </ListItemIcon>
@@ -240,12 +243,12 @@ export default function Home(props) {
           </ListItem>
 
           <ListItem button key={"Messages"}  onClick = {handleDrawerClose} component={Link} to={{
-            pathname:'/friendList', state: {name: localStorage.getItem('first_name')}}}>
+            pathname:'/home/friendList', state: {name: localStorage.getItem('first_name')}}}>
               <ListItemIcon><img src={messageIcon}/></ListItemIcon>
               <ListItemText primary={"Messages"} />
           </ListItem>
 
-          <ListItem button key={"Sign Out"} component="a" href = "/" onClick = {clearLocalStorage}>
+          <ListItem button key={"Sign Out"} component="a" href = "/signin" onClick = {clearLocalStorage}>
               <ListItemIcon>
                 <Icon><img src={signOutIcon}/></Icon>
               </ListItemIcon>
@@ -285,4 +288,4 @@ export default function Home(props) {
       </main>
     </div>
   );
-}
+})

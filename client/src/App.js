@@ -20,21 +20,18 @@ function App(app) {
   return (
   	<Switch>
       <Route exact path="/" component={Landing}/>
-      <Route exact path="/signin" component={SignIn}/>
-      <Route exact path="/resendToken" component={ResendTokenPage}/>
-      <Route exact path="/forgotpassword" component={ForgotPassword}/>
-      <Route exact path="/resetpassword" component={ResetPassword}/>
-      <Route exact path="/termsofservice" component={TermsOfService} />
-      <Route exact path="/home" component={Home}/>
-      <Route exact path="/signup" component={SignUp}/>
-
-      <Route exact path="/verifyaccount" component={AccountVerified}/>
-      <Route exact path="/resetpassword" component={ChangePassword}/>
-
-      <Route exact path="/verifyaccount/:token" component={AccountVerified}/>
-      <Route exact path="/resetpassword/:token" component={ChangePassword}/>
-
-      <Route exact path = '/confirmride' component = {ConfirmRideEmail}/>
+      <Route path="/signin" component={SignIn}/>
+      <Route path="/resendToken" component={ResendTokenPage}/>
+      <Route path="/forgotpassword" component={ForgotPassword}/>
+      <Route path="/resetpassword" component={ResetPassword}/>
+      <Route path="/termsofservice" component={TermsOfService} />
+      <Route component={Home}/>
+      <Route path="/signup" component={SignUp}/>
+      <Route path="/verifyaccount" component={AccountVerified}/>
+      <Route path="/resetpassword" component={ChangePassword}/>
+      <Route path="/verifyaccount/:token" component={AccountVerified}/>
+      <Route path="/resetpassword/:token" component={ChangePassword}/>
+      <Route path = '/confirmride' component = {ConfirmRideEmail}/>
 
       /* add 404 page */
       <Route path="*" component={ErrorNotFound} />

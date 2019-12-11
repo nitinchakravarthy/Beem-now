@@ -16,7 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import { pink } from '@material-ui/core/colors';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
@@ -94,7 +94,7 @@ const headingTheme = createMuiTheme({
   },
 });
 
-export default function ReturnRidesPage(props) {
+export default withRouter ( function ReturnRidesPage(props) {
   const classes = useStyles();
   const [returnRides, setReturnRides] = useState(props.location.state.returnRides);
   const [originCity, setOriginCity] = useState(props.location.state.originCity);
@@ -172,6 +172,17 @@ export default function ReturnRidesPage(props) {
   };
 
   return (
+  <div>
+  {isClicked ? props.history.push({pathname:"/home/ridesummary", 
+                                state: {
+                                  roundTrip: roundTrip,
+                                  originCity: originCity,
+                                  destinationCity: destinationCity,
+                                  selectedDepartRide: selectedDepartRide,
+                                  selectedReturnRide: selectedReturnRide,
+                                  seats:seats
+                                },
+                                }) : null}
   <Container component = "main" maxWidth='md'>
       <CssBaseline />
       <div className = {classes.paper}>
@@ -197,54 +208,44 @@ export default function ReturnRidesPage(props) {
         </AppBar>
         <div style={{width: '100%'}}>
         {dates.map((date, index) => (
-            <TabPanel value={value} index={index}>
-              <div>
-              {returnRides.length != 0 ?
-              <div>
-              {isClicked ? <Redirect to={{pathname:"/ridesummary",
-                                          state: {
-                                            roundTrip: roundTrip,
-                                            departId: departId,
-                                            returnId: returnId,
-                                            originCity: originCity,
-                                            destinationCity: destinationCity,
-                                            selectedDepartRide: selectedDepartRide,
-                                            selectedReturnRide: selectedReturnRide,
-                                            seats:seats
-                                          }}}/> : null}
-              <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>
-              <CssBaseline />
-              <List>
-                {returnRides.map(item => (
-                <div className = {classes.card}>
-                  <ListItem button key={item._id} alignItems="flex-start">
-                    <ListItemAvatar className = {classes.avatarBlock}>
-                      <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
-                         {item.host.first_name[0]}
-                      </Avatar>
-                      <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
-                    </ListItemAvatar>
-                    <Container maxWidth='md'>
-                      <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
-                        <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
-                        <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-                        <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-                        <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
-                        <Typography variant="subtitle2" align='justify' color="textSecondary">
-                          {formatDepartureDate(item.departDate)}
-                        </Typography>
-                        <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
-                      </ListItemText>
+          <TabPanel value={value} index={index}>
+            <div>
+            {returnRides.length != 0 ?
+            <div>
+            <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>
+            <CssBaseline />
+            <List>
+              {returnRides.map(item => (
+              <div className = {classes.card}>
+                <ListItem button key={item._id} alignItems="flex-start">
+                  <ListItemAvatar className = {classes.avatarBlock}>
+                    <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
+                       {item.host.first_name[0]}
+                    </Avatar>
+                    <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
+                  </ListItemAvatar>
+                  <Container maxWidth='md'>
+                    <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
+                      <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
+                      <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+                      <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
+                      <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+                      <Typography variant="subtitle2" align='justify' color="textSecondary">
+                        {formatDepartureDate(item.departDate)}
+                      </Typography>
+                      <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
+                    </ListItemText>
                     </Container>
                   </ListItem>
                 </div>
                 ))}
               </List> </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
               </div>
-            </TabPanel>
-          ))}
-        </div>
-      </div>
+                      </TabPanel>
+                    ))}
+                  </div>
+                </div>
   </Container>
+  </div>
   );
-}
+})

@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CompanyLogo from '../logo.png'
@@ -71,9 +71,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignIn(props) {
   const classes = useStyles();
+  let history = useHistory();
   const [isAuthenticated, setIsAuthenticated] = useState(!(localStorage.getItem('uid') === null));
   const [isAccountCreated,setIsAccountCreated] = useState(props.location.state ? props.location.state.accountCreated : false);
   const [signUpSucess,setSignUpSuccess] = useState(props.location.state? props.location.state.signUpSucess : "");
+
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target)
@@ -124,7 +126,7 @@ export default function SignIn(props) {
 
   return (
     <div>
-    {isAuthenticated ? <Redirect to="/home"/> : null}
+    {isAuthenticated ? props.history.push({pathname: "/home"}) : null}
     <ToastContainer />
     <Container component="main" maxWidth="xs">
       <CssBaseline />
