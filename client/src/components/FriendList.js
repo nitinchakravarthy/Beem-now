@@ -68,7 +68,8 @@ export default function FriendList(props){
 
     async function fetchFriends() {
       console.log("calling fetchFriends")
-      fetch('/Cars/cars/'+props.location.state.name, {
+      console.log(props.location.state.name)
+      fetch('http://localhost:3000/Cars/cars/'+props.location.state.name, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ export default function FriendList(props){
     if(users!=null)
     {chatList = users.map(user =>{
         return  <ListItem alignItems="flex-start" button={true} divider={true} className = {classes.chat} component = {Link} to={{
-            pathname:'/chat', state: { to: user.friendId, name: user.name}}}>
+            pathname:'/home/chat', state: { to: user.friendId, name: user.name}}}>
         {/* <ListItemAvatar>
         <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
         </ListItemAvatar> */}

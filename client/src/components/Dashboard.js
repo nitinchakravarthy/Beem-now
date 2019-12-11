@@ -42,7 +42,7 @@ var socket = io(':3002')
 
 
 
-
+console.log('Dashboard')
 export default function Dashboard(props){
 
 const [initialChat, changeInitialChat] = useState('')
@@ -59,7 +59,7 @@ async function getInitialChatAndRegisterUser(otherPersonId){
   let msgs = ''
   let chat = ''
   let time = ''
-  const response = await fetch('Cars/cars/'+props.location.state.name+'/'+otherPersonId, {
+  const response = await fetch('http://localhost:3000/Cars/cars/'+props.location.state.name+'/'+otherPersonId, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ const handleChatSubmit = (sender, textValue, textTime)=>{
 
 const saveChat = (sender, textValue, textTime) =>{
   if(textValue){
-    fetch('Cars/cars', {
+    fetch('http://localhost:3000/Cars/cars', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
