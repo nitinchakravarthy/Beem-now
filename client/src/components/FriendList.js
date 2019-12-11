@@ -60,7 +60,7 @@ const useStyles=makeStyles(theme =>({
 
 export default function FriendList(props){
 
-  console.log("name = "+props.location.state.name) 
+  // console.log("name = "+props.location.state.name) 
 
     const classes = useStyles();
 
@@ -80,7 +80,7 @@ export default function FriendList(props){
         setChatUsers(data)
       })
     }
-
+    console.log("called fetchFriends")
     //Later, take it to a separate module.
     const getDate = (dateInMillis)=>{
       var date = new Date(parseInt(dateInMillis));

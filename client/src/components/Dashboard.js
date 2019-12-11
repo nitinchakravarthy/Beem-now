@@ -66,7 +66,10 @@ async function getInitialChatAndRegisterUser(otherPersonId){
     },
   })
   
+
   const data = await response.json();
+  console.log("yolo")
+  console.log(data)
   if(data.length==0){
     return;
   }

@@ -19,6 +19,8 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import {Link } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -95,6 +97,12 @@ export default function RideSummary(props) {
   const [returnDate, setReturnDate] = useState('2019-01-02T07:30:00.000Z');
   const [departPrice, setDepartPrice] = useState(10);
   const [returnPrice, setReturnPrice] = useState(15);
+  const [departSuccess, setdepartSuccess] = useState(false);
+  const [returnSuccess, setreturnSuccess] = useState(false);
+  const [ridesRequested, setRidesRequested] = useState(false);
+  const notify = (toastString) => {
+      toast(toastString);
+    };
 
   const formatDepartureDate = (date) => {
       var t = date.split('T')
@@ -115,9 +123,72 @@ export default function RideSummary(props) {
 
   const handleConfirm = (event) => {
       console.log("Ride confirmed...")
+      if(roundTrip){
+          handleRoundTrip();
+
+      }else{
+      }
+  }
+  const handleRoundTrip = () => {
+        chooseRidePost(departId,handleDepartResponse);
+        chooseRidePost(returnId,handleReturnResponse);
+  }
+  const handleSingleRide = () => {
+      chooseRidePost(departId,handleDepartResponse)
+  }
+  const handleDepartResponse = (resp) =>{
+    if(resp.error_code == 0){
+        setdepartSuccess(true);
+        if(!roundTrip){
+            setRidesRequested(true);
+        }
+        if(roundTrip && departSuccess && returnSuccess){
+            setRidesRequested(true)
+        }
+    }
+  }
+  const handleReturnResponse= (resp) => {
+      if(resp.error_code == 0){
+        setReturnSuccess(true);
+        if(roundTrip && departSuccess && returnSuccess){
+            setRidesRequested(true)
+        }
+      }
+  }
+  const chooseRidePost = (rid,successCallback) => {
+      var body = {uid:localStorage.get('uid'),
+                  rid:rid};
+      fetch('/rides/chooseride', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }).then(response => response.json())
+      .then((resp) => {
+          if(resp.error_code == 0){
+              console.log(resp);
+              successCallback(resp);
+          }else{
+              notify(resp.msg)
+          }
+
+     }).catch( (error) => {
+        notify("Unable to request ride. Something has gone wrong");
+         console.log(error);
+     });
   }
 
   return (
+      <div>
+      {ridesRequested ?  <Redirect to={{ pathname : "/rideconfirmed",
+                                    state : {roundTrip :{roundTrip},
+                                            departSuccess: {departSuccess},
+                                            returnSuccess: {returnSuccess}
+                                    }
+        }} />: null}
+      <ToastContainer />
     <Container component = "main" maxWidth='xs'>
       <CssBaseline />
       <div className = {classes.paper}>
@@ -167,8 +238,8 @@ export default function RideSummary(props) {
               </ListItem>
             </div>
             <div>
-              {roundTrip?
-                <div> 
+              { roundTrip ?
+                <div>
                 <div>
                   <Typography variant="h6" color="textSecondary">Return:</Typography>
                 </div>
@@ -214,7 +285,7 @@ export default function RideSummary(props) {
                 </div></div> : null}
             </div>
             <Divider style = {{marginTop: '5%'}}/>
-            <div className = {classes.card}>  
+            <div className = {classes.card}>
               <ListItem key={departId} alignItems="flex-start">
                 <Grid container direction="row" justify="space-between" alignItems="flex-start">
                  <Typography variant="h6" color="textSecondary">Total</Typography>
@@ -239,5 +310,6 @@ export default function RideSummary(props) {
           </Button>
       </div>
     </Container>
+    </div>
   );
 }

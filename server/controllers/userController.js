@@ -33,8 +33,8 @@ exports.loginHandler = function(req, res, next) {
   //var top_user = null;
   User.findOne({ email: req.body.email }, function( err,user){
     if (!user) return res.status(401).send({error_code:1 , type:0, msg: 'The email address ' + req.body.email + ' is not associated with any account.'});
-    //console.log(req.body.password);
-    //console.log(user);
+    console.log(req.body.password);
+    console.log(user);
     user.comparePassword(req.body.password, function(err, isMatch){
         if (err) return res.status(500).send({ error_code:1, type:4 , msg: err.message });
         if (!isMatch) return res.status(401).send({ error_code:1, type: 2 ,msg: 'Invalid email or password' });
@@ -75,7 +75,7 @@ exports.signUpHandler = function (req,res,next){
         // Change the service
         // var transporter = nodemailer.createTransport({ service: 'Sendgrid',
         //                                                 auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
-        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount?' + '?token=' + token.token;
+        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount\/' + token.token;
         const mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'New Account Verification',
                             text: 'Hello, \n\n To verify your email, please click on the link below. \n\n' + link  + '.\n\n' };
         console.log(mailOptions);
@@ -83,7 +83,7 @@ exports.signUpHandler = function (req,res,next){
         transporter.sendMail(mailOptions, function (err) {
                 if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
                 console.log("Mail sent");
-                const resp = {'verified': false, 'mailSent': true, 'email': user.email};
+                const resp = {error_code:0, verified: false, mailSent: true, email: user.email, msg:'Confirmation email sent'};
                 res.status(200).send(resp);
         });
       });
@@ -136,7 +136,7 @@ exports.resendToken = function(req,res,next){
     token.save(function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
-        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount?' + '?token=' + token.token;
+        var link = '\nhttp:\/\/' + req.headers.host + '\/verifyaccount\/?' + token.token;
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
         var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Account Verification Resend',
             text: 'Hello, \n\n To verify your email, please click on the link below. \n\n' + link  + '.\n\n' };
@@ -181,7 +181,7 @@ exports.resetPasswordStart = function(req,res,next){
     token.save(function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
         // Send the email
-        var link = '\nhttp:\/\/' + req.headers.host + '\/resetpassword?' + '?token=' + token.token;
+        var link = '\nhttp:\/\/' + req.headers.host + '\/resetpassword\/' + token.token;
         var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: process.env.SENDGRID_USERNAME, pass: process.env.SENDGRID_PASSWORD } });
         var mailOptions = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Password Reset',
         text: 'Hello, \n\n Please click on the link below to reset your password. \n\n' + link  + '.\n\n' };
@@ -238,7 +238,7 @@ exports.resetPasswordEnd = function(req,res,next){
           user.password = req.body.newPassword;
           user.save(function(err){
             if (err)  { return res.status(500).send({ msg: err.message }); }
-            res.status(200).send({passwordResetStatus:"END", passwordUpdated:true});
+            res.status(200).send({error_code:0, passwordResetStatus:"END", passwordUpdated:true});
           });
       });
     });

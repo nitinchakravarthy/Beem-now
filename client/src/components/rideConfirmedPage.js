@@ -62,33 +62,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResendTokenPage(props) {
+export default function RideConfirmed(props) {
   const classes = useStyles();
-  const [emailError, setEmailError] = useState('');
-  const [isAccountCreated,setIsAccountCreated] = useState(props.location.state ? props.location.state.accountCreated : false);
-  const [signUpSucess,setSignUpSuccess] = useState(props.location.state? props.location.state.signUpSucess : "");
-  const [email,setEmail] = useState(props.location.state? props.location.state.email : "");
+  const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
+  const [departSuccess, setdepartSuccess] = useState(props.location.state.departSuccess);
+  const [returnSuccess, setreturnSuccess] = useState(props.location.state.returnSuccess);
   const notify = (toastString) => {
       toast(toastString);
     };
-    useEffect(() => {
-        console.log("in resend token");
-        console.log(signUpSucess);
-        console.log(email.email);
-    }, []);
-  const resendToken = (event) => {
-
-        event.preventDefault();
-        console.log("resend token");
-        fetch('/users/resendToken?email=' + email.email).then(response => response.json())
-        .then((data) => {
-            console.log(data);
-            notify("Email sent to " + email.email + " with a new confirmation link.");
-        })
-        .catch(() => {
-            notify("Could not send an email. Please try again");
-        });
-  }
 
   return (
   <div>
@@ -100,25 +81,28 @@ export default function ResendTokenPage(props) {
           <img src = {CompanyLogo} />
         </div>
         <form className={classes.form} onSubmit={resendToken}>
+        {roundTrip ?
         <Typography component="h1" variant="h5" align='center'>
-          Please go to your email and confirm you account. You can sign in once you do that.
+          Your ride request has been sent succesfully.
         </Typography>
-        <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
-          If your token has expired. click on the button below to resend a new confirmation email.
+        :
+        <Typography component="h1" variant="h5" align='center'>
+          Your ride requests have been sent succesfully.
         </Typography>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-        >
-          Resend Token
-        </Button>
+        }
+        {roundTrip ?
+            <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
+              Your request has been succesfully sent to the host. You will recieve a ride confirmation email when the host accepts you ride request.
+            </Typography>
+            :
+            <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
+               Your request has been succesfully sent to the host. You will recieve a ride confirmation emails for your departure ride and your return rides when the hosts accepts you ride request.
+            </Typography>
+        }
           <Grid container>
             <Grid item xs={12}>
-             <Link href="/signin" variant="body2" className={classes.centerAlign}>
-              {"Go back to sign in page"}
+             <Link href="/home" variant="body2" className={classes.centerAlign}>
+              {"Go back to Home page"}
             </Link>
             </Grid>
           </Grid>

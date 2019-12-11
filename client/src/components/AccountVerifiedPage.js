@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
 export default function AccountVerified(props) {
   const classes = useStyles();
   const [emailError, setEmailError] = useState('');
-  const [token,setToken] = useState(this.props.location.query.token);
+  const [token,setToken] = useState(props.match.params.token);
   const [verificationText, setVerificationText] = useState("Verifying your account");
   const [verified, setVerified] = useState(false);
 
@@ -99,12 +99,12 @@ export default function AccountVerified(props) {
           <img src = {CompanyLogo} />
         </div>
         <Typography component="h1" variant="h5" align='center'>
-         {this.VerificationText}
+         {verificationText}
         </Typography>
+        {verified ? <div>
         <Typography variant="body1" align='center' style={{marginTop: '60px'}}>
           Your account has been verified. Now you can login
         </Typography>
-        {verified ? <div>
         <form className={classes.form} onSubmit={openStripe}>
         <Typography variant="body2" align='center' style={{marginTop: '40px'}}>
           Before continuing to login, please take a minute to connect your payments profile via stripe.

@@ -13,7 +13,7 @@ import AccountVerified from './components/AccountVerifiedPage';
 import ChangePassword from './components/changepassword';
 import TermsOfService from './components/TermsOfService';
 import ConfirmRideEmail from './components/confirmRideEmail';
-import { Switch, Route, Link } from 'react-router-dom'
+import { BrowserRouter  as Router, Switch, Route, Link } from 'react-router-dom'
 
 function App(app) {
 
@@ -27,8 +27,13 @@ function App(app) {
       <Route exact path="/termsofservice" component={TermsOfService} />
       <Route exact path="/home" component={Home}/>
       <Route exact path="/signup" component={SignUp}/>
+
       <Route exact path="/verifyaccount" component={AccountVerified}/>
       <Route exact path="/resetpassword" component={ChangePassword}/>
+
+      <Route exact path="/verifyaccount/:token" component={AccountVerified}/>
+      <Route exact path="/resetpassword/:token" component={ChangePassword}/>
+
       <Route exact path = '/confirmride' component = {ConfirmRideEmail}/>
 
       /* add 404 page */
