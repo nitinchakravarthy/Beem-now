@@ -199,6 +199,7 @@ export default function RideSummary(props) {
                   <Typography variant="body1" color="textSecondary">{departureRide.host.first_name}</Typography>
                   <ThemeProvider theme={headingTheme}>
                     <Button variant="contained" color = "primary" className={classes.chatButton} component = {Link} to={{
+
                     pathname:'/chat', state: { to: departureRide.host.first_name, name: localStorage.getItem('first_name')}}}>
                       Chat
                     </Button>
@@ -244,6 +245,7 @@ export default function RideSummary(props) {
                           color = "primary"
                           className={classes.chatButton}
                           component = {Link} to={{
+
                           pathname:'/chat', state: { to: returnRide.host.first_name, name: localStorage.getItem('first_name')}}}
                         >
                           Chat

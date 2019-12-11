@@ -31,7 +31,7 @@ import {Link } from 'react-router-dom'
 
 const drawerWidth = 240;
 
-const myName = prompt("Whats your username buddy?")
+// const myName = prompt("Whats your username buddy?")
 
 
 const useStyles = makeStyles(theme => ({
@@ -240,7 +240,7 @@ export default function Home(props) {
           </ListItem>
 
           <ListItem button key={"Messages"}  onClick = {handleDrawerClose} component={Link} to={{
-            pathname:'/friendList', state: {name: myName}}}>
+            pathname:'/friendList', state: {name: localStorage.getItem('first_name')}}}>
               <ListItemIcon><img src={messageIcon}/></ListItemIcon>
               <ListItemText primary={"Messages"} />
           </ListItem>
