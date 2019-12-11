@@ -92,10 +92,9 @@ export default withRouter( function RideSummary(props) {
   const [departSuccess, setdepartSuccess] = useState(false);
   const [returnSuccess, setReturnSuccess] = useState(false);
   const [ridesRequested, setRidesRequested] = useState(false);
+  const [seats, setSeats] = useState(props.location.state.seats);
   const [departId, setDepartId] = useState(props.location.state.departId);
   const [returnId, setReturnId] = useState(props.location.state.returnId);
-  const [seats, setSeats] = useState(props.location.state.seats);
-
   const notify = (toastString) => {
       toast(toastString);
     };

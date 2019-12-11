@@ -138,58 +138,64 @@ export default withRouter ( function DepartureRidesPage(props) {
 
   const handleSelect = (item) => {
       setSelectedDepartRide(item)
-      var departDate = new Date((dates[value][1]))
-      console.log(departDate)
-      var returnDate = new Date(selectedReturnDate.getTime())
-      console.log(returnDate)
-      console.log(departDate, returnDate)
-      if (departDate > returnDate){
-        returnDate = departDate.addDays(1);
+      if (roundTrip){
+        var departDate = new Date((dates[value][1]))
+        console.log(departDate)
+        var returnDate = new Date(selectedReturnDate.getTime())
         console.log(returnDate)
+        console.log(departDate, returnDate)
+        if (departDate > returnDate){
+          returnDate = departDate.addDays(1);
+          console.log(returnDate)
 
-      }
-      setReturnDateArray(getDates(returnDate, departDate));
-      console.log(returnDateArray.length)
-      returnDate = String(returnDate.getMonth()+1)+"/"+String(returnDate.getDate())+"/"+String(returnDate.getYear()+1900);
+        }
+        setReturnDateArray(getDates(returnDate, departDate));
+        console.log(returnDateArray.length)
+        returnDate = String(returnDate.getMonth()+1)+"/"+String(returnDate.getDate())+"/"+String(returnDate.getYear()+1900);
 
-      const params = {
-          uid: localStorage.getItem('uid'),
-          originCity: destinationCity,
-          destinationCity: originCity,
-          departDate: returnDate,
-          roundTrip: false,
-          selectedDepartTime: item.departDate,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          seats:seats
-      }
-      fetch('/rides/searchRide', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body:  JSON.stringify(params)
-      }).then(response => response.json())
-      .then((data) => {
-         if(data.error_code == 0){
-             var obj
-             try {
-                obj = JSON.parse(data.departure_rides);
+        const params = {
+            uid: localStorage.getItem('uid'),
+            originCity: destinationCity,
+            destinationCity: originCity,
+            departDate: returnDate,
+            roundTrip: false,
+            selectedDepartTime: item.departDate,
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            seats:seats
+        }
+        fetch('/rides/searchRide', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body:  JSON.stringify(params)
+        }).then(response => response.json())
+        .then((data) => {
+           if(data.error_code == 0){
+               var obj
+               try {
+                  obj = JSON.parse(data.departure_rides);
+                  console.log(obj)
+                } catch (ex) {
+                  console.error(ex);
+                }
                 console.log(obj)
-              } catch (ex) {
-                console.error(ex);
-              }
-              console.log(obj)
-              setReturnRides(obj)
-              setIsClicked(true)
-             //save the user object in the
-         }else{
-             //notify(data.msg)
-         }
-      }).catch((error) => {
-             console.log(error);
-             //notify(error.msg)
-      });
+
+                setReturnRides(obj)
+                setIsClicked(true)
+               //save the user object in the
+           }else{
+               //notify(data.msg)
+           }
+        }).catch((error) => {
+               console.log(error);
+               //notify(error.msg)
+        });
+      }
+      else{
+        setIsClicked(true)
+      }
   }
 
   const formatDepartureDate = (date) => {

@@ -455,7 +455,8 @@ exports.rideRejected = function(req,res,next){
                             },
             finalCoords: {$geoWithin:
                                 {$centerSphere : [ finalCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
-                            }
+                            },
+            //host: {$ne:req.body.uid}
           },  'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
         ).populate('host', {first_name : 1}).exec(function(err, departure_rides){
           console.log("Got from DB")
@@ -481,7 +482,8 @@ exports.rideRejected = function(req,res,next){
                                 },
                 finalCoords: {$geoWithin:
                                     {$centerSphere : [ initialCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
-                                }
+                                },
+                //host: {$ne:req.body.uid}
               }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
             ).populate('host', {first_name : 1}).exec(function(err, return_rides){
               if (err) return res.status(500).send({ msg: err.message });
