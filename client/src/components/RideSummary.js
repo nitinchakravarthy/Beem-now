@@ -212,7 +212,7 @@ export default function RideSummary(props) {
                   <Typography variant="body1" color="textSecondary">{departDriver}</Typography>
                   <ThemeProvider theme={headingTheme}>
                     <Button variant="contained" color = "primary" className={classes.chatButton} component = {Link} to={{
-                    pathname:'/chat', state: { to: departDriver, name: "Rishabh"}}}>
+                    pathname:'/chat', state: { to: departDriver, name: localStorage.getItem('first_name')}}}>
                       Chat
                     </Button>
                   </ThemeProvider>
@@ -257,7 +257,7 @@ export default function RideSummary(props) {
                           color = "primary"
                           className={classes.chatButton}
                           component = {Link} to={{
-                          pathname:'/chat', state: { to: returnDriver, name: user.name}}}
+                          pathname:'/chat', state: { to: returnDriver, name: localStorage.getItem('first_name')}}}
                         >
                           Chat
                         </Button>

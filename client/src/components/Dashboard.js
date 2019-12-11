@@ -216,7 +216,7 @@ return(
       <Typography variant="h4" component="h4">
       </Typography>
       <Typography variant="h6" component="h6">
-      <span className={classes.dot}></span>Chat with {props.location.state.to}
+      <span></span>Chat with {props.location.state.to}
       </Typography>
       <div id="chatScreen" style={{textAlign:"left", whiteSpace:'pre-line'}}>
         {initialChat}
