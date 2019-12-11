@@ -419,14 +419,19 @@ exports.rideRejected = function(req,res,next){
     if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
     console.log('Input:', req.body);
     //dates for query
+    // if selectedDepartTime is present means departDate is actually return Date in CST
     var departDate_start = moment(req.body.departDate, "MM/DD/YYYY").tz(req.body.timeZone);
     var departDate_end = departDate_start.clone().add(1, 'day');
     if (req.body.selectedDepartTime != null) {
-      var departTime = moment(req.body.selectedDepartTime, "hh:mm A");
-      departDate_end.set({
-        'hour' : d1.get('hour'),
-        'minute' : d1.get('minute')
-      });
+      var utcDepartTime = moment(req.body.selectedDepartTime);
+      var localDepartTime = utcDepartTime.clone().tz(req.body.timeZone);
+      // Only if Return and selected depart are on same date -> add the departure date offset
+      if (departDate_start.diff(localDepartTime, "days") == 0) {
+        departDate_start.set({
+          'hour' : localDepartTime.get('hour'),
+          'minute' : localDepartTime.get('minute')
+        });
+      }
     }
 
     //moment(departDate_start.getTime()+(1*24*60*60*1000))
@@ -475,16 +480,20 @@ exports.rideRejected = function(req,res,next){
             console.log(err.message);
             return res.status(500).send({ msg: err.message })
           };
-          // while(toJSON(departure_rides)) {
-          //   console.log("Insode");
-          //   console.log(toJSON(ride.next()))
-          //   ride.departDate = new Date(moment(ride.departDate).tz(req.body.timeZone).format())
-          //   console.log(ride.departDate )
-          // }
           console.log(departure_rides);
+          // departure_rides = departure_rides.map(function (doc) {
+          //   doc.departDate = moment(doc.departDate).tz(req.body.timeZone).format()
+          // })
+          // console.log(departure_rides);
           const result_d = JSON.stringify(departure_rides);
           console.log("result_d");
           console.log(result_d);
+          const res_json = JSON.parse(result_d)
+          console.log(res_json);
+          for (i=0; i < res_json.length; i++) {
+            res_json[i].departDate =  moment(res_json[i].departDate).tz(req.body.timeZone).format()
+          }
+          console.log(res_json)
           if (req.body.roundTrip) {
             //dates for query
             var returnDate_start = moment(req.body.returnDate, "MM/DD/YYYY").tz(req.body.timeZone);
@@ -506,15 +515,24 @@ exports.rideRejected = function(req,res,next){
             ).populate('host', {first_name : 1, avatar: 1}).exec(function(err, return_rides){
               if (err) return res.status(500).send({ msg: err.message });
               const result_r = JSON.stringify(return_rides);
-              console.log(result_d, result_r)
-              res.send({ error_code: 0, departure_rides: result_d,
-                     return_rides: result_r });
+              const resR_json = JSON.parse(result_r)
+              console.log(resR_json);
+              for (i=0; i < resR_json.length; i++) {
+                resR_json[i].departDate =  moment(resR_json[i].departDate).tz(req.body.timeZone).format()
+              }
+              console.log(resR_json)
+              console.log(resR_json, res_json)
+              res.send({ error_code: 0, departure_rides:  JSON.stringify(res_json),
+                     return_rides:  JSON.stringify(resR_json) });
               });
           }
           else{
-            res.send({ error_code: 0, departure_rides: result_d,
+            res.send({ error_code: 0, departure_rides: JSON.stringify(res_json),
                      return_rides: null });
           }
         });
+      }). catch ((err) => {
+        console.log("Search: Error while fetching GeoSpatial Info")
+        return res.status(500).send({ msg: err.message })
       });
   };

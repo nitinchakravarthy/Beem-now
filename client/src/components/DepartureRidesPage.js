@@ -199,13 +199,14 @@ export default withRouter ( function DepartureRidesPage(props) {
   }
 
   const formatDepartureDate = (date) => {
-      var t = date.split('T')
-      var time = t[1].split(':')
-      var meridian = (parseInt(time[0]) < 12) ? "AM" : "PM"
-      var t_date = new Date(date)
-      var dateString = t_date.getDate() + " " + monthNames[t_date.getMonth()] + " • "
-                       + time[0] + ":"+ time[1] + " " + meridian
-      return dateString
+    var t = date.split('T')
+    var time = t[1].split(':')
+    var meridian = (parseInt(time[0]) > 12) ? "PM" : "AM"
+    var hours = (parseInt(time[0]) > 12) ? parseInt(time[0])-12 : parseInt(time[0])
+    var t_date = new Date(date)
+    var dateString = t_date.getDate() + " " + monthNames[t_date.getMonth()] + " • "
+                     + hours + ":"+ time[1] + " " + meridian
+    return dateString
   }
 
   const handleChange = (event, newValue) => {
