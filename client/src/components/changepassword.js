@@ -68,7 +68,7 @@ export default function ChangePassword(props) {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  const [token,setToken] = useState(this.props.location.query.token,"");
+  const [token,setToken] = useState(props.match.params.token,"");
   const [passwordChanged, setPasswordChanged] = useState(false);
   const validatePassword = (event) => {
       let name = event.target.name

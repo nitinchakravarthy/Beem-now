@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
 export default function AccountVerified(props) {
   const classes = useStyles();
   const [emailError, setEmailError] = useState('');
-  const [token,setToken] = useState(props.match.params.token);
+  const [token,setToken] = useState(props.match.params.token,"");
   const [verificationText, setVerificationText] = useState("Verifying your account");
   const [verified, setVerified] = useState(false);
 

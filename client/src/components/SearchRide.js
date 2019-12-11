@@ -17,7 +17,12 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider, KeyboardTimePicker} from "
 import DateFnsUtils from '@date-io/date-fns';
 import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import CompanyLogo from '../logo.png'
+import CompanyLogo from '../logo.png';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -41,6 +46,13 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -112,11 +124,16 @@ export default function SearchRide() {
   const [destinationCity, setDestinationCity] = useState('');
   const [roundTrip, setRoundTrip] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [seats, setSeats] = useState(1);
+  const inputLabel = React.useRef(null);
+  const [labelWidth, setLabelWidth] = React.useState(0);
 
   const handleSwitch  =  () =>{
     setIsChecked(prev => !prev);
   };
-
+  const handleseatChange = event => {
+      setSeats(event.target.value);
+    };
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
@@ -128,7 +145,8 @@ export default function SearchRide() {
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
           departDate: data.get('departDate'),
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          seats:seats
           //returnDate: data.get('returnDate')
       }
       if(data.get('roundTrip')){
@@ -222,19 +240,43 @@ export default function SearchRide() {
             autoComplete="email"
             autoFocus
           />
-          <FormControlLabel
-              control={
-                <Switch
-                  checked={isChecked}
-                  onChange={handleSwitch}
-                  value={isChecked}
-                  color="primary"
-                />
-              }
-              name = 'roundTrip'
-              label = "Round Trip"
-              labelPlacement="start"
-            />
+          <Grid container spacing={2}>
+           <Grid item xs={6}>
+           <FormControlLabel
+               control={
+                 <Switch
+                   checked={isChecked}
+                   onChange={handleSwitch}
+                   value={isChecked}
+                   color="primary"
+                 />
+               }
+               name = 'roundTrip'
+               label = "Round Trip"
+               labelPlacement="start"
+             />
+           </Grid>
+
+            <Grid item xs={6}>
+                <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="seat_select">seats</InputLabel>
+                   <Select
+                     labelId="seat_select"
+                     id="seats"
+                     value={seats}
+                     onChange={handleChange}
+                     >
+                     <MenuItem value={1}>1</MenuItem>
+                     <MenuItem value={2}>2</MenuItem>
+                     <MenuItem value={3}>3</MenuItem>
+                     <MenuItem value={4}>4</MenuItem>
+                     <MenuItem value={5}>5</MenuItem>
+                     <MenuItem value={6}>6</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+          </Grid>
+
            <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container spacing={2}>
              <Grid item xs={6}>
@@ -272,6 +314,7 @@ export default function SearchRide() {
               </Grid>
             </Grid>
           </MuiPickersUtilsProvider>
+
           <Button
             type="submit"
             fullWidth

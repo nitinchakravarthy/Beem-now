@@ -101,7 +101,7 @@ export default function ReturnRidesPage(props) {
   const [destinationCity, setDestinationCity] = useState(props.location.state.destinationCity);
   const [dates, setDates] = useState(props.location.state.dates)
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
-  const [departId, setDepartId] = useState(props.departId);
+  const [departId, setDepartId] = useState(props.location.state.departId);
   const [returnId, setReturnId] = useState('');
   const [isClicked, setIsClicked] = useState(false);
 
@@ -194,12 +194,12 @@ export default function ReturnRidesPage(props) {
               <div>
     {returnRides.length != 0 ?
     <div>
-    {isClicked ? <Redirect to={{pathname:"/ridesummary", 
+    {isClicked ? <Redirect to={{pathname:"/ridesummary",
                                 state: {
                                   roundTrip: roundTrip,
-                                  departId: departId, 
-                                  returnId: returnId, 
-                                  originCity: originCity, 
+                                  departId: departId,
+                                  returnId: returnId,
+                                  originCity: originCity,
                                   destinationCity: destinationCity,
                                 }}}/> : null}
     <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>

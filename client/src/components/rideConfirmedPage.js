@@ -80,7 +80,6 @@ export default function RideConfirmed(props) {
         <div className={classes.logo}>
           <img src = {CompanyLogo} />
         </div>
-        <form className={classes.form} onSubmit={resendToken}>
         {roundTrip ?
         <Typography component="h1" variant="h5" align='center'>
           Your ride request has been sent succesfully.
@@ -106,7 +105,7 @@ export default function RideConfirmed(props) {
             </Link>
             </Grid>
           </Grid>
-          </form>
+
       </div>
       <Box mt={8}>
         <Copyright />

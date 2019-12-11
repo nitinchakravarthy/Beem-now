@@ -78,6 +78,7 @@ exports.createRide = function(req, res, next) {
         roundTrip : req.body.roundTrip,
         departDate : utcReturnDate,
         maxCapacity : req.body.maxCapacity,
+        capacityLeft : req.body.maxCapacity,
         pricePerSeat : req.body.pricePerSeat,
         originCity : req.body.destinationCity,
         destinationCity : req.body.originCity,
@@ -316,8 +317,9 @@ exports.chooseride = function(req,res,next){
                 if (err) { return res.status(500).send({ msg: err.message }); }
                 if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
                 if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
-
-              const mailOptions_host = { from: process.env.SENDGRID_EMAIL, to: host.email, subject: 'Someone wants to pick the ride you posted',
+                var confirmLink = '\nhttp:\/\/' + req.headers.host + '\/rides\/updateRideConfirmed?uid=' + req.body.uid + "&rid=" + req.body.rid;
+                var rejectLink = '\nhttp:\/\/' + req.headers.host + '\/rides\/updateRideRejected?uid=' + req.body.uid + "&rid=" + req.body.rid;
+              const mailOptions_host = { from: process.env.SENDGRID_EMAIL, to: ride.host.email, subject: 'Someone wants to pick the ride you posted',
                                 text: "Hi, \n\n" + user.first_name + " wants to ride with you from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + ".\n\n" +
                                 "To confirm click on this link. \n\n" + confirmLink + "\n\n" + "To reject click on this link \n\n" + rejectLink + "\n\n" };
               console.log(mailOptions_host);
@@ -325,7 +327,7 @@ exports.chooseride = function(req,res,next){
               transporter.sendMail(mailOptions_host, function (err) {
                       if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
                       console.log("Mail sent");
-                      const resp = {'error_code':0, 'mailSent': true, 'email': host.email, 'rideStatus':'REQUEST_SENT', 'msg':'Request has been sent to the ride host.'};
+                      const resp = {'error_code':0, 'mailSent': true, 'email': ride.host.email, 'rideStatus':'REQUEST_SENT', 'msg':'Request has been sent to the ride host.'};
                       res.status(200).send(resp);
               });
 
@@ -333,11 +335,12 @@ exports.chooseride = function(req,res,next){
       });
 }
 exports.rideConfirmed = function(req,res,next){
+    console.log(req.query.uid);
+    console.log(req.query.rid);
     const errors = validationResult(req);
     console.log(errors);
     if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-    console.log(req.query.uid);
-    console.log(req.query.rid);
+
     Ride.findOne({_id : req.query.rid}).populate('host').populate('riders').exec(function(err,ride){
         if (err) return res.status(500).send({ msg: err.message });
         console.log("found ride");
@@ -347,26 +350,23 @@ exports.rideConfirmed = function(req,res,next){
             if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
             if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
             for(var i = 0; i < riders.length; i++) {
-                if (vendors[i]._id == user._id) {
-                    found = true;
-                    return res.status(200).json({ridestatus:'ALREADY_CONFIRMED',ride:ride});
+                if (riders[i]._id == req.query.uid) {
+                    return res.status(200).json({error_code:0,ridestatus:'ALREADY_CONFIRMED'});
                 }
             }
-
             riders.push(user)
             ride.riders = riders;
             ride.capacityLeft = ride.capacityLeft-1;
             ride.save(function(err){
                 if (err)  { return res.status(500).send({ msg: err.message }); }
                 const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been accepted',
-                                  text: "Hi, Your Ride with "+ host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
+                                  text: "Hi,\n\n Your Ride with "+ ride.host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
                 console.log(mailOptions_self);
                 transporter.sendMail(mailOptions_self, function (err) {
                         if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
                         console.log("Mail sent");
-                        return res.status(200).json({rideStatus:'COMFIRMED', ride: ride });
-                        //const resp = {'mailSent': true, 'email': user.email};
-                        //res.status(200).send(resp);
+                        // return res.status(200).json({rideStatus:'COMFIRMED', ride: ride });
+                        return res.status(200).send("Ride confirmed");
                 });
             });
         });
@@ -374,6 +374,8 @@ exports.rideConfirmed = function(req,res,next){
 }
 
 exports.rideRejected = function(req,res,next){
+    console.log(req.query.uid);
+    console.log(req.query.rid);
     const errors = validationResult(req);
     console.log(errors);
     if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
@@ -388,74 +390,24 @@ exports.rideRejected = function(req,res,next){
             if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
             if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
             for(var i = 0; i < riders.length; i++) {
-                if (vendors[i]._id == user._id) {
+                if (riders[i]._id == req.query.uid) {
                     found = true;
-                    return res.status(200).json({ridestatus:'ALREADY_CONFIRMED',ride:ride});
+                    return res.status(200).json({error_code:0, ridestatus:'ALREADY_CONFIRMED'});
                 }
             }
             const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been accepted',
-                              text: "Hi, Your Ride with "+ host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
+                              text: "Hi,\n\n Your Ride with "+ ride.host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been rejected by the host. Please choose another ride." };
             console.log(mailOptions_self);
             transporter.sendMail(mailOptions_self, function (err) {
                     if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
                     console.log("Mail sent");
-                    return res.status(200).json({rideStatus:'REJECTED', ride: ride });
+                    return res.status(200).send("Ride rejected");
+                    // return res.status(200).json({rideStatus:'REJECTED', ride: ride });
             });
 
         });
     });
 }
-// exports.chooseride = function(req,res,next){
-//       const errors = validationResult(req);
-//       console.log(errors);
-//       if (!errors.isEmpty()) return res.status(422).jsonp(errors.array());
-//       console.log(req.body.uid);
-//       console.log(req.body.rid);
-//       Ride.findOne({_id : req.body.rid}).populate('host').populate('riders').exec(function(err,ride){
-//           if (err) return res.status(500).send({ msg: err.message });
-//           console.log("found ride");
-//           console.log(ride);
-//           var host = ride.host;
-//           console.log(host._id);
-//
-//           User.findOne({_id: req.body.uid},function(err,user){
-//               if (err) { return res.status(500).send({ msg: err.message }); }
-//               if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
-//               if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
-//               console.log("found user with uid");
-//
-//               var riders = ride.riders;
-//               riders.push(user)
-//               ride.riders = riders;
-//               ride.capacityLeft = ride.capacityLeft-1;
-//               ride.save(function(err){
-//                   if (err)  { return res.status(500).send({ msg: err.message }); }
-//                   return res.status(200).json({rideStatus:'COMFIRMED', ride: ride });
-//                 });
-//               const mailOptions_host = { from: process.env.SENDGRID_EMAIL, to: host.email, subject: 'Someone wants to pick your ride',
-//                                 text: "Hi, " + user.first_name + " wants to ride with you from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + "." };
-//               console.log(mailOptions_host);
-//               // notify the host that a person wants to ride with them.
-//               transporter.sendMail(mailOptions_host, function (err) {
-//                       if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
-//                       console.log("Mail sent");
-//                       //const resp = {'mailSent': true, 'email': host.email};
-//                       //res.status(200).send(resp);
-//               });
-//
-//               const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Someone wants to pick your ride',
-//                                 text: "Hi, Your Ride with "+ host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been confirmed." };
-//               console.log(mailOptions_self);
-//               transporter.sendMail(mailOptions_self, function (err) {
-//                       if (err) { console.log(err);return res.status(500).send({ msg: err.message }); }
-//                       console.log("Mail sent");
-//                       //const resp = {'mailSent': true, 'email': user.email};
-//                       //res.status(200).send(resp);
-//               });
-//           });
-//       });
-//   }
-
 
   exports.searchRideExhaustive = function(req, res, next) {
     // Check for validation error
@@ -495,6 +447,7 @@ exports.rideRejected = function(req,res,next){
           { departDate:{"$gte": (new Date(departDate_start.format())), // Date converts local to UTC which is better for $lt and $gt
                         "$lt": (new Date (departDate_end.format()))
                       },
+            capacityLeft : {"$gte" : req.body.seats},
             initialCoords: {$near:
                                 {$maxDistance: MAX_DISTANCE,
                                  $geometry: {type:"Point", coordinates:initialCoords}

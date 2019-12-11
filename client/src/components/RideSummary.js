@@ -96,7 +96,7 @@ export default function RideSummary(props) {
   const [departPrice, setDepartPrice] = useState(10);
   const [returnPrice, setReturnPrice] = useState(15);
   const [departSuccess, setdepartSuccess] = useState(false);
-  const [returnSuccess, setreturnSuccess] = useState(false);
+  const [returnSuccess, setReturnSuccess] = useState(false);
   const [ridesRequested, setRidesRequested] = useState(false);
   const notify = (toastString) => {
       toast(toastString);
@@ -123,38 +123,38 @@ export default function RideSummary(props) {
       console.log("Ride confirmed...")
       if(roundTrip){
           handleRoundTrip();
-
       }else{
+          handleSingleRide();
       }
   }
   const handleRoundTrip = () => {
+        console.log("handling roundtrip");
         chooseRidePost(departId,handleDepartResponse);
         chooseRidePost(returnId,handleReturnResponse);
   }
   const handleSingleRide = () => {
-      chooseRidePost(departId,handleDepartResponse)
+      chooseRidePost(departId,handleDepartResponse);
   }
   const handleDepartResponse = (resp) =>{
+      console.log("handling depart ride response");
     if(resp.error_code == 0){
         setdepartSuccess(true);
         if(!roundTrip){
+            console.log("handling depart ride response but not roundTrip");
             setRidesRequested(true);
-        }
-        if(roundTrip && departSuccess && returnSuccess){
-            setRidesRequested(true)
         }
     }
   }
   const handleReturnResponse= (resp) => {
+      console.log("handling return ride response");
       if(resp.error_code == 0){
         setReturnSuccess(true);
-        if(roundTrip && departSuccess && returnSuccess){
-            setRidesRequested(true)
-        }
       }
   }
   const chooseRidePost = (rid,successCallback) => {
-      var body = {uid:localStorage.get('uid'),
+      console.log("choose ride post");
+      console.log(rid);
+      var body = {uid:localStorage.getItem('uid'),
                   rid:rid};
       fetch('/rides/chooseride', {
         method: 'POST',
@@ -184,13 +184,13 @@ export default function RideSummary(props) {
 
   return (
       <div>
-      {ridesRequested ?  <Redirect to={{ pathname : "/rideconfirmed",
+      { ((!roundTrip && departSuccess) || (roundTrip && departSuccess && returnSuccess))  ? <Redirect to={{ pathname : "/rideconfirmed",
                                     state : {roundTrip :{roundTrip},
                                             departSuccess: {departSuccess},
                                             returnSuccess: {returnSuccess}
                                     }
-        }} />: null}
-      <ToastContainer />
+        }} /> : null}
+      ToastContainer />
     <Container component = "main" maxWidth='xs'>
       <CssBaseline />
       <div className = {classes.paper}>

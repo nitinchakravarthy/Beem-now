@@ -23,7 +23,7 @@ router.post('/createRide',
      check('destinationCity', 'Invalid Destination city').not().isEmpty(),
      check('returnDate', 'Invalid return date').optional().not().isEmpty().not().isAfter('departDate'),
      check('returnTime', 'Invalid Time').optional().not().isEmpty(),
-     check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
+     check('timeZone', 'Time Zone should not be Empty').not().isEmpty(),
   ], rideController.createRide);
 
 
@@ -77,7 +77,8 @@ router.get('/userRideInfo',
     check('returnDate', 'Invalid return date').optional().not().isEmpty(),
     check('originCity', 'Invalid Origin city').not().isEmpty(),
     check('destinationCity', 'Invalid Destination city').not().isEmpty(),
-    check('timeZone', 'Time Zone should not be Empty').not().isEmpty()
+    check('timeZone', 'Time Zone should not be Empty').not().isEmpty(),
+    check('seats','Number of seats cannot be empty').not().isEmpty()
   ], rideController.searchRideExhaustive);
 
 
