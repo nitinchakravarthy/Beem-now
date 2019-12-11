@@ -18,7 +18,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import CompanyLogo from '../logo.png'
-
+import Search from './search'
 const useStyles = makeStyles(theme => ({
   '@global': {
     body: {
@@ -125,6 +125,7 @@ export default function SearchRide() {
       const data = new FormData(event.target);
       const uid = localStorage.getItem('uid');
       console.log(uid);
+      console.log(data);
       const success = handleEmptySubmission(data);
       const params = {
           uid: uid,
@@ -204,6 +205,8 @@ export default function SearchRide() {
           Search Ride
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
+         <Search id="a"/>
+         <Search id="b"/>
           <TextField
             variant="outlined"
             margin="normal"

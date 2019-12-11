@@ -24,7 +24,7 @@ import RideHistory from './RideHistoryPage'
 
 import RideConfirmed from './rideConfirmedPage';
 // import RideHistory from './RideHistoryPage';
-
+import Search from './search'
 import { Switch, Route, Link, HashRouter, NavLink} from 'react-router-dom';
 export default function Home() {
   return (
@@ -43,6 +43,7 @@ export default function Home() {
             <Route path="/ridehistory" component={RideHistory}/>
             <Route exact path = '/friendList' component = {FriendList}/>
             <Route exact path = '/chat' component = {Dashboard}/>
+            <Route exact path = '/search' component = {Search}/>
           </div>
         </div>
       </HashRouter>
