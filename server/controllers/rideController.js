@@ -420,7 +420,16 @@ exports.rideRejected = function(req,res,next){
     console.log('Input:', req.body);
     //dates for query
     var departDate_start = moment(req.body.departDate, "MM/DD/YYYY").tz(req.body.timeZone);
-    var departDate_end = departDate_start.clone().add(1, 'day');//moment(departDate_start.getTime()+(1*24*60*60*1000))
+    var departDate_end = departDate_start.clone().add(1, 'day');
+    if (req.body.selectedDepartTime != null) {
+      var departTime = moment(req.body.selectedDepartTime, "hh:mm A");
+      departDate_end.set({
+        'hour' : d1.get('hour'),
+        'minute' : d1.get('minute')
+      });
+    }
+
+    //moment(departDate_start.getTime()+(1*24*60*60*1000))
     console.log(new Date(departDate_start.format()));
     console.log(new Date(departDate_end.format()));
 
@@ -459,13 +468,20 @@ exports.rideRejected = function(req,res,next){
                                 {$centerSphere : [ finalCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
                             },
             //host: {$ne:req.body.uid}
-        },  'host departDate originCity destinationCity maxCapacity capacityLeft occupiedCapacity pricePerSeat'
-        ).populate('host', {first_name : 1}).exec(function(err, departure_rides){
+          },  'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+        ).populate('host', {first_name : 1, avatar : 1}).exec(function(err, departure_rides) {
           console.log("Got from DB")
           if (err) {
             console.log(err.message);
             return res.status(500).send({ msg: err.message })
           };
+          // while(toJSON(departure_rides)) {
+          //   console.log("Insode");
+          //   console.log(toJSON(ride.next()))
+          //   ride.departDate = new Date(moment(ride.departDate).tz(req.body.timeZone).format())
+          //   console.log(ride.departDate )
+          // }
+          console.log(departure_rides);
           const result_d = JSON.stringify(departure_rides);
           console.log("result_d");
           console.log(result_d);
@@ -487,7 +503,7 @@ exports.rideRejected = function(req,res,next){
                                 },
                 //host: {$ne:req.body.uid}
               }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
-            ).populate('host', {first_name : 1}).exec(function(err, return_rides){
+            ).populate('host', {first_name : 1, avatar: 1}).exec(function(err, return_rides){
               if (err) return res.status(500).send({ msg: err.message });
               const result_r = JSON.stringify(return_rides);
               console.log(result_d, result_r)
