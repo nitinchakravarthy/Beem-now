@@ -174,7 +174,7 @@ export default withRouter ( function ReturnRidesPage(props) {
 
   return (
   <div>
-  {isClicked ? props.history.push({pathname:"/home/ridesummary", 
+  {isClicked ? props.history.push({pathname:"/home/ridesummary",
                                 state: {
                                   roundTrip: roundTrip,
                                   originCity: originCity,
@@ -230,7 +230,7 @@ export default withRouter ( function ReturnRidesPage(props) {
                       <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
                       <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
                       <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-                      <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+                      <Typography variant="body1" color="textSecondary">Seats Left : {item.capacityLeft}</Typography>
                       <Typography variant="subtitle2" align='justify' color="textSecondary">
                         {formatDepartureDate(item.departDate)}
                       </Typography>

@@ -110,15 +110,15 @@ export default function SearchRide(props) {
         console.log("in component did mount");
         if(postSuccess){
             notify("Your ride was posted Successfully");
+            setPostSuccess(false)
         }
-        setPostSuccess(false)
     });
 
   history.listen((location, action) => {
       if(location.pathname == "/home" && action == "POP"){
       console.log("InHome")
       history.replace({pathname: "/home"})
-    } 
+    }
   })
 
   const handleSwitch  =  () =>{

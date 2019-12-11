@@ -104,18 +104,25 @@ exports.confirmationPost = function(req,res,next){
     if(!token) res.status(400).send({ type: 'not-verified', msg: 'We were unable to find a valid token. Your token my have expired.' });
 
     // If we found a token, find a matching user
-    User.findOne({_id: token._userId}, function(err,user){
-      if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
-      if (user.verified) return res.status(400).send({ type: 'already-verified', msg: 'This user has already been verified.' });
 
-      // Verify and save the user
-      user.verified = true;
-      user.save(function(err){
-        if (err)  { return res.status(500).send({ msg: err.message }); }
-        delete user.password;
+    User.findOneAndUpdate({_id:token._userId}, {verified: true}, {upsert:true},function(err,user){
+        if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
+        if (user.verified) return res.status(400).send({ type: 'already-verified', msg: 'This user has already been verified.' });
         res.status(200).send({verified:true, user:user});
-      });
+
     });
+    // User.findOne({_id: token._userId}, function(err,user){
+    //   if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
+    //   if (user.verified) return res.status(400).send({ type: 'already-verified', msg: 'This user has already been verified.' });
+    //
+    //   // Verify and save the user
+    //   user.verified = true;
+    //   user.save(function(err){
+    //     if (err)  { return res.status(500).send({ msg: err.message }); }
+    //     delete user.password;
+    //     res.status(200).send({verified:true, user:user});
+    //   });
+    // });
   });
 };
 

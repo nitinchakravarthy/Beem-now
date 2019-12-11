@@ -242,6 +242,7 @@ exports.searchRide = function(req, res, next) {
                 },
         originCity:req.body.originCity, // second is a geospacial query
         destinationCity:req.body.destinationCity,
+        host : {"$ne": req.body.uid}
       }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
     ).populate('host', {}).exec(function(err, departure_rides){
       if (err) return res.status(500).send({ msg: err.message });
@@ -258,6 +259,7 @@ exports.searchRide = function(req, res, next) {
                         },
             originCity:req.body.destinationCity ,
             destinationCity:req.body.originCity,
+            host : {"$ne": req.body.uid}
           }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
           ).populate('host').exec(function(err, return_rides){
           if (err) return res.status(500).send({ msg: err.message });
@@ -395,7 +397,7 @@ exports.rideRejected = function(req,res,next){
                     return res.status(200).json({error_code:0, ridestatus:'ALREADY_CONFIRMED'});
                 }
             }
-            const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been accepted',
+            const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been rejected',
                               text: "Hi,\n\n Your Ride with "+ ride.host.first_name +" from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " has been rejected by the host. Please choose another ride." };
             console.log(mailOptions_self);
             transporter.sendMail(mailOptions_self, function (err) {
@@ -457,7 +459,7 @@ exports.rideRejected = function(req,res,next){
                                 {$centerSphere : [ finalCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
                             },
             //host: {$ne:req.body.uid}
-          },  'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+        },  'host departDate originCity destinationCity maxCapacity capacityLeft occupiedCapacity pricePerSeat'
         ).populate('host', {first_name : 1}).exec(function(err, departure_rides){
           console.log("Got from DB")
           if (err) {

@@ -78,7 +78,7 @@ export default function AccountVerified(props) {
   };
 
   useEffect(() => {
-        console.log("in component did mount");
+        console.log(token);
         fetch( '/users/confirmation?token=' + token).then(response => response.json())
         .then((data) => {
             console.log(data);
