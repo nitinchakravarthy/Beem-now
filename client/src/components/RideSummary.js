@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -92,11 +92,17 @@ export default function RideSummary(props) {
   const [departSuccess, setdepartSuccess] = useState(false);
   const [returnSuccess, setReturnSuccess] = useState(false);
   const [ridesRequested, setRidesRequested] = useState(false);
+  const [seats, setSeats] = useState(props.location.state.seats);
+
   const notify = (toastString) => {
       toast(toastString);
     };
+    useEffect(() => {
+          console.log("in Ride summarry useEffect");
+          console.log(seats);
+      });
 
-  var totalCost = parseFloat(departureRide.pricePerSeat) + (roundTrip?parseFloat(returnRide.pricePerSeat):0.0)
+  var totalCost = parseFloat(seats) * (parseFloat(departureRide.pricePerSeat) + (roundTrip?parseFloat(returnRide.pricePerSeat):0.0) )
   const formatDepartureDate = (date) => {
       var t = date.split('T')
       var time = t[1].split(':')
@@ -144,7 +150,8 @@ export default function RideSummary(props) {
       console.log("choose ride post");
       console.log(rid);
       var body = {uid:localStorage.getItem('uid'),
-                  rid:rid};
+                  rid:rid,
+                  seats:seats};
       fetch('/rides/chooseride', {
         method: 'POST',
         headers: {
@@ -219,7 +226,7 @@ export default function RideSummary(props) {
                   <Grid item md>
                     <ListItemText>
                       <Typography variant="h6" align = "center" color="textSecondary">Price</Typography>
-                      <Typography variant="h6" align = "center" color="textSecondary">{departureRide.pricePerSeat}$</Typography>
+                      <Typography variant="h6" align = "center" color="textSecondary">{seats*departureRide.pricePerSeat}$</Typography>
                     </ListItemText>
                   </Grid>
                 </Grid>
@@ -266,7 +273,7 @@ export default function RideSummary(props) {
                       <Grid item md>
                         <ListItemText>
                           <Typography variant="h6" align = "center" color="textSecondary">Price</Typography>
-                         <Typography variant="h6" align = "center" color="textSecondary">{returnRide.pricePerSeat}$</Typography>
+                         <Typography variant="h6" align = "center" color="textSecondary">{seats*returnRide.pricePerSeat}$</Typography>
                         </ListItemText>
                       </Grid>
                     </Grid>

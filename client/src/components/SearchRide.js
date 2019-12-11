@@ -108,6 +108,7 @@ export default function SearchRide() {
       const data = new FormData(event.target);
       const uid = localStorage.getItem('uid');
       console.log(uid);
+      console.log(seats);
       const params = {
           uid: uid,
           roundTrip: false,
@@ -116,8 +117,7 @@ export default function SearchRide() {
           departDate: data.get('departDate'),
           selectedDepartTime: null,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          seats:seats
-
+          seats:data.get('seats')
           //returnDate: data.get('returnDate')
       }
       setOriginCity(data.get('originCity'));
@@ -168,7 +168,8 @@ export default function SearchRide() {
                                 originCity: originCity,
                                 destinationCity: destinationCity,
                                 dates: dateArray,
-                                returnDate: selectedDateReturn
+                                returnDate: selectedDateReturn,
+                                seats:seats
                               }
                               }}/> : null}
     <Container component="main" maxWidth="xs">
@@ -224,10 +225,11 @@ export default function SearchRide() {
                 <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel id="seat_select">seats</InputLabel>
                    <Select
+                    name = 'seats'
                      labelId="seat_select"
                      id="seats"
                      value={seats}
-                     onChange={handleChange}
+                     onChange={handleseatChange}
                      >
                      <MenuItem value={1}>1</MenuItem>
                      <MenuItem value={2}>2</MenuItem>

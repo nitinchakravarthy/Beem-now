@@ -106,8 +106,9 @@ export default function ReturnRidesPage(props) {
   const [selectedDepartRide, setSelectedDepartRide] = useState(props.location.state.selectedDepartRide);
   const [selectedReturnRide, setSelectedReturnRide] = useState('');
   const [isClicked, setIsClicked] = useState(false);
+  const [seats, setSeats] = useState(props.location.state.seats);
 
-  const [value, setValue] = React.useState(dates.length - 16);
+  const [value, setValue] = useState(dates.length - 16);
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
@@ -139,7 +140,8 @@ export default function ReturnRidesPage(props) {
           departDate: dates[newValue][1],
           selectedDepartTime: selectedDepartRide.departDate,
           roundTrip: false,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          seats:seats
     }
     fetch('/rides/searchRide', {
         method: 'POST',
@@ -208,6 +210,7 @@ export default function ReturnRidesPage(props) {
                                             destinationCity: destinationCity,
                                             selectedDepartRide: selectedDepartRide,
                                             selectedReturnRide: selectedReturnRide,
+                                            seats:seats
                                           }}}/> : null}
               <Container component = "main" maxWidth='md' style = {{padding: '0 0 0 0'}}>
               <CssBaseline />

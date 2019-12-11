@@ -317,10 +317,10 @@ exports.chooseride = function(req,res,next){
                 if (err) { return res.status(500).send({ msg: err.message }); }
                 if (!user) return res.status(400).send({ msg: 'We were unable to find a user.' });
                 if (!user.verified) return res.status(400).send({ type: 'Not-verified', msg: 'This user is not verified.' });
-                var confirmLink = '\nhttp:\/\/' + req.headers.host + '\/rides\/updateRideConfirmed?uid=' + req.body.uid + "&rid=" + req.body.rid;
-                var rejectLink = '\nhttp:\/\/' + req.headers.host + '\/rides\/updateRideRejected?uid=' + req.body.uid + "&rid=" + req.body.rid;
+                var confirmLink = '\nhttp:\/\/' + req.headers.host + '\/rides\/updateRideConfirmed?uid=' + req.body.uid + "&rid=" + req.body.rid + "&seats=" + req.body.seats;
+                var rejectLink = '\nhttp:\/\/' + req.headers.host + '\/rides\/updateRideRejected?uid=' + req.body.uid + "&rid=" + req.body.rid + "&seats=" + req.body.seats;
               const mailOptions_host = { from: process.env.SENDGRID_EMAIL, to: ride.host.email, subject: 'Someone wants to pick the ride you posted',
-                                text: "Hi, \n\n" + user.first_name + " wants to ride with you from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + ".\n\n" +
+                                text: "Hi, \n\n" + user.first_name + " wants to ride with you from " + ride.originCity + " to " + ride.destinationCity + " on " + ride.departDate + " for "+ req.body.seats + "people.\n\n" +
                                 "To confirm click on this link. \n\n" + confirmLink + "\n\n" + "To reject click on this link \n\n" + rejectLink + "\n\n" };
               console.log(mailOptions_host);
               // notify the host that a person wants to ride with them.
@@ -356,7 +356,7 @@ exports.rideConfirmed = function(req,res,next){
             }
             riders.push(user)
             ride.riders = riders;
-            ride.capacityLeft = ride.capacityLeft-1;
+            ride.capacityLeft = ride.capacityLeft-req.query.seats;
             ride.save(function(err){
                 if (err)  { return res.status(500).send({ msg: err.message }); }
                 const mailOptions_self = { from: process.env.SENDGRID_EMAIL, to: user.email, subject: 'Your ride request has been accepted',

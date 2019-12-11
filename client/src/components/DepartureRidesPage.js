@@ -111,7 +111,7 @@ function getDates(date, startDate) {
     var currentDate = startDate;
     while (currentDate <= stopDate) {
         var t_date = new Date (currentDate);
-        
+
         var actualDate = String(t_date.getMonth()+1)+"/"+String(t_date.getDate())+"/"+String(t_date.getYear()+1900);
         dateArray.push([String(t_date.getDate())+" "+monthNames[t_date.getMonth()], actualDate]);
         currentDate = currentDate.addDays(1);
@@ -132,7 +132,8 @@ export default function DepartureRidesPage(props) {
   const [isClicked, setIsClicked] = useState(false);
   const [selectedDepartRide, setSelectedDepartRide] = useState('');
   const [dates, setDates] = useState(props.location.state.dates);
-  const [value, setValue] = React.useState(dates.length - 15);
+  const [value, setValue] = useState(dates.length - 15);
+  const [seats, setSeats] = useState(props.location.state.seats);
 
   const handleSelect = (item) => {
       setSelectedDepartRide(item)
@@ -144,10 +145,10 @@ export default function DepartureRidesPage(props) {
       if (departDate > returnDate){
         returnDate = departDate.addDays(1);
         console.log(returnDate)
-        
+
       }
       setReturnDateArray(getDates(returnDate, departDate));
-      console.log(returnDateArray.length) 
+      console.log(returnDateArray.length)
       returnDate = String(returnDate.getMonth()+1)+"/"+String(returnDate.getDate())+"/"+String(returnDate.getYear()+1900);
 
       const params = {
@@ -157,7 +158,8 @@ export default function DepartureRidesPage(props) {
           departDate: returnDate,
           roundTrip: false,
           selectedDepartTime: item.departDate,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          seats:seats
       }
       fetch('/rides/searchRide', {
         method: 'POST',
@@ -209,7 +211,8 @@ export default function DepartureRidesPage(props) {
           departDate: dates[newValue][1],
           selectedDepartTime: null,
           roundTrip: false,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          seats:seats
     }
     fetch('/rides/searchRide', {
         method: 'POST',
@@ -272,9 +275,9 @@ export default function DepartureRidesPage(props) {
                   {departureRides.length != 0 ?
                   <div>
                   {isClicked ?
-                      (roundTrip ?
-                          <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip, selectedDepartRide: selectedDepartRide, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
-                          <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip, selectedDepartRide:selectedDepartRide, selectedReturnRide:null}}}/>
+                      (!roundTrip ?
+                          <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip, selectedDepartRide:selectedDepartRide, seats:seats,selectedReturnRide:null}}}/>
+                          : <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip, selectedDepartRide: selectedDepartRide, seats:seats, returnRides: returnRides, originCity: originCity, destinationCity: destinationCity, dates: returnDateArray}}}/>
                       ): null}
                   <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
                   <CssBaseline />
@@ -303,7 +306,7 @@ export default function DepartureRidesPage(props) {
                       </ListItem>
                     </div>
                     ))}
-                  </List> 
+                  </List>
                   </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
                   </div>
                 </TabPanel>
