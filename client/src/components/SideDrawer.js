@@ -130,6 +130,7 @@ export default withRouter ( function Home(props) {
       setIsRideHistoryClicked(false)
       const params = {
         user_id: localStorage.getItem('uid'),
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       }
       fetch('/rides/rideHistory', {
         method: 'POST',

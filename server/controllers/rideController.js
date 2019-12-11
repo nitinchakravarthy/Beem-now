@@ -290,6 +290,10 @@ exports.rideHistory = function(req, res, next) {
       ).populate('host', { first_name: 1, avatar: 1}).sort('-departureDate').exec(function(err, driver_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const driver_rides_result = JSON.stringify(driver_rides);
+      const driver_res_json = JSON.parse(driver_rides_result)
+      for (i=0; i < driver_res_json.length; i++) {
+        driver_res_json[i].departDate =  moment(driver_res_json[i].departDate).tz(req.body.timeZone).format()
+      }
       Ride.find({
           //search in riders array for user_id
           riders : req.body.user_id
@@ -297,9 +301,13 @@ exports.rideHistory = function(req, res, next) {
         ).populate('host', { first_name: 1, avatar: 1}).sort('-departureDate').exec(function(err, passenger_rides){
         if (err) return res.status(500).send({ msg: err.message });
         const passenger_rides_result = JSON.stringify(passenger_rides);
-        console.log(driver_rides, passenger_rides)
-        res.send({ error_code: 0, passenger_rides: passenger_rides_result,
-               driver_rides: driver_rides_result });
+        const passenger_res_json = JSON.parse(passenger_rides_result)
+        for (i=0; i < passenger_res_json.length; i++) {
+          passenger_res_json[i].departDate =  moment(passenger_res_json[i].departDate).tz(req.body.timeZone).format()
+        }
+        console.log(driver_res_json, passenger_res_json)
+        res.send({ error_code: 0, passenger_rides: JSON.stringify(passenger_res_json),
+               driver_rides: JSON.stringify(driver_res_json) });
         });
     });
 };
@@ -484,14 +492,10 @@ exports.rideRejected = function(req,res,next){
           // })
           // console.log(departure_rides);
           const result_d = JSON.stringify(departure_rides);
-          console.log("result_d");
-          console.log(result_d);
           const res_json = JSON.parse(result_d)
-          console.log(res_json);
           for (i=0; i < res_json.length; i++) {
             res_json[i].departDate =  moment(res_json[i].departDate).tz(req.body.timeZone).format()
           }
-          console.log(res_json)
           if (req.body.roundTrip) {
             //dates for query
             var returnDate_start = moment(req.body.returnDate, "MM/DD/YYYY").tz(req.body.timeZone);
