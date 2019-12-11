@@ -243,7 +243,7 @@ exports.searchRide = function(req, res, next) {
         originCity:req.body.originCity, // second is a geospacial query
         destinationCity:req.body.destinationCity,
         host : {"$ne": req.body.uid}
-      }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+      }, 'host departDate originCity destinationCity maxCapacity capacityLeft pricePerSeat'
     ).populate('host', {}).exec(function(err, departure_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const result_d = JSON.stringify(departure_rides);
@@ -260,7 +260,7 @@ exports.searchRide = function(req, res, next) {
             originCity:req.body.destinationCity ,
             destinationCity:req.body.originCity,
             host : {"$ne": req.body.uid}
-          }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+          }, 'host departDate originCity destinationCity maxCapacity capacityLeft pricePerSeat'
           ).populate('host').exec(function(err, return_rides){
           if (err) return res.status(500).send({ msg: err.message });
           const result_r = JSON.stringify(return_rides);
@@ -288,7 +288,7 @@ exports.rideHistory = function(req, res, next) {
   Ride.find({
         //match the object id of host
         host: new ObjectId(req.body.user_id)
-      },'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+      },'host departDate originCity destinationCity maxCapacity capacityLeft pricePerSeat'
       ).populate('host', { first_name: 1, avatar: 1}).sort('-departureDate').exec(function(err, driver_rides){
       if (err) return res.status(500).send({ msg: err.message });
       const driver_rides_result = JSON.stringify(driver_rides);
@@ -299,7 +299,7 @@ exports.rideHistory = function(req, res, next) {
       Ride.find({
           //search in riders array for user_id
           riders : req.body.user_id
-        },'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+        },'host departDate originCity destinationCity maxCapacity capacityLeft pricePerSeat'
         ).populate('host', { first_name: 1, avatar: 1}).sort('-departureDate').exec(function(err, passenger_rides){
         if (err) return res.status(500).send({ msg: err.message });
         const passenger_rides_result = JSON.stringify(passenger_rides);
@@ -450,7 +450,7 @@ exports.rideRejected = function(req,res,next){
     var destinationLocation = req.body.destinationCity;
     //get co-ordniates
     axios.all([
-      axios.get('https://nominatim.openstreetmap.org/search?format=json',
+      axios.get('https//nominatim.openstreetmap.org/search?format=json',
     {
       params: {
         q : originLocation
@@ -481,7 +481,7 @@ exports.rideRejected = function(req,res,next){
                                 {$centerSphere : [ finalCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
                             },
             //host: {$ne:req.body.uid}
-          },  'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+          },  'host departDate originCity destinationCity maxCapacity capacityLeft pricePerSeat'
         ).populate('host', {first_name : 1, avatar : 1}).exec(function(err, departure_rides) {
           console.log("Got from DB")
           if (err) {
@@ -515,7 +515,7 @@ exports.rideRejected = function(req,res,next){
                                     {$centerSphere : [ initialCoords, 5 / 3963.2 ]} // The radius should be in radians so dividing by earth's radius
                                 },
                 //host: {$ne:req.body.uid}
-              }, 'host departDate originCity destinationCity maxCapacity occupiedCapacity pricePerSeat'
+              }, 'host departDate originCity destinationCity maxCapacity capacityLeft pricePerSeat'
             ).populate('host', {first_name : 1, avatar: 1}).exec(function(err, return_rides){
               if (err) return res.status(500).send({ msg: err.message });
               const result_r = JSON.stringify(return_rides);

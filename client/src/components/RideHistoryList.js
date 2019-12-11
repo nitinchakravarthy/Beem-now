@@ -91,7 +91,7 @@ export default function AlignItemsList(props) {
               <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
               <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
               <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-              <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+              <Typography variant="body1" color="textSecondary">Seats Left : {item.capacityLeft}</Typography>
               <Typography variant="subtitle2" align='justify' color="textSecondary">
                 {formatDepartureDate(item.departDate)}
               </Typography>
