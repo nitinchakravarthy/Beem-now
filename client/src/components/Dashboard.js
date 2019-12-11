@@ -65,8 +65,14 @@ async function getInitialChatAndRegisterUser(otherPersonId){
       'Content-Type': 'application/json',
     },
   })
+  
 
   const data = await response.json();
+  console.log("yolo")
+  console.log(data)
+  if(data.length==0){
+    return;
+  }
   msgs = data[0].msgs
   Array.from(msgs).forEach(function (arrayItem) {
     chat = "\n"+arrayItem.from+":"+arrayItem.message
@@ -94,25 +100,8 @@ async function getInitialChatAndRegisterUser(otherPersonId){
     newDiv.append(newSpan)
     document.getElementById('chatScreen').append(newDiv)
 
-
-    // toAdd.appendChild(newDiv);
-    // toAddUtil.push(<div style={{textAlign:"left", whiteSpace:'pre-line'}}>{chat}<span style={{float:"right"}}>{time}</span></div>)
-    // var div = document.createElement('div')
-    // div.innerHTML = {chat}
-
-    //Below works normally
-    // document.getElementById('chatScreen').append(chat+'     '+'@'+'('+time+')'+"\n")
-
   });
 
-
-    // console.log("final chat = "+chat)
-  // changeToAdd(previousState => {
-  //   previousState.push(...toAddUtil)})
-  // console.log("toAdd = "+toAdd+"   "+"toAddUtil = "+toAddUtil)
-  // changeInitialChat(toAddUtil)
-
-  //Chat from other use event handle
   socket.on('client-message',  message => {
     //Replace by documentById get code finally.
   console.log("client-message received"+message.from+" "+message.msg)
@@ -120,12 +109,7 @@ async function getInitialChatAndRegisterUser(otherPersonId){
   var time = getDate(message.time)
   console.log("socket.on(client-message) toAdd = "+toAdd)
   console.log("socket.on(client-message) initial chat = "+initialChat)
-  // toAdd.push(<div style={{textAlign:"left", whiteSpace:'pre-line'}}>{chat}<span style={{float:"right"}}>{time}</span></div>)
-  // changeToAdd(previousState =>{
-  //   previousState.push(<div style={{textAlign:"left", whiteSpace:'pre-line'}}>{chat}<span style={{float:"right"}}>{time}</span></div>)
-  //   changeInitialChat(previousState)
-  // })
-  // var newSpan = document.createElement('span').append(time);
+
 
   var newDiv = document.createElement('div');
   newDiv.setAttribute("align", "left")

@@ -18,6 +18,10 @@ import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import {Link } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+
+
 
 const useStyles = makeStyles(theme => ({
    root: {
@@ -83,8 +87,14 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
 export default function RideSummary(props) {
   const classes = useStyles();
   const [departureRide, setDepartureRide] = useState(props.location.state.selectedDepartRide);
-  const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
+  const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);  
   const [returnRide, setReturnRide] = useState(props.location.state.selectedReturnRide);
+  const [departSuccess, setdepartSuccess] = useState(false);
+  const [returnSuccess, setreturnSuccess] = useState(false);
+  const [ridesRequested, setRidesRequested] = useState(false);
+  const notify = (toastString) => {
+      toast(toastString);
+    };
 
   var totalCost = parseFloat(departureRide.pricePerSeat) + (roundTrip?parseFloat(returnRide.pricePerSeat):0.0)
   const formatDepartureDate = (date) => {
@@ -100,14 +110,73 @@ export default function RideSummary(props) {
 
   const handleConfirm = (event) => {
       console.log("Ride confirmed...")
-  }
+      if(roundTrip){
+          handleRoundTrip();
 
-  const handleChat = (event) => {
-      
+      }else{
+      }
+  }
+  const handleRoundTrip = () => {
+        chooseRidePost(departId,handleDepartResponse);
+        chooseRidePost(returnId,handleReturnResponse);
+  }
+  const handleSingleRide = () => {
+      chooseRidePost(departId,handleDepartResponse)
+  }
+  const handleDepartResponse = (resp) =>{
+    if(resp.error_code == 0){
+        setdepartSuccess(true);
+        if(!roundTrip){
+            setRidesRequested(true);
+        }
+        if(roundTrip && departSuccess && returnSuccess){
+            setRidesRequested(true)
+        }
+    }
+  }
+  const handleReturnResponse= (resp) => {
+      if(resp.error_code == 0){
+        setReturnSuccess(true);
+        if(roundTrip && departSuccess && returnSuccess){
+            setRidesRequested(true)
+        }
+      }
+  }
+  const chooseRidePost = (rid,successCallback) => {
+      var body = {uid:localStorage.get('uid'),
+                  rid:rid};
+      fetch('/rides/chooseride', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }).then(response => response.json())
+      .then((resp) => {
+          if(resp.error_code == 0){
+              console.log(resp);
+              successCallback(resp);
+          }else{
+              notify(resp.msg)
+          }
+
+     }).catch( (error) => {
+        notify("Unable to request ride. Something has gone wrong");
+         console.log(error);
+     });
   }
 
   return (
-    <Container component = "main" maxWidth='lg'>
+      <div>
+      {ridesRequested ?  <Redirect to={{ pathname : "/rideconfirmed",
+                                    state : {roundTrip :{roundTrip},
+                                            departSuccess: {departSuccess},
+                                            returnSuccess: {returnSuccess}
+                                    }
+        }} />: null}
+      <ToastContainer />
+    <Container component = "main" maxWidth='md'>
       <CssBaseline />
       <div className = {classes.paper}>
         <ThemeProvider theme={headingTheme}>
@@ -129,7 +198,8 @@ export default function RideSummary(props) {
                   </Avatar>
                   <Typography variant="body1" color="textSecondary">{departureRide.host.first_name}</Typography>
                   <ThemeProvider theme={headingTheme}>
-                    <Button variant="contained" color = "primary" className={classes.chatButton} onClick = {handleChat}>
+                    <Button variant="contained" color = "primary" className={classes.chatButton} component = {Link} to={{
+                    pathname:'/chat', state: { to: departureRide.host.first_name, name: localStorage.getItem('first_name')}}}>
                       Chat
                     </Button>
                   </ThemeProvider>
@@ -155,8 +225,8 @@ export default function RideSummary(props) {
               </ListItem>
             </div>
             <div>
-              {roundTrip?
-                <div> 
+              { roundTrip ?
+                <div>
                 <div>
                   <Typography variant="h6" color="textSecondary">Return:</Typography>
                 </div>
@@ -173,7 +243,8 @@ export default function RideSummary(props) {
                           variant="contained"
                           color = "primary"
                           className={classes.chatButton}
-                          onClick = {handleChat}
+                          component = {Link} to={{
+                          pathname:'/chat', state: { to: returnRide.host.first_name, name: localStorage.getItem('first_name')}}}
                         >
                           Chat
                         </Button>
@@ -226,5 +297,6 @@ export default function RideSummary(props) {
           </Button>
       </div>
     </Container>
+    </div>
   );
 }

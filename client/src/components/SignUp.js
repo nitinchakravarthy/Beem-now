@@ -204,6 +204,7 @@ export default function SignUp() {
   const notify = (toastString) => {
       toast(toastString);
     };
+
   const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.target);
@@ -225,11 +226,17 @@ export default function SignUp() {
             },
             body: JSON.stringify(body),
           }).then(response => response.json())
-          .then((data) => {
-             console.log(data);
-             setEmail(data.get('email'));
-             setSignUpSuccess(data);
-             setAccountCreated(true);
+          .then((resp) => {
+              if(resp.error_code == 0){
+                  console.log(resp);
+                  console.log(resp.email);
+                  setEmail(resp.email);
+                  setSignUpSuccess(resp);
+                  setAccountCreated(true);
+              }else{
+                  notify(resp.msg)
+              }
+
          }).catch( (error) => {
             notify("unable to create a new account. Please try again later.");
              console.log(error);

@@ -50,7 +50,7 @@ export default function ResetPassword() {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
-
+  const [token,setToken] = useState(props.match.params.token);
   const validatePassword = (event) => {
       let name = event.target.name
       let value = event.target.value
@@ -89,18 +89,37 @@ export default function ResetPassword() {
       } else {
         setPasswordError('')
         setConfirmPasswordError('')
-        // send new credentials to backend
-        // fetch('/api/form-submit-url', {
-        //   method: 'POST',
-        //   body: data,
-        // });
-        setResetSuccess(true);
+        var body = {token : token,
+                    newPassword: data.get('password'),
+                    newPasswordConf: data.get('confirmPassword')}
+        fetch('/users/resetPassword', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        }).then(response => response.json())
+        .then((data) => {
+           console.log(data);
+           if(data.error_code == 0){
+               //save the user object in the
+               console.log(data.user);
+               setResetSuccess(true);
+           }else{
+               notify(data.msg)
+           }
+       }).catch((error) => {
+           console.log(error);
+           notify(error.msg)
+       });
+
       }
 
   }
   return (
     <div>
-      {resetSuccess ? <Redirect to="/"/> : null}
+      {resetSuccess ? <Redirect to="/Signin"/> : null}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
