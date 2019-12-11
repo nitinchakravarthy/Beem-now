@@ -56,6 +56,7 @@ export default function PostRide() {
   const [amountError, setAmountError] = useState('');
   const [maxCapacityError,setmaxCapacityError ] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const[postSuccess, setPostSuccess] = useState(false);
   // const [state, setState] = useState({
   //   checkedA: true,
   //   checkedB: true,
@@ -162,6 +163,7 @@ export default function PostRide() {
            console.log(data);
            if(data.rideStatus) {
                notify("Ride Posted Successfully.")
+               setPostSuccess(true);
                setIsAuthenticated(true);
            }else{
                setIsAuthenticated(false);
@@ -186,7 +188,7 @@ export default function PostRide() {
  const [value, setValue] = useState();
   return (
     <div>
-    {isAuthenticated ? <Redirect to="/"/> : null}
+    {isAuthenticated ? <Redirect to={{pathname:"/" , state: {postSuccess:true} }}/> : null}
     <ToastContainer />
     <Container component="main" maxWidth="xs">
       <CssBaseline />

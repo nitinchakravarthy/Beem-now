@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -23,6 +23,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { ToastContainer, toast } from 'react-toastify';
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -59,6 +60,9 @@ const useStyles = makeStyles(theme => ({
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
+const notify = (toastString) => {
+    toast(toastString);
+};
 
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
@@ -81,7 +85,9 @@ function getDates(date) {
     return dateArray;
 }
 console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
-export default function SearchRide() {
+
+
+export default function SearchRide(props) {
   const classes = useStyles();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedDate, handleDateChange] = useState(new Date());
@@ -98,7 +104,14 @@ export default function SearchRide() {
   const [labelWidth, setLabelWidth] = React.useState(0);
   const [originCityError, setOriginCityError] = useState('');
   const [destinationCityError, setDestinationCityError] = useState('');
+  const [postSuccess,setPostSuccess] = useState(props.location.state ? props.location.state.postSuccess: false);
 
+  useEffect(() => {
+        console.log("in component did mount");
+        if(postSuccess){
+            notify("Your ride was posted Successfully");
+        }
+    });
   const handleSwitch  =  () =>{
     setIsChecked(prev => !prev);
   };
@@ -215,6 +228,7 @@ export default function SearchRide() {
                                 seats:seats
                               }
                               }}/> : null}
+    <ToastContainer />
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
