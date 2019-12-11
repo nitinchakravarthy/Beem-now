@@ -102,11 +102,10 @@ export default function ReturnRidesPage(props) {
   const [dates, setDates] = useState(props.location.state.dates)
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
   const [selectedDepartRide, setSelectedDepartRide] = useState(props.location.state.selectedDepartRide);
-  console.log(selectedDepartRide)
   const [selectedReturnRide, setSelectedReturnRide] = useState('');
   const [isClicked, setIsClicked] = useState(false);
 
-  const [value, setValue] = React.useState(15);
+  const [value, setValue] = React.useState(dates.length - 16);
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
@@ -136,6 +135,8 @@ export default function ReturnRidesPage(props) {
           originCity: destinationCity,
           destinationCity: originCity,
           departDate: dates[newValue][1],
+          selectedDepartTime: selectedDepartRide.departDate,
+          roundTrip: false,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
     fetch('/rides/searchRide', {

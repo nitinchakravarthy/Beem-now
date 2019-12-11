@@ -104,9 +104,8 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 
-function getDates(date) {
+function getDates(date, startDate) {
     var days = 15
-    var startDate = new Date(date.getTime() - (days * 24 * 60 * 60 * 1000));
     var stopDate = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
     var dateArray = new Array();
     var currentDate = startDate;
@@ -123,22 +122,72 @@ function getDates(date) {
 export default function DepartureRidesPage(props) {
   const classes = useStyles();
   const [departureRides, setDepartureRides] = useState(props.location.state.departure_rides);
-  const [returnRides, setReturnRides] = useState(props.location.state.return_ride);
+  const [returnRides, setReturnRides] = useState("");
   const [originCity, setOriginCity] = useState(props.location.state.originCity);
   const [destinationCity, setDestinationCity] = useState(props.location.state.destinationCity);
-  const [returnDate, setReturnDate] = useState(props.location.state.returnDate);
+  const [selectedReturnDate, setSelectedReturnDate] = useState(props.location.state.returnDate);
+  console.log(selectedReturnDate)
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
-  const [returnDateArray, setReturnDateArray] = useState(props.returnDate);
+  const [returnDateArray, setReturnDateArray] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
   const [selectedDepartRide, setSelectedDepartRide] = useState('');
   const [dates, setDates] = useState(props.location.state.dates);
-  const [value, setValue] = React.useState(15);
+  const [value, setValue] = React.useState(dates.length - 15);
 
   const handleSelect = (item) => {
-      setReturnDateArray(getDates(returnDate))
-      console.log(item._id)
       setSelectedDepartRide(item)
-      setIsClicked(true)
+      var departDate = new Date((dates[value][1]))
+      console.log(departDate)
+      var returnDate = new Date(selectedReturnDate.getTime())
+      console.log(returnDate)
+      console.log(departDate, returnDate)
+      if (departDate > returnDate){
+        returnDate = departDate.addDays(1);
+        console.log(returnDate)
+        
+      }
+      setReturnDateArray(getDates(returnDate, departDate));
+      console.log(returnDateArray.length) 
+      returnDate = String(returnDate.getMonth()+1)+"/"+String(returnDate.getDate())+"/"+String(returnDate.getYear()+1900);
+
+      const params = {
+          uid: localStorage.getItem('uid'),
+          originCity: destinationCity,
+          destinationCity: originCity,
+          departDate: returnDate,
+          roundTrip: false,
+          selectedDepartTime: item.departDate,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+      fetch('/rides/searchRide', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(params)
+      }).then(response => response.json())
+      .then((data) => {
+         if(data.error_code == 0){
+             var obj
+             try {
+                obj = JSON.parse(data.departure_rides);
+                console.log(obj)
+              } catch (ex) {
+                console.error(ex);
+              }
+              console.log(obj)
+              setReturnRides(obj)
+              setIsClicked(true)
+             //save the user object in the
+         }else{
+             //notify(data.msg)
+         }
+      }).catch((error) => {
+             console.log(error);
+             //notify(error.msg)
+      });
+
   }
 
   const formatDepartureDate = (date) => {
@@ -158,6 +207,8 @@ export default function DepartureRidesPage(props) {
           originCity: originCity,
           destinationCity: destinationCity,
           departDate: dates[newValue][1],
+          selectedDepartTime: null,
+          roundTrip: false,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
     fetch('/rides/searchRide', {
