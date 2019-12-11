@@ -56,36 +56,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const dates = ["10 Dec", "11 Dec", "12 Dec", "13 Dec", "14 Dec",
-"15 Dec", "16 Dec", "17 Dec", "18 Dec", "19 Dec", "20 Dec"]
-const departure_rides = [
-  {
-     "_id": "5dbb9426341020625232cabc",
-     "isActive": true,
-     "roundTrip": false,
-     "maxCapacity": 3,
-     "seatsRemaining": 2,
-     "costPerSeat": "$15.65",
-     "picture": "http://placehold.it/32x32",
-     "age": 27,
-     "driverName": "Deanne Simpson",
-     "driverGender": "female",
-     "school": "TAMU",
-     "driverEmail": "deannesimpson@plasmox.com",
-     "driverPhone": "+1 (860) 456-3906",
-     "initialAddress": "130 Lancaster Avenue, Mayfair, Puerto Rico, 4215",
-     "finalAddress": "464 Brown Street, Brecon, Kentucky, 9163",
-     "initialCity": "Houston",
-     "finalCity" : "Austin",
-     "initialLatitude": 3.947075,
-     "initialLongitude": -148.546124,
-     "finalLatitude": -71.746849,
-     "finalLongitude": 48.105426,
-     "departureDate": "9/26/2019",
-     "departureTime": "08:00am"
-     }
-]
-
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
@@ -98,7 +68,7 @@ Date.prototype.addDays = function(days) {
 
 function getDates(date) {
     var days = 15
-    var startDate = new Date(date.getTime() - (days * 24 * 60 * 60 * 1000));
+    var startDate = new Date()
     var stopDate = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
     var dateArray = new Array();
     var currentDate = startDate;
@@ -119,7 +89,6 @@ export default function SearchRide() {
   const [selectedTime, handleTimeChange] = useState("2019-01-01T00:00:00.000Z");
   const [dateArray, setDateArray] = useState('');
   const [departureRides, setDepartureRides] = useState([]);
-  const [returnRides, setReturnRides] = useState([]);
   const [originCity, setOriginCity] = useState('');
   const [destinationCity, setDestinationCity] = useState('');
   const [roundTrip, setRoundTrip] = useState(false);
@@ -141,17 +110,15 @@ export default function SearchRide() {
       console.log(uid);
       const params = {
           uid: uid,
-          roundTrip: data.get('roundTrip') ? data.get('roundTrip') : false,
+          roundTrip: false,
           originCity: data.get('originCity'),
           destinationCity: data.get('destinationCity'),
           departDate: data.get('departDate'),
+          selectedDepartTime: null,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           seats:seats
+
           //returnDate: data.get('returnDate')
-      }
-      if(data.get('roundTrip')){
-          params['roundTrip'] = true;
-          params['returnDate'] = data.get('returnDate');
       }
       setOriginCity(data.get('originCity'));
       setDestinationCity(data.get('destinationCity'));
@@ -167,17 +134,14 @@ export default function SearchRide() {
       }).then(response => response.json())
       .then((data) => {
          if(data.error_code == 0){
-             var obj_d, obj_r;
+             var obj_d;
              try {
                 obj_d = JSON.parse(data.departure_rides);
-                obj_r = JSON.parse(data.return_rides);
                 console.log(obj_d);
-                console.log(obj_r);
               } catch (ex) {
                 console.error(ex);
               }
              setDepartureRides(obj_d)
-             setReturnRides(obj_r)
              setIsAuthenticated(true);
          }else{
              //notify(data.msg)
@@ -201,7 +165,6 @@ export default function SearchRide() {
                               state: {
                                 roundTrip:roundTrip,
                                 departure_rides: departureRides,
-                                return_ride: returnRides,
                                 originCity: originCity,
                                 destinationCity: destinationCity,
                                 dates: dateArray,

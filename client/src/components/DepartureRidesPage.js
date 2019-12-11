@@ -29,8 +29,8 @@ function TabPanel(props) {
       component="div"
       role="tabpanel"
       hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
-      aria-labelledby={`scrollable-auto-tab-${index}`}
+      id= {`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby= {`scrollable-auto-tab-${index}`}
       {...other}
     >
       <Box p={3}>{children}</Box>
@@ -93,6 +93,7 @@ const headingTheme = createMuiTheme({
   },
 });
 
+
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
       "July", "Aug", "Sept", "Oct", "Nov", "Dec"
     ];
@@ -103,14 +104,14 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 
-function getDates(date) {
+function getDates(date, startDate) {
     var days = 15
-    var startDate = new Date(date.getTime() - (days * 24 * 60 * 60 * 1000));
     var stopDate = new Date(date.getTime() + (days * 24 * 60 * 60 * 1000));
     var dateArray = new Array();
     var currentDate = startDate;
     while (currentDate <= stopDate) {
         var t_date = new Date (currentDate);
+        
         var actualDate = String(t_date.getMonth()+1)+"/"+String(t_date.getDate())+"/"+String(t_date.getYear()+1900);
         dateArray.push([String(t_date.getDate())+" "+monthNames[t_date.getMonth()], actualDate]);
         currentDate = currentDate.addDays(1);
@@ -121,22 +122,72 @@ function getDates(date) {
 export default function DepartureRidesPage(props) {
   const classes = useStyles();
   const [departureRides, setDepartureRides] = useState(props.location.state.departure_rides);
-  const [returnRides, setReturnRides] = useState(props.location.state.return_ride);
+  const [returnRides, setReturnRides] = useState("");
   const [originCity, setOriginCity] = useState(props.location.state.originCity);
   const [destinationCity, setDestinationCity] = useState(props.location.state.destinationCity);
-  const [returnDate, setReturnDate] = useState(props.location.state.returnDate);
+  const [selectedReturnDate, setSelectedReturnDate] = useState(props.location.state.returnDate);
+  console.log(selectedReturnDate)
   const [roundTrip, setRoundTrip] = useState(props.location.state.roundTrip);
-  const [returnDateArray, setReturnDateArray] = useState(props.returnDate);
+  const [returnDateArray, setReturnDateArray] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
-  const [departId, setDepartId] = useState('');
+  const [selectedDepartRide, setSelectedDepartRide] = useState('');
   const [dates, setDates] = useState(props.location.state.dates);
-  const [value, setValue] = React.useState(15);
+  const [value, setValue] = React.useState(dates.length - 15);
 
   const handleSelect = (item) => {
-      setReturnDateArray(getDates(returnDate))
-      console.log(item._id)
-      setDepartId(item._id)
-      setIsClicked(true)
+      setSelectedDepartRide(item)
+      var departDate = new Date((dates[value][1]))
+      console.log(departDate)
+      var returnDate = new Date(selectedReturnDate.getTime())
+      console.log(returnDate)
+      console.log(departDate, returnDate)
+      if (departDate > returnDate){
+        returnDate = departDate.addDays(1);
+        console.log(returnDate)
+        
+      }
+      setReturnDateArray(getDates(returnDate, departDate));
+      console.log(returnDateArray.length) 
+      returnDate = String(returnDate.getMonth()+1)+"/"+String(returnDate.getDate())+"/"+String(returnDate.getYear()+1900);
+
+      const params = {
+          uid: localStorage.getItem('uid'),
+          originCity: destinationCity,
+          destinationCity: originCity,
+          departDate: returnDate,
+          roundTrip: false,
+          selectedDepartTime: item.departDate,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+      fetch('/rides/searchRide', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(params)
+      }).then(response => response.json())
+      .then((data) => {
+         if(data.error_code == 0){
+             var obj
+             try {
+                obj = JSON.parse(data.departure_rides);
+                console.log(obj)
+              } catch (ex) {
+                console.error(ex);
+              }
+              console.log(obj)
+              setReturnRides(obj)
+              setIsClicked(true)
+             //save the user object in the
+         }else{
+             //notify(data.msg)
+         }
+      }).catch((error) => {
+             console.log(error);
+             //notify(error.msg)
+      });
+
   }
 
   const formatDepartureDate = (date) => {
@@ -156,6 +207,8 @@ export default function DepartureRidesPage(props) {
           originCity: originCity,
           destinationCity: destinationCity,
           departDate: dates[newValue][1],
+          selectedDepartTime: null,
+          roundTrip: false,
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
     fetch('/rides/searchRide', {
@@ -216,47 +269,47 @@ export default function DepartureRidesPage(props) {
           {dates.map((date, index) => (
               <TabPanel value={value} index={index}>
                 <div>
-    {departureRides.length != 0 ?
-    <div>
-    {isClicked ?
-        (roundTrip ?
-            <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip,departId: departId, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
-            <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip,departId:departId, originCity:originCity, destinationCity:destinationCity}}}/>
-        ): null}
-    <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
-    <CssBaseline />
-    <List>
-      {departureRides.map(item => (
-      <div className = {classes.card}>
-        <ListItem button key={item._id} alignItems="flex-start">
-          <ListItemAvatar className = {classes.avatarBlock}>
-            <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
-               {item.host.first_name[0]}
-            </Avatar>
-            <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
-          </ListItemAvatar>
-          <Container maxWidth='md'>
-            <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
-              <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
-              <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
-              <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
-              <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
-              <Typography variant="subtitle2" align='justify' color="textSecondary">
-                {formatDepartureDate(item.departDate)}
-              </Typography>
-              <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
-            </ListItemText>
+                  {departureRides.length != 0 ?
+                  <div>
+                  {isClicked ?
+                      (roundTrip ?
+                          <Redirect to={{pathname: "/returnresults", state: {roundTrip:roundTrip, selectedDepartRide: selectedDepartRide, returnRides: returnRides,originCity: originCity,destinationCity: destinationCity,dates: returnDateArray}}}/> :
+                          <Redirect to={{pathname:"/ridesummary", state: {roundTrip:roundTrip, selectedDepartRide:selectedDepartRide, selectedReturnRide:null}}}/>
+                      ): null}
+                  <Container component = "main" maxWidth = "md" style = {{padding: '0 0 0 0'}}>
+                  <CssBaseline />
+                  <List>
+                    {departureRides.map(item => (
+                    <div className = {classes.card}>
+                      <ListItem button key={item._id} alignItems="flex-start">
+                        <ListItemAvatar className = {classes.avatarBlock}>
+                          <Avatar alt="No Image" src={item.avatar} className={classes.avatar}>
+                             {item.host.first_name[0]}
+                          </Avatar>
+                          <Typography variant="body1" color="textSecondary">{item.host.first_name}</Typography>
+                        </ListItemAvatar>
+                        <Container maxWidth='md'>
+                          <ListItemText key={item._id} onClick = {() => handleSelect(item)}>
+                            <Typography variant="body1" color="textSecondary">⦿ {item.originCity}</Typography>
+                            <Typography variant="body1" color="textSecondary"><span>&nbsp;</span>|</Typography>
+                            <Typography variant="body1" color="textSecondary">⦿ {item.destinationCity}</Typography>
+                            <Typography variant="body1" color="textSecondary">Seats Left : {item.maxCapacity}</Typography>
+                            <Typography variant="subtitle2" align='justify' color="textSecondary">
+                              {formatDepartureDate(item.departDate)}
+                            </Typography>
+                            <Typography variant="h6" align = "right">{item.pricePerSeat}$</Typography>
+                          </ListItemText>
+                        </Container>
+                      </ListItem>
+                    </div>
+                    ))}
+                  </List> 
+                  </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
+                  </div>
+                </TabPanel>
+                ))}
+              </div>
+            </div>
           </Container>
-        </ListItem>
-      </div>
-      ))}
-    </List> 
-    </Container></div> : <Typography variant="h3" color="textSecondary" align="center">No rides found</Typography>}
-    </div>
-              </TabPanel>
-            ))}
-          </div>
-      </div>
-  </Container>
-  );
+        );
 }

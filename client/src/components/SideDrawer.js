@@ -31,6 +31,9 @@ import {Link } from 'react-router-dom'
 
 const drawerWidth = 240;
 
+// const myName = prompt("Whats your username buddy?")
+
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -236,7 +239,7 @@ export default function Home(props) {
               <ListItemText primary={"Ride History"} />
           </ListItem>
 
-          <ListItem button key={"Messages"} component={Link} to={{
+          <ListItem button key={"Messages"}  onClick = {handleDrawerClose} component={Link} to={{
             pathname:'/friendList', state: {name: localStorage.getItem('first_name')}}}>
               <ListItemIcon><img src={messageIcon}/></ListItemIcon>
               <ListItemText primary={"Messages"} />
