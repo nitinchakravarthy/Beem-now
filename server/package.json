@@ -29,7 +29,7 @@
     "nodemailer": "^6.3.0",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^1.19.1",
-    "sharp": "^0.22.1",
+    "sharp": "^0.30.5",
     "socket.io": "^2.3.0",
     "stripe": "^7.5.4",
     "uuid": "^3.3.2",
